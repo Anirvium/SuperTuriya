@@ -1,0 +1,10 @@
+.DS_Store
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+.codex_deps/
+var/*.db
+var/*.db-*
+tmp/pdfs/rendered/
