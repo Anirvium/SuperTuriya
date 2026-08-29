@@ -1,0 +1,277 @@
+{
+  "schema_version": "1.0",
+  "workload": "deterministic_request_fulfillment",
+  "frozen_at": "2026-08-29T00:00:00Z",
+  "cases": [
+    {
+      "case_id": "dev-001",
+      "split": "development",
+      "title": "Fresh region conflicts with stored preference",
+      "goal": "Fulfil req-dev-001 in ap-south with quantity 2 and cited catalog evidence.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-dev-001", "requested_region": "ap-south", "requested_quantity": 2, "requires_approval": false, "approval_granted": false, "memory_region": "us-west", "catalog_status": "available", "faulty_quantity_arg": 2, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "memory_first", "require_evidence": true, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "us-west", "age_days": 90}, "catalog.lookup": {"region": "ap-south", "status": "available", "evidence_id": "ev-dev-001-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "dev-001-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested ap-south sandbox quantity 2.", "evidence_refs": []},
+        {"step_id": "dev-001-s2", "index": 2, "kind": "memory", "source": "profile.lookup", "summary": "Selected stale us-west memory before fresh request state.", "evidence_refs": ["mem-dev-001-old"]},
+        {"step_id": "dev-001-s3", "index": 3, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog confirmed ap-south is available.", "evidence_refs": ["ev-dev-001-catalog"]},
+        {"step_id": "dev-001-s4", "index": 4, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilled in us-west, contradicting the request.", "evidence_refs": ["ev-dev-001-catalog"]}
+      ],
+      "expected_state": {"region": "ap-south", "quantity": 2, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-dev-001-catalog"}
+    },
+    {
+      "case_id": "dev-002",
+      "split": "development",
+      "title": "Successful action lacks evidence",
+      "goal": "Fulfil req-dev-002 in eu-central with quantity 1 and cited catalog evidence.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-dev-002", "requested_region": "eu-central", "requested_quantity": 1, "requires_approval": false, "approval_granted": false, "memory_region": "eu-central", "catalog_status": "available", "faulty_quantity_arg": 1, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": false, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "eu-central", "age_days": 2}, "catalog.lookup": {"region": "eu-central", "status": "available", "evidence_id": "ev-dev-002-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "dev-002-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested eu-central sandbox quantity 1 with evidence.", "evidence_refs": []},
+        {"step_id": "dev-002-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog confirmed availability.", "evidence_refs": ["ev-dev-002-catalog"]},
+        {"step_id": "dev-002-s3", "index": 3, "kind": "decision", "source": "planner", "summary": "Dropped the catalog evidence from the final plan.", "evidence_refs": []},
+        {"step_id": "dev-002-s4", "index": 4, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilled without an evidence reference.", "evidence_refs": []}
+      ],
+      "expected_state": {"region": "eu-central", "quantity": 1, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-dev-002-catalog"}
+    },
+    {
+      "case_id": "dev-003",
+      "split": "development",
+      "title": "Fulfilment routed before validation",
+      "goal": "Fulfil req-dev-003 in us-east with quantity 3 after catalog validation.",
+      "eligible": true,
+      "difficult": true,
+      "initial_state": {"request_id": "req-dev-003", "requested_region": "us-east", "requested_quantity": 3, "requires_approval": false, "approval_granted": false, "memory_region": "us-east", "catalog_status": "available", "faulty_quantity_arg": 3, "faulty_order": ["profile.lookup", "fulfill.simulate", "catalog.lookup"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": true, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": false},
+      "tool_fixtures": {"profile.lookup": {"region": "us-east", "age_days": 1}, "catalog.lookup": {"region": "us-east", "status": "available", "evidence_id": "ev-dev-003-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "dev-003-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested validated us-east fulfilment.", "evidence_refs": []},
+        {"step_id": "dev-003-s2", "index": 2, "kind": "route", "source": "orchestrator", "summary": "Routed directly to fulfilment before catalog lookup.", "evidence_refs": []},
+        {"step_id": "dev-003-s3", "index": 3, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilment failed because catalog state was absent.", "evidence_refs": []},
+        {"step_id": "dev-003-s4", "index": 4, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog evidence arrived too late.", "evidence_refs": ["ev-dev-003-catalog"]}
+      ],
+      "expected_state": {"region": "us-east", "quantity": 3, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-dev-003-catalog"}
+    },
+    {
+      "case_id": "eval-001",
+      "split": "held_out",
+      "title": "Stale memory overrides north-eu request",
+      "goal": "Fulfil req-eval-001 in north-eu with quantity 2 and evidence.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-001", "requested_region": "north-eu", "requested_quantity": 2, "requires_approval": false, "approval_granted": false, "memory_region": "us-east", "catalog_status": "available", "faulty_quantity_arg": 2, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "memory_first", "require_evidence": true, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "us-east", "age_days": 120}, "catalog.lookup": {"region": "north-eu", "status": "available", "evidence_id": "ev-eval-001-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-001-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested north-eu sandbox.", "evidence_refs": []},
+        {"step_id": "eval-001-s2", "index": 2, "kind": "memory", "source": "profile.lookup", "summary": "Selected 120-day-old us-east preference.", "evidence_refs": ["mem-eval-001-old"]},
+        {"step_id": "eval-001-s3", "index": 3, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog confirmed north-eu availability.", "evidence_refs": ["ev-eval-001-catalog"]},
+        {"step_id": "eval-001-s4", "index": 4, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilled in us-east.", "evidence_refs": ["ev-eval-001-catalog"]}
+      ],
+      "expected_state": {"region": "north-eu", "quantity": 2, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-001-catalog"}
+    },
+    {
+      "case_id": "eval-002",
+      "split": "held_out",
+      "title": "Conflicting profile overrides ap-northeast request",
+      "goal": "Fulfil req-eval-002 in ap-northeast with quantity 1 and evidence.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-002", "requested_region": "ap-northeast", "requested_quantity": 1, "requires_approval": false, "approval_granted": false, "memory_region": "ap-south", "catalog_status": "available", "faulty_quantity_arg": 1, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "memory_first", "require_evidence": true, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "ap-south", "age_days": 60}, "catalog.lookup": {"region": "ap-northeast", "status": "available", "evidence_id": "ev-eval-002-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-002-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested ap-northeast sandbox.", "evidence_refs": []},
+        {"step_id": "eval-002-s2", "index": 2, "kind": "memory", "source": "profile.lookup", "summary": "Used older ap-south profile value.", "evidence_refs": ["mem-eval-002-old"]},
+        {"step_id": "eval-002-s3", "index": 3, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog confirmed ap-northeast availability.", "evidence_refs": ["ev-eval-002-catalog"]},
+        {"step_id": "eval-002-s4", "index": 4, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilled in ap-south.", "evidence_refs": ["ev-eval-002-catalog"]}
+      ],
+      "expected_state": {"region": "ap-northeast", "quantity": 1, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-002-catalog"}
+    },
+    {
+      "case_id": "eval-003",
+      "split": "held_out",
+      "title": "Final action omits catalog evidence",
+      "goal": "Fulfil req-eval-003 in us-central with quantity 4 and cite catalog evidence.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-003", "requested_region": "us-central", "requested_quantity": 4, "requires_approval": false, "approval_granted": false, "memory_region": "us-central", "catalog_status": "available", "faulty_quantity_arg": 4, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": false, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "us-central", "age_days": 1}, "catalog.lookup": {"region": "us-central", "status": "available", "evidence_id": "ev-eval-003-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-003-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested fulfilment with cited evidence.", "evidence_refs": []},
+        {"step_id": "eval-003-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog returned available.", "evidence_refs": ["ev-eval-003-catalog"]},
+        {"step_id": "eval-003-s3", "index": 3, "kind": "decision", "source": "planner", "summary": "Prepared final action without evidence references.", "evidence_refs": []},
+        {"step_id": "eval-003-s4", "index": 4, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilled without provenance.", "evidence_refs": []}
+      ],
+      "expected_state": {"region": "us-central", "quantity": 4, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-003-catalog"}
+    },
+    {
+      "case_id": "eval-004",
+      "split": "held_out",
+      "title": "Evidence dropped after successful lookup",
+      "goal": "Fulfil req-eval-004 in eu-west with quantity 2 and cite catalog evidence.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-004", "requested_region": "eu-west", "requested_quantity": 2, "requires_approval": false, "approval_granted": false, "memory_region": "eu-west", "catalog_status": "available", "faulty_quantity_arg": 2, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": false, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "eu-west", "age_days": 2}, "catalog.lookup": {"region": "eu-west", "status": "available", "evidence_id": "ev-eval-004-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-004-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested evidence-linked fulfilment.", "evidence_refs": []},
+        {"step_id": "eval-004-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog evidence was available.", "evidence_refs": ["ev-eval-004-catalog"]},
+        {"step_id": "eval-004-s3", "index": 3, "kind": "decision", "source": "planner", "summary": "Finalizer omitted the evidence reference.", "evidence_refs": []},
+        {"step_id": "eval-004-s4", "index": 4, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilled without evidence.", "evidence_refs": []}
+      ],
+      "expected_state": {"region": "eu-west", "quantity": 2, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-004-catalog"}
+    },
+    {
+      "case_id": "eval-005",
+      "split": "held_out",
+      "title": "Quantity sent as a word",
+      "goal": "Fulfil req-eval-005 in us-west with integer quantity 3 and evidence.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-005", "requested_region": "us-west", "requested_quantity": 3, "requires_approval": false, "approval_granted": false, "memory_region": "us-west", "catalog_status": "available", "faulty_quantity_arg": "three", "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": true, "quantity_constraint": false, "result_validation": true, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "us-west", "age_days": 1}, "catalog.lookup": {"region": "us-west", "status": "available", "evidence_id": "ev-eval-005-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-005-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested quantity 3.", "evidence_refs": []},
+        {"step_id": "eval-005-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog confirmed availability.", "evidence_refs": ["ev-eval-005-catalog"]},
+        {"step_id": "eval-005-s3", "index": 3, "kind": "tool_call", "source": "fulfill.simulate", "summary": "Called fulfilment with quantity='three'.", "evidence_refs": ["ev-eval-005-catalog"]},
+        {"step_id": "eval-005-s4", "index": 4, "kind": "tool_result", "source": "fulfill.simulate", "summary": "Tool rejected non-integer quantity.", "evidence_refs": ["ev-eval-005-catalog"]}
+      ],
+      "expected_state": {"region": "us-west", "quantity": 3, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-005-catalog"}
+    },
+    {
+      "case_id": "eval-006",
+      "split": "held_out",
+      "title": "Negative quantity reaches tool",
+      "goal": "Fulfil req-eval-006 in ap-south with positive integer quantity 2 and evidence.",
+      "eligible": true,
+      "difficult": true,
+      "initial_state": {"request_id": "req-eval-006", "requested_region": "ap-south", "requested_quantity": 2, "requires_approval": false, "approval_granted": false, "memory_region": "ap-south", "catalog_status": "available", "faulty_quantity_arg": -2, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": true, "quantity_constraint": false, "result_validation": true, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "ap-south", "age_days": 1}, "catalog.lookup": {"region": "ap-south", "status": "available", "evidence_id": "ev-eval-006-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-006-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested positive quantity 2.", "evidence_refs": []},
+        {"step_id": "eval-006-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog confirmed availability.", "evidence_refs": ["ev-eval-006-catalog"]},
+        {"step_id": "eval-006-s3", "index": 3, "kind": "tool_call", "source": "fulfill.simulate", "summary": "Called fulfilment with quantity=-2.", "evidence_refs": ["ev-eval-006-catalog"]},
+        {"step_id": "eval-006-s4", "index": 4, "kind": "tool_result", "source": "fulfill.simulate", "summary": "Tool rejected negative quantity.", "evidence_refs": ["ev-eval-006-catalog"]}
+      ],
+      "expected_state": {"region": "ap-south", "quantity": 2, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-006-catalog"}
+    },
+    {
+      "case_id": "eval-007",
+      "split": "held_out",
+      "title": "Available status interpreted as unavailable",
+      "goal": "Fulfil req-eval-007 in eu-north when catalog status is available.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-007", "requested_region": "eu-north", "requested_quantity": 1, "requires_approval": false, "approval_granted": false, "memory_region": "eu-north", "catalog_status": "available", "faulty_quantity_arg": 1, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": true, "quantity_constraint": true, "result_validation": false, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "eu-north", "age_days": 1}, "catalog.lookup": {"region": "eu-north", "status": "available", "evidence_id": "ev-eval-007-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-007-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested eu-north fulfilment.", "evidence_refs": []},
+        {"step_id": "eval-007-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Returned status='available'.", "evidence_refs": ["ev-eval-007-catalog"]},
+        {"step_id": "eval-007-s3", "index": 3, "kind": "decision", "source": "planner", "summary": "Interpreted available as unavailable.", "evidence_refs": ["ev-eval-007-catalog"]},
+        {"step_id": "eval-007-s4", "index": 4, "kind": "action", "source": "planner", "summary": "Declined a valid request.", "evidence_refs": ["ev-eval-007-catalog"]}
+      ],
+      "expected_state": {"region": "eu-north", "quantity": 1, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-007-catalog"}
+    },
+    {
+      "case_id": "eval-008",
+      "split": "held_out",
+      "title": "Catalog status mapping inverted",
+      "goal": "Fulfil req-eval-008 in sa-east when catalog status is available.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-008", "requested_region": "sa-east", "requested_quantity": 2, "requires_approval": false, "approval_granted": false, "memory_region": "sa-east", "catalog_status": "available", "faulty_quantity_arg": 2, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": true, "quantity_constraint": true, "result_validation": false, "approval_rule": true, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "sa-east", "age_days": 1}, "catalog.lookup": {"region": "sa-east", "status": "available", "evidence_id": "ev-eval-008-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-008-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested sa-east fulfilment.", "evidence_refs": []},
+        {"step_id": "eval-008-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog status was available.", "evidence_refs": ["ev-eval-008-catalog"]},
+        {"step_id": "eval-008-s3", "index": 3, "kind": "decision", "source": "planner", "summary": "Mapped available to blocked.", "evidence_refs": ["ev-eval-008-catalog"]},
+        {"step_id": "eval-008-s4", "index": 4, "kind": "action", "source": "planner", "summary": "Did not fulfil the request.", "evidence_refs": ["ev-eval-008-catalog"]}
+      ],
+      "expected_state": {"region": "sa-east", "quantity": 2, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-008-catalog"}
+    },
+    {
+      "case_id": "eval-009",
+      "split": "held_out",
+      "title": "High-volume request skips approval check",
+      "goal": "Fulfil approved req-eval-009 in us-east with quantity 8 only after checking approval.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-009", "requested_region": "us-east", "requested_quantity": 8, "requires_approval": true, "approval_granted": true, "memory_region": "us-east", "catalog_status": "available", "faulty_quantity_arg": 8, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": true, "quantity_constraint": true, "result_validation": true, "approval_rule": false, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "us-east", "age_days": 1}, "catalog.lookup": {"region": "us-east", "status": "available", "evidence_id": "ev-eval-009-catalog"}, "approval.check": {"approved": true, "evidence_id": "ev-eval-009-approval"}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-009-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested quantity 8; approval required and granted.", "evidence_refs": []},
+        {"step_id": "eval-009-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog confirmed availability.", "evidence_refs": ["ev-eval-009-catalog"]},
+        {"step_id": "eval-009-s3", "index": 3, "kind": "route", "source": "orchestrator", "summary": "Skipped approval.check and routed to fulfilment.", "evidence_refs": []},
+        {"step_id": "eval-009-s4", "index": 4, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilled without recording approval.", "evidence_refs": ["ev-eval-009-catalog"]}
+      ],
+      "expected_state": {"region": "us-east", "quantity": 8, "status": "fulfilled", "approval_checked": true, "catalog_evidence_id": "ev-eval-009-catalog"}
+    },
+    {
+      "case_id": "eval-010",
+      "split": "held_out",
+      "title": "Privileged request bypasses approval tool",
+      "goal": "Fulfil approved req-eval-010 in eu-central with quantity 6 only after checking approval.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-010", "requested_region": "eu-central", "requested_quantity": 6, "requires_approval": true, "approval_granted": true, "memory_region": "eu-central", "catalog_status": "available", "faulty_quantity_arg": 6, "faulty_order": ["profile.lookup", "catalog.lookup", "fulfill.simulate"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": true, "quantity_constraint": true, "result_validation": true, "approval_rule": false, "enforce_order": true},
+      "tool_fixtures": {"profile.lookup": {"region": "eu-central", "age_days": 1}, "catalog.lookup": {"region": "eu-central", "status": "available", "evidence_id": "ev-eval-010-catalog"}, "approval.check": {"approved": true, "evidence_id": "ev-eval-010-approval"}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-010-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested privileged quantity 6.", "evidence_refs": []},
+        {"step_id": "eval-010-s2", "index": 2, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog confirmed availability.", "evidence_refs": ["ev-eval-010-catalog"]},
+        {"step_id": "eval-010-s3", "index": 3, "kind": "route", "source": "orchestrator", "summary": "Bypassed the required approval tool.", "evidence_refs": []},
+        {"step_id": "eval-010-s4", "index": 4, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilled with no approval provenance.", "evidence_refs": ["ev-eval-010-catalog"]}
+      ],
+      "expected_state": {"region": "eu-central", "quantity": 6, "status": "fulfilled", "approval_checked": true, "catalog_evidence_id": "ev-eval-010-catalog"}
+    },
+    {
+      "case_id": "eval-011",
+      "split": "held_out",
+      "title": "Fulfilment runs before catalog lookup",
+      "goal": "Fulfil req-eval-011 in ca-central after catalog validation.",
+      "eligible": true,
+      "difficult": false,
+      "initial_state": {"request_id": "req-eval-011", "requested_region": "ca-central", "requested_quantity": 2, "requires_approval": false, "approval_granted": false, "memory_region": "ca-central", "catalog_status": "available", "faulty_quantity_arg": 2, "faulty_order": ["profile.lookup", "fulfill.simulate", "catalog.lookup"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": true, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": false},
+      "tool_fixtures": {"profile.lookup": {"region": "ca-central", "age_days": 1}, "catalog.lookup": {"region": "ca-central", "status": "available", "evidence_id": "ev-eval-011-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-011-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested validated ca-central fulfilment.", "evidence_refs": []},
+        {"step_id": "eval-011-s2", "index": 2, "kind": "route", "source": "orchestrator", "summary": "Routed to fulfilment before catalog validation.", "evidence_refs": []},
+        {"step_id": "eval-011-s3", "index": 3, "kind": "action", "source": "fulfill.simulate", "summary": "Fulfilment failed without catalog state.", "evidence_refs": []},
+        {"step_id": "eval-011-s4", "index": 4, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog evidence arrived after the failure.", "evidence_refs": ["ev-eval-011-catalog"]}
+      ],
+      "expected_state": {"region": "ca-central", "quantity": 2, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-011-catalog"}
+    },
+    {
+      "case_id": "eval-012",
+      "split": "held_out",
+      "title": "Early fulfilment also drops evidence",
+      "goal": "Fulfil req-eval-012 in ap-southeast after catalog validation and cite evidence.",
+      "eligible": true,
+      "difficult": true,
+      "initial_state": {"request_id": "req-eval-012", "requested_region": "ap-southeast", "requested_quantity": 5, "requires_approval": false, "approval_granted": false, "memory_region": "ap-southeast", "catalog_status": "available", "faulty_quantity_arg": 5, "faulty_order": ["profile.lookup", "fulfill.simulate", "catalog.lookup"]},
+      "workflow_config": {"retrieval_filter": "latest", "require_evidence": false, "quantity_constraint": true, "result_validation": true, "approval_rule": true, "enforce_order": false},
+      "tool_fixtures": {"profile.lookup": {"region": "ap-southeast", "age_days": 1}, "catalog.lookup": {"region": "ap-southeast", "status": "available", "evidence_id": "ev-eval-012-catalog"}, "approval.check": {"approved": false}, "fulfill.simulate": {"side_effects": "sandboxed"}},
+      "trajectory": [
+        {"step_id": "eval-012-s1", "index": 1, "kind": "input", "source": "user", "summary": "Requested validated evidence-linked fulfilment.", "evidence_refs": []},
+        {"step_id": "eval-012-s2", "index": 2, "kind": "route", "source": "orchestrator", "summary": "Routed to fulfilment before catalog lookup.", "evidence_refs": []},
+        {"step_id": "eval-012-s3", "index": 3, "kind": "action", "source": "fulfill.simulate", "summary": "Failed early and carried no evidence.", "evidence_refs": []},
+        {"step_id": "eval-012-s4", "index": 4, "kind": "tool", "source": "catalog.lookup", "summary": "Catalog returned available after the failed action.", "evidence_refs": ["ev-eval-012-catalog"]}
+      ],
+      "expected_state": {"region": "ap-southeast", "quantity": 5, "status": "fulfilled", "approval_checked": false, "catalog_evidence_id": "ev-eval-012-catalog"}
+    }
+  ]
+}
