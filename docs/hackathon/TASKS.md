@@ -21,8 +21,8 @@
 - [x] T-016: Freeze the current system-under-test version and reclassify external v1 as development evidence.
 - [x] T-017: Add independent external-v2 case/gold schemas, reviewer instructions, hash manifest, and mechanical isolation tests without authoring the final hidden cases.
 - [x] T-017B: Freeze the system-under-test by source hash and implement cases-only raw prediction, persisted-before-scoring private adjudication, canary rejection, author packet, and v2 evidence manifest commands.
-- [ ] T-018: Receive, validate, and freeze 12–16 independently authored opaque cases; prohibit prompt or rule tuning after the final run begins.
-- [ ] T-019: Execute all same-model GPT-OSS-120B baseline and SuperTuriya trials, preserving every trial and schema/provider failure.
-- [ ] T-020: Run the cumulative LIVE ablation matrix and report recovery, safety, localization, repair accuracy, runtime, and usage without assuming monotonic gains.
+- [x] T-018: Receive, validate, review, correct, and freeze 16 AI-authored blinded/adversarial opaque cases; prohibit prompt or rule tuning after freeze.
+- [x] T-019: Preserve the capacity-limited primary run, preregister a separate same-model fallback before observing its output, and complete all three fallback trials without mixing model results.
+- [x] T-020: Report recovery, safety, localization, invariant, repair-surface, runtime, and usage evidence without assuming improvement; preserve the observed zero-lift result.
 - [ ] T-021: After T-017 through T-020, implement one sanitized canonical-trace adapter and external-workload showcase under the contract in `EXTERNAL_WORKLOAD_SHOWCASE.md`.
-- [ ] T-022: Complete independent reviewer inspection, five-minute video, public-clone reproduction, license, and final submission packaging.
+- [ ] T-022: Complete the five-minute video and HackerEarth form. Reviewer inspection, public-clone reproduction, license, repository push, and evidence packaging are complete.

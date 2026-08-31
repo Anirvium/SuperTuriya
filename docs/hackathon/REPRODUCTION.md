@@ -1,6 +1,7 @@
 # Reproduction Guide
 
-Status: verified on 29 August 2026 using Python 3.12.10 on macOS. The project contract requires Python 3.9 or newer.
+Status: verified from the public submission commit on 31 August 2026 using
+Python 3.12.10 on macOS. The project contract requires Python 3.9 or newer.
 
 ## Requirements
 
@@ -40,24 +41,37 @@ Absolute improvement: 66.67 percentage points
 Safety regression rate: 0.00%
 ```
 
-Expected tests: 53 passing tests. They cover frozen benchmark hashes, mechanical hidden-label isolation, baseline/final parity, malformed and stale patch rejection, approval and activation gates, safety regressions, frozen-state and fixture identity, single-change replay, alternate valid paths, fixed metrics, difficult-case rejection, one non-benchmark shadow transfer, LIVE provider identity, strict-schema probing, deterministic LIVE intervention binding, complete Investigator schema prompting, governance-versus-repair prompt separation, append-preserved LIVE evidence, safe explainability projection, explainability API routing, terminology controls, rate-limit retry behavior, transport-guarded ablation, API/static UI routing, audit persistence, the pre-existing full trajectory loop, and the independent-v2 source-freeze, strict visible projection, frozen taxonomy, repair-surface resolution, cases-only runtime, canary, predictions-before-scoring, case-level paired uncertainty, and author-packet controls.
+Expected tests: **58 passing tests**. They cover frozen benchmark hashes,
+mechanical hidden-label isolation, baseline/final parity, malformed and stale
+patch rejection, approval and activation gates, safety regressions, frozen-state
+and fixture identity, single-change replay, alternate valid paths, fixed metrics,
+difficult-case rejection, one non-benchmark shadow transfer, provider identity,
+strict-schema probing, resumable execution, fallback preregistration, safe
+explainability, API/static UI routing, audit persistence, the pre-existing full
+trajectory loop, and the External-v2 source freeze, projection boundary,
+taxonomy, repair targets, cases-only runtime, canary rejection,
+predictions-before-scoring contract, paired uncertainty, and author packet.
 
-## Independent external-v2 gate
+## Frozen External-v2 verification
 
 ```bash
-python3 -m superturiya.external_v2 status
+make v2-verify
+make v2-sut-verify
 ```
 
-Expected before independent authoring: `awaiting_independent_cases`, 0 visible
-cases, 0 private-gold files, and `ready_to_freeze: false`. This is a required
-honest blocker, not a failed product test. After an independent author supplies
-12-16 cases and a different reviewer checks them:
+Expected benchmark verification:
 
-```bash
-python3 -m superturiya.external_v2 validate
-make v2-freeze AUTHOR_ID='<author>' REVIEWER_ID='<reviewer>'
-python3 -m superturiya.external_v2 verify
-```
+- status `frozen` and `valid: true`;
+- 16 cases and 16 eligible, initially failing cases;
+- four cloud-operations scenario families and five difficult cases;
+- no hidden fields in the model-visible projection;
+- valid frozen file hashes.
+
+Expected SUT verification: status `frozen`, valid source hashes, and system hash
+`b49f961ae86aedd2cbdf85ada2209fbb97307ffa3e76d29e4fcae636e024ee9e`.
+
+These commands validate the already-frozen benchmark and SUT without invoking a
+model or opening private gold for a new comparison.
 
 Optional bounded transfer proof:
 
@@ -87,7 +101,29 @@ python3 -m superturiya --seed --port 8765
 
 Open `http://127.0.0.1:8765`. The seed step persists the FROZEN held-out evaluation if the local database does not already contain one. The recommended successful case is `eval-006`; the recommended verifier-rejection case is `eval-012`.
 
-## Optional LIVE mode
+## External-v2 recorded experiment
+
+The committed final experiment is a three-trial, same-model comparison over 16
+cases. The primary run paused at 72/144 checkpoints when free daily capacity was
+exhausted, before a complete artifact or score existed. A capacity-driven Qwen
+3.8 27B fallback was preregistered before any fallback output was observed. It
+completed all 144 calls and used 160,658 provider tokens, with about 50 minutes
+of enforced pacing and no paid cost incurred.
+
+Committed result: direct baseline **8/16 (50.00%)**, SuperTuriya **8/16
+(50.00%)**, absolute improvement **0.00 percentage points**, and safety
+regression **0.00%**. The result was identical across all three trials.
+
+Inspect the result without provider credentials:
+
+```bash
+python3 -m json.tool evidence/external_validity/v2/scored_live_comparison_qwen_fallback.json
+python3 -m json.tool evidence/external_validity/v2/manifest.json
+```
+
+See `external_v2_final_report.md` for the claim boundary and interpretation.
+
+## Optional new LIVE execution
 
 LIVE configuration will use environment variables and must never be committed:
 
@@ -95,6 +131,8 @@ LIVE configuration will use environment variables and must never be committed:
 - `SUPERTURIYA_LLM_API_KEY`
 - `SUPERTURIYA_LLM_MODEL`
 
-LIVE mode records the endpoint/model metadata, temperature, hashes, usage, latency, and estimated cost returned by the provider. LIVE results are not the submitted reproducibility claim and require an explicitly configured compatible service.
-
-The final competition path uses Groq Free Tier and `openai/gpt-oss-120b`, with a one-call probe plus recorded pacing and retry controls. Use the exact commands and claim boundaries in [GROQ_LIVE_EVIDENCE.md](GROQ_LIVE_EVIDENCE.md).
+LIVE mode records endpoint/model metadata, temperature, hashes, usage, latency,
+and transport behavior. It requires an explicitly configured compatible service
+and is not necessary to reproduce the committed deterministic demo, tests,
+benchmark integrity, or scored evidence. Do not rerun or rescore the frozen
+competition experiment as part of ordinary judge reproduction.

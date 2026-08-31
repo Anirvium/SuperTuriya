@@ -1,4 +1,10 @@
-# Final LIVE Evidence Route: Groq Free Tier
+# Historical Primary LIVE Route: Groq Free Tier
+
+> This preregistered primary route paused at 72/144 checkpoints because free
+> daily capacity was exhausted before a complete artifact or score existed. It
+> was not scored or combined with another model. The completed final evidence is
+> the separately preregistered Qwen fallback documented in
+> `external_v2_final_report.md`.
 
 ## Decision
 

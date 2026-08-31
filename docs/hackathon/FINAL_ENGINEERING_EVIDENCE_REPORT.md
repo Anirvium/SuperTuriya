@@ -1,5 +1,9 @@
 # Final Engineering Evidence Report
 
+> Historical pre-External-v2 engineering report. For final evaluation results,
+> current test counts, and submission claims, use `external_v2_final_report.md`,
+> `REPRODUCTION.md`, and the repository README.
+
 Status: core evidence-hardening gates passed on 29 August 2026. One shadow-transfer proof is included separately from the primary benchmark.
 
 ## Product and demo domain

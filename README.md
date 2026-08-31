@@ -64,7 +64,10 @@ Committed evidence is under `evidence/`: complete baseline and final reports, al
 
 ## External-validity evaluation
 
-A separate sealed structural-transfer benchmark now tests the same mechanism on 12 new five-to-seven-step traces across software release, data access, and incident rollback. It is independent from the primary benchmark's case IDs, wording, and step sequences, but it was internally authored with knowledge of the six repair surfaces. It is not presented as third-party blind evaluation.
+A sealed structural-transfer v1 benchmark tests the same mechanism on 12 new
+five-to-seven-step traces across software release, data access, and incident
+rollback. It was internally authored with knowledge of the six repair surfaces,
+so it is treated as development evidence rather than third-party validation.
 
 ```bash
 python3 -m superturiya.external_validity validate
@@ -76,35 +79,45 @@ python3 -m superturiya.external_validity bundle
 
 Frozen structural-transfer result: direct baseline **2/12 (16.67%)** versus SuperTuriya **9/12 (75.00%)**, an absolute gain of seven verified recoveries, with 0.00% safety regression. All three deliberately multi-causal cases remain rejected.
 
-The same-model LIVE runner requires `SUPERTURIYA_LLM_ENDPOINT`, `SUPERTURIYA_LLM_API_KEY`, and `SUPERTURIYA_LLM_MODEL`, runs baseline and final against the same environment and model for three trials, captures provider-reported usage, and fails closed if provider model identities differ.
-
-The final competition provider route uses the GPT-OSS-120B reasoning model (`openai/gpt-oss-120b`) served through the Groq Free Tier. GPT-OSS performs the direct-baseline repair proposal and the structured Investigator and Adaptation judgments; it does not execute tools, verify replay, approve itself, or activate learning. A one-call probe, configurable pacing, bounded transient retries, and a redacted transport ledger make the full experiment executable within published Free-tier constraints without changing the core architecture. Follow the [exact Groq LIVE evidence procedure](docs/hackathon/GROQ_LIVE_EVIDENCE.md); never commit the API key.
-
 See [external validity protocol](docs/hackathon/EXTERNAL_VALIDITY_V1.md), the sealed [benchmark contract](benchmark/external_v1/README.md), and versioned artifacts under `evidence/external_validity/v1/`.
 
-The final evidence gate is the independently authored external-v2 benchmark
-covering multiple cloud-operations scenario families over the same frozen
-region/quantity/catalog/approval/order simulator. It is not claimed as
-unrelated-domain external validity.
-Its case/gold schemas, separate private-gold boundary, author/reviewer protocol,
-minimum-size check, one-time hash freeze, and mutation detection are implemented.
-No final cases have been invented inside this repository; status remains
-`awaiting_independent_cases` until a third party supplies and a separate reviewer
-checks 12-16 opaque cases.
+External-v2 is the final evidence gate. It contains 16 blinded/adversarial cases
+authored by an AI acting as Person A without access to SuperTuriya prompts,
+model outputs, or benchmark performance. It is **not** described as independently
+human-authored. A separate semantic review, one documented private-label
+correction, mechanical validation, and content-hash freeze occurred before model
+execution. The cases cover four cloud-operations scenario families over the same
+frozen simulator; this is not claimed as unrelated-domain external validity.
 
 ```bash
-python3 -m superturiya.external_v2 status
-python3 -m superturiya.external_v2 validate  # after independent cases arrive
+make v2-verify
+make v2-sut-verify
 ```
 
-The complete v2 path is executable as separate `sut-freeze`, `author-packet`,
-`validate`, `freeze`, `predict`, `score`, and `evidence-manifest` stages. Raw
-predictions are persisted before private labels can be opened by scoring.
+The preregistered primary model run paused after 72/144 checkpoints when its free
+daily capacity was exhausted; no complete raw artifact or score was produced.
+Before observing fallback-model output, a separate Qwen 3.8 27B same-model
+experiment was preregistered for deadline feasibility. It completed all 144
+calls: three trials over the same 16 cases for the direct baseline and
+SuperTuriya. Both recovered **8/16 (50.00%)**, for **0.00 percentage-point
+improvement** and **0.00% safety regression**. SuperTuriya localized accepted
+critical steps at 100.00% and decisive invariants at 81.25%, but repair-surface
+selection remained the bottleneck. No post-freeze tuning or model-shopping was
+performed.
+
+Raw predictions were persisted before private gold was opened for scoring. The
+run used 160,658 provider tokens, and the committed evidence records no
+credential values or private-label leakage. See the
+[final External-v2 report](docs/hackathon/external_v2_final_report.md),
+[fallback contract](evidence/external_validity/v2/qwen_fallback_contract.json),
+[raw predictions](evidence/external_validity/v2/raw_live_comparison_qwen_fallback.json),
+[scored result](evidence/external_validity/v2/scored_live_comparison_qwen_fallback.json),
+and [content-addressed manifest](evidence/external_validity/v2/manifest.json).
 
 See [external-v2 protocol](benchmark/external_v2/protocol.md) and the
 [reviewer instructions](benchmark/external_v2/reviewer_instructions.md).
 
-For submission delivery, use the [100-second judge script](docs/hackathon/JUDGE_DEMO_SCRIPT.md) and [submission checklist](docs/hackathon/SUBMISSION_CHECKLIST.md).
+For submission delivery, use the [five-minute video script](docs/hackathon/JUDGE_DEMO_SCRIPT.md) and [submission checklist](docs/hackathon/SUBMISSION_CHECKLIST.md).
 
 ## What is engineered
 
