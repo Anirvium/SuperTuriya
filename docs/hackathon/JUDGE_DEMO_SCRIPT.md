@@ -1,5 +1,10 @@
 # Judge Video Script (4 minutes 45 seconds)
 
+> Final recording source of truth: use
+> [FINAL_VIDEO_PRESENTATION_GUIDE.md](FINAL_VIDEO_PRESENTATION_GUIDE.md) with
+> `output/presentation/superturiya_hackathon_final.pptx`. The script below is
+> retained as the concise judge-demo reference.
+
 ## 0:00-0:30 - User, problem, and hot take
 
 Show the workbench hero.

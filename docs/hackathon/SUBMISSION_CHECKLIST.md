@@ -20,6 +20,7 @@
 - [x] Add the MIT repository license.
 - [x] Push the reviewed implementation and evidence to the public submission repository.
 - [x] Prepare the judge flow in `JUDGE_DEMO_SCRIPT.md`.
+- [x] Prepare the final eight-slide presentation, synchronized sub-five-minute narration, recording checklist, and submission copy.
 - [x] Provide the credential-free local run command in README and `REPRODUCTION.md`.
 - [ ] Confirm team details, repository URL, demo URL/video, and written fields in HackerEarth.
 - [x] Re-run the full suite and frozen integrity checks from a clean public clone: 58/58 tests, External-v2 frozen and valid.

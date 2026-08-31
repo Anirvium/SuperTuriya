@@ -95,6 +95,10 @@ verify the frozen External-v2 benchmark and SUT hashes without an API key.
 
 Committed evidence is under `evidence/`: complete baseline and final reports, all case-level results, representative Investigator and Adaptation trajectories, replay records, hashes, usage, runtime, and the metric contract. See [reproduction instructions](docs/hackathon/REPRODUCTION.md) and the [evidence manifest](docs/hackathon/EVIDENCE_MANIFEST.md).
 
+For the submission walkthrough, use the
+[final presentation](output/presentation/superturiya_hackathon_final.pptx) with
+the synchronized [five-minute video and recording guide](docs/hackathon/FINAL_VIDEO_PRESENTATION_GUIDE.md).
+
 ## Evidence without hiding the miss
 
 External-v2 is the final evidence gate. It contains 16 blinded/adversarial cases
