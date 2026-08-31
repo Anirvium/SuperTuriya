@@ -1,0 +1,90 @@
+{
+  "case_id": "v2-013",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-013",
+    "quantity": 1,
+    "region": "ap-south-1",
+    "status": "fulfilled"
+  },
+  "goal": "Execute one sandbox recovery action in ap-south-1 and preserve catalog validation evidence.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "available",
+    "faulty_order": [
+      "catalog.lookup",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": 1,
+    "memory_region": "ap-south-1",
+    "request_id": "REQ-7301",
+    "requested_quantity": 1,
+    "requested_region": "ap-south-1",
+    "requires_approval": false
+  },
+  "scenario_family": "incident_recovery_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-013",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-013",
+      "region": "ap-south-1",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7301"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "incident_commander",
+      "step_id": "v2-013-s1",
+      "summary": "REQ-7301 requests 1 sandbox recovery action in ap-south-1 with catalog evidence preserved."
+    },
+    {
+      "evidence_refs": [
+        "CAT-013"
+      ],
+      "index": 2,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-013-s2",
+      "summary": "The recovery catalog reports the image available and returns CAT-013."
+    },
+    {
+      "evidence_refs": [
+        "CAT-013"
+      ],
+      "index": 3,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-013-s3",
+      "summary": "The sandbox recovery action is executed using the validated image."
+    },
+    {
+      "evidence_refs": [],
+      "index": 4,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-013-s4",
+      "summary": "The recovery summary reports success but omits CAT-013 from its evidence references."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": true,
+    "quantity_constraint": true,
+    "require_evidence": false,
+    "result_validation": true,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

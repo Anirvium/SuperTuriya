@@ -1,0 +1,98 @@
+{
+  "case_id": "v2-008",
+  "difficult": true,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-008",
+    "quantity": 2,
+    "region": "us-west-2",
+    "status": "fulfilled"
+  },
+  "goal": "Deploy two hotfix replicas in us-west-2 only after catalog validation and retain that evidence.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "available",
+    "faulty_order": [
+      "fulfill.simulate",
+      "catalog.lookup"
+    ],
+    "faulty_quantity_arg": 2,
+    "memory_region": "us-west-2",
+    "request_id": "REQ-7104",
+    "requested_quantity": 2,
+    "requested_region": "us-west-2",
+    "requires_approval": false
+  },
+  "scenario_family": "software_release_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-008",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-008",
+      "region": "us-west-2",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7104"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "release_manager",
+      "step_id": "v2-008-s1",
+      "summary": "REQ-7104 requests 2 hotfix replicas in us-west-2 with catalog evidence retained."
+    },
+    {
+      "evidence_refs": [],
+      "index": 2,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-008-s2",
+      "summary": "A sandbox hotfix rollout is attempted before catalog validation."
+    },
+    {
+      "evidence_refs": [
+        "CAT-008"
+      ],
+      "index": 3,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-008-s3",
+      "summary": "The release catalog is queried after the attempt and returns available with evidence CAT-008."
+    },
+    {
+      "evidence_refs": [
+        "CAT-008"
+      ],
+      "index": 4,
+      "kind": "recovery",
+      "source": "agent",
+      "step_id": "v2-008-s4",
+      "summary": "The workflow acknowledges the late validation but does not attach CAT-008 to its terminal record."
+    },
+    {
+      "evidence_refs": [],
+      "index": 5,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-008-s5",
+      "summary": "The final record claims completion with no evidence reference."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": false,
+    "quantity_constraint": true,
+    "require_evidence": false,
+    "result_validation": true,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

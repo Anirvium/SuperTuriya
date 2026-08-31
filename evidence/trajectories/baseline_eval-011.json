@@ -1,0 +1,42 @@
+{
+  "agent_id": "direct_trace_baseline",
+  "mode": "frozen",
+  "model": "frozen-direct-baseline-v1",
+  "output": {
+    "after_value": "review the trace before acting",
+    "approval_state": "candidate",
+    "before_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "evidence_refs": [
+      "eval-011-s4"
+    ],
+    "expected_metric_effect": {
+      "task_success": "+unknown"
+    },
+    "intervention_hash": "b36a63881cce2ea8d6eb802ac136caa01cb3e258782c5388277a40806101f657",
+    "intervention_id": "base_eval-011",
+    "operation": "prompt_rule.add",
+    "rationale": "Direct raw-trace review selected a small generic correction.",
+    "requires_approval": true,
+    "risks": [
+      "raw-trace diagnosis may target a downstream symptom"
+    ],
+    "target_id": "planner.be_careful",
+    "verification_conditions": [
+      "all deterministic invariants pass"
+    ]
+  },
+  "prompt": "Review this failed agent trajectory. Identify the root cause and propose the smallest correction likely to prevent the failure. Choose exactly one complete repair_surface_id from allowed_interventions.\n{\"allowed_interventions\":[{\"after_value\":\"check and record approval before fulfilment\",\"operation\":\"approval_rule.add\",\"repair_surface_id\":\"approval_rule.add::fulfill.approval\",\"target_id\":\"fulfill.approval\"},{\"after_value\":\"require catalog evidence\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::final_response.evidence\",\"target_id\":\"final_response.evidence\"},{\"after_value\":\"review the trace before acting\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.be_careful\",\"target_id\":\"planner.be_careful\"},{\"after_value\":\"positive integer equal to requested quantity\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.quantity_range\",\"target_id\":\"planner.quantity_range\"},{\"after_value\":\"render requested quantity as integer\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.quantity_type\",\"target_id\":\"planner.quantity_type\"},{\"after_value\":\"strict status mapping\",\"operation\":\"prompt_rule.replace\",\"repair_surface_id\":\"prompt_rule.replace::planner.catalog_mapping\",\"target_id\":\"planner.catalog_mapping\"},{\"after_value\":\"latest\",\"operation\":\"prompt_rule.replace\",\"repair_surface_id\":\"prompt_rule.replace::planner.region_precedence\",\"target_id\":\"planner.region_precedence\"},{\"after_value\":\"require catalog evidence\",\"operation\":\"recovery_step.insert\",\"repair_surface_id\":\"recovery_step.insert::finalizer.attach_evidence\",\"target_id\":\"finalizer.attach_evidence\"},{\"after_value\":\"catalog lookup before fulfilment\",\"operation\":\"recovery_step.insert\",\"repair_surface_id\":\"recovery_step.insert::workflow.preflight\",\"target_id\":\"workflow.preflight\"},{\"after_value\":\"latest\",\"operation\":\"retrieval.filter\",\"repair_surface_id\":\"retrieval.filter::context.region\",\"target_id\":\"context.region\"},{\"after_value\":\"check and record approval before fulfilment\",\"operation\":\"route.condition\",\"repair_surface_id\":\"route.condition::workflow.approval_route\",\"target_id\":\"workflow.approval_route\"},{\"after_value\":\"catalog lookup before fulfilment\",\"operation\":\"route.condition\",\"repair_surface_id\":\"route.condition::workflow.order\",\"target_id\":\"workflow.order\"},{\"after_value\":\"positive integer equal to requested quantity\",\"operation\":\"tool_argument.constraint\",\"repair_surface_id\":\"tool_argument.constraint::fulfill.quantity\",\"target_id\":\"fulfill.quantity\"},{\"after_value\":\"strict status mapping\",\"operation\":\"tool_result.validation\",\"repair_surface_id\":\"tool_result.validation::catalog.status\",\"target_id\":\"catalog.status\"}],\"case\":{\"case_id\":\"eval-011\",\"goal\":\"Fulfil req-eval-011 in ca-central after catalog validation.\",\"initial_state\":{\"approval_granted\":false,\"catalog_status\":\"available\",\"memory_region\":\"ca-central\",\"request_id\":\"req-eval-011\",\"requested_quantity\":2,\"requested_region\":\"ca-central\",\"requires_approval\":false},\"tool_descriptions\":{\"approval.check\":\"Returns the approval decision and evidence identifier.\",\"catalog.lookup\":\"Returns availability, region, and an evidence identifier.\",\"fulfill.simulate\":\"Sandboxed deterministic fulfilment tool; quantity must be positive integer.\",\"profile.lookup\":\"Returns stored profile context with age metadata.\"},\"trajectory\":[{\"evidence_refs\":[],\"index\":1,\"kind\":\"input\",\"source\":\"user\",\"step_id\":\"eval-011-s1\",\"summary\":\"Requested validated ca-central fulfilment.\"},{\"evidence_refs\":[],\"index\":2,\"kind\":\"route\",\"source\":\"orchestrator\",\"step_id\":\"eval-011-s2\",\"summary\":\"Routed to fulfilment before catalog validation.\"},{\"evidence_refs\":[],\"index\":3,\"kind\":\"action\",\"source\":\"fulfill.simulate\",\"step_id\":\"eval-011-s3\",\"summary\":\"Fulfilment failed without catalog state.\"},{\"evidence_refs\":[\"ev-eval-011-catalog\"],\"index\":4,\"kind\":\"tool\",\"source\":\"catalog.lookup\",\"step_id\":\"eval-011-s4\",\"summary\":\"Catalog evidence arrived after the failure.\"}]}}",
+  "prompt_hash": "c2a6c80bb76305deb88a1197d457f3d834fdc3b16ac0fb4a85afaf67479849f0",
+  "provider": "submitted-evidence",
+  "runtime_ms": 0.0267,
+  "temperature": 0.0,
+  "usage": {
+    "agent_id": "direct_trace_baseline",
+    "completion_tokens": 27,
+    "estimated_cost_usd": 0.0,
+    "mode": "frozen",
+    "prompt_tokens": 153,
+    "token_source": "whitespace_proxy",
+    "total_tokens": 180
+  }
+}

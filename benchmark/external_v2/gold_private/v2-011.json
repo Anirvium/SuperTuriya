@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "tool_result.validation",
+      "target_id": "catalog.status"
+    }
+  ],
+  "adjudication_note": "s2 clearly returns unavailable; s3 maps that result to the opposite operational decision. Tool-result validation must block fulfillment on unavailable status.",
+  "case_id": "v2-011",
+  "decisive_invariant": "tool.available_status_respected",
+  "expected_repair_surface": {
+    "operation": "tool_result.validation",
+    "target_id": "catalog.status"
+  },
+  "gold_critical_steps": [
+    "v2-011-s3"
+  ],
+  "gold_failure_class": "tool_output_misinterpretation",
+  "label_canary": "V2_GOLD_CANARY_V2_011_STATUS"
+}

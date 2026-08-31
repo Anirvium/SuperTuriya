@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 from urllib.parse import parse_qs, unquote, urlparse
 
+from .explainability import live_explainability_state
 from .intelligence import SuperTuriyaEngine
 from .sample_data import seed_demo
 from .store import SuperTuriyaStore
@@ -47,6 +48,14 @@ class SuperTuriyaHandler(BaseHTTPRequestHandler):
                 subject_id = query.get("subject_id", [None])[0] or None
                 self._send_json(self.engine.dashboard_state(tenant_id, subject_id))
                 return
+            if parsed.path == "/hackathon/state":
+                query = parse_qs(parsed.query)
+                tenant_id = query.get("tenant_id", ["hackathon"])[0]
+                self._send_json(self.engine.hackathon_state({"tenant_id": tenant_id}))
+                return
+            if parsed.path == "/hackathon/external-validity":
+                self._send_json(live_explainability_state())
+                return
             if parsed.path.startswith("/traces/"):
                 run_id = unquote(parsed.path.split("/", 2)[2])
                 self._send_json(self.engine.store.get_trace(run_id))
@@ -82,6 +91,11 @@ class SuperTuriyaHandler(BaseHTTPRequestHandler):
                 "/trajectories/interpret": self.engine.quantum_interpret_trajectory,
                 "/policies/synthesise": self.engine.synthesise_policies,
                 "/policies/synthesize": self.engine.synthesise_policies,
+                "/policies/review": self.engine.review_policy,
+                "/hackathon/evaluate": self.engine.run_hackathon_evaluation,
+                "/hackathon/cases/prepare": self.engine.prepare_hackathon_case,
+                "/hackathon/interventions/review": self.engine.review_hackathon_intervention,
+                "/hackathon/interventions/activate": self.engine.activate_hackathon_intervention,
             }
             handler = routes.get(parsed.path)
             if not handler:
@@ -173,6 +187,8 @@ def build_server(
     engine = SuperTuriyaEngine(store)
     if seed:
         seed_demo(engine)
+        if not store.list_evaluation_runs("hackathon", limit=1):
+            engine.run_hackathon_evaluation({"mode": "frozen", "tenant_id": "hackathon"})
 
     root = Path(static_root or Path(__file__).resolve().parent.parent / "web").resolve()
 

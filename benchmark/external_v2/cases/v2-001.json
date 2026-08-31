@@ -1,0 +1,113 @@
+{
+  "case_id": "v2-001",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-001",
+    "quantity": 3,
+    "region": "ap-south-1",
+    "status": "fulfilled"
+  },
+  "goal": "Provision three sandbox worker nodes in ap-south-1 for the current request.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "available",
+    "faulty_order": [
+      "catalog.lookup",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": 3,
+    "memory_region": "us-east-1",
+    "request_id": "REQ-7001",
+    "requested_quantity": 3,
+    "requested_region": "ap-south-1",
+    "requires_approval": false
+  },
+  "scenario_family": "resource_provisioning",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-001",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-001",
+      "region": "ap-south-1",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7001"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "operator",
+      "step_id": "v2-001-s1",
+      "summary": "REQ-7001 requests 3 sandbox worker nodes in ap-south-1."
+    },
+    {
+      "evidence_refs": [
+        "memory:us-east-1"
+      ],
+      "index": 2,
+      "kind": "context",
+      "source": "memory",
+      "step_id": "v2-001-s2",
+      "summary": "Persisted context from an older task says the preferred region is us-east-1."
+    },
+    {
+      "evidence_refs": [
+        "memory:us-east-1",
+        "request:REQ-7001"
+      ],
+      "index": 3,
+      "kind": "decision",
+      "source": "agent",
+      "step_id": "v2-001-s3",
+      "summary": "The persisted region is selected instead of the explicit current-request region."
+    },
+    {
+      "evidence_refs": [
+        "CAT-001"
+      ],
+      "index": 4,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-001-s4",
+      "summary": "Capacity is looked up for the current request; the fixture reports available in ap-south-1."
+    },
+    {
+      "evidence_refs": [
+        "CAT-001"
+      ],
+      "index": 5,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-001-s5",
+      "summary": "Sandbox provisioning is attempted for 3 nodes in us-east-1."
+    },
+    {
+      "evidence_refs": [
+        "CAT-001"
+      ],
+      "index": 6,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-001-s6",
+      "summary": "The run reports the workers provisioned in us-east-1."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": true,
+    "quantity_constraint": true,
+    "require_evidence": true,
+    "result_validation": true,
+    "retrieval_filter": "prefer_persisted_memory_region"
+  }
+}

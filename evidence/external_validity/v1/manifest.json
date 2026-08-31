@@ -1,0 +1,55 @@
+{
+  "artifact_count": 7,
+  "artifact_schema": "external-evidence-manifest-v1",
+  "benchmark_id": "superturiya-external-structural-transfer-v1",
+  "created_at": "2026-08-30T08:19:06Z",
+  "evidence_version": "external-validity-v1",
+  "files": [
+    {
+      "path": "ablation_frozen.json",
+      "sha256": "899b4b0b14ee6820a43825f2622b131c4504da0fb49c4603f3c801ec8f91bd2a",
+      "size_bytes": 765379
+    },
+    {
+      "path": "freeze_validation.json",
+      "sha256": "57e9988aab9fdbad23853588f9024cacca2ab50f74565b5af8220e23e4d232a2",
+      "size_bytes": 1657
+    },
+    {
+      "path": "frozen_comparison.json",
+      "sha256": "aabbb8758f66635296dace99b5a4dbc1dc98fa7474d95c4075527bce9a0f5adb",
+      "size_bytes": 549954
+    },
+    {
+      "path": "isolation_audit.json",
+      "sha256": "eb5a603fed54d36cb899a72a329dc59b12f287fd8c4cb61bca5c41e0bc2a2489",
+      "size_bytes": 943
+    },
+    {
+      "path": "live_comparison.json",
+      "sha256": "ffbe9418948b4c95f913c4b9a8e706c64a03097b6e569310764002e6a65638a2",
+      "size_bytes": 667869
+    },
+    {
+      "path": "live_probe.json",
+      "sha256": "290f14ac51ad463e03e869179bb0b75d38a1cc9d465eea74ad60f6d1460c7721",
+      "size_bytes": 1400
+    },
+    {
+      "path": "live_status.json",
+      "sha256": "a8da4ef9959aaf4ebc326e5a7ea37bb6ee5ab63bb620f4f60a00ee10b45c888c",
+      "size_bytes": 412
+    }
+  ],
+  "source_revision": {
+    "git_head": "bbe7fb9cc55d028796628ee4db0710767e4e70f6",
+    "git_worktree_dirty": true,
+    "module_sha256": {
+      "superturiya/external_evaluation.py": "cfe66194c5f94c0ac4283f99bde8530fe71a3b7db540a0a364b427b323871022",
+      "superturiya/external_runtime.py": "6064ba2804e895c6764b7222e84c5ad5f48bbb1b2909a3b4243ac5ba97c21883",
+      "superturiya/external_runtime_cli.py": "21763304c961dab0d0f25f1b3d21265a38ddc23301c08d661c10525b22d0cc25",
+      "superturiya/external_validity.py": "6205803ed11117c5425baa3233bba9ecbcb60ab84981f874abae03df76dc8e1f"
+    },
+    "warning": "Evidence was generated from a dirty worktree; regenerate after the final commit."
+  }
+}

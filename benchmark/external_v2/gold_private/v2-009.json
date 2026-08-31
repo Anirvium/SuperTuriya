@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "retrieval.filter",
+      "target_id": "context.region"
+    }
+  ],
+  "adjudication_note": "The current request and catalog both point to eu-west-1, while s3 carries forward ap-south-1 from memory. Filtering retrieved operational context to the current request prevents the region substitution.",
+  "case_id": "v2-009",
+  "decisive_invariant": "state.region_matches_request",
+  "expected_repair_surface": {
+    "operation": "retrieval.filter",
+    "target_id": "context.region"
+  },
+  "gold_critical_steps": [
+    "v2-009-s3"
+  ],
+  "gold_failure_class": "stale_memory",
+  "label_canary": "V2_GOLD_CANARY_V2_009_REGION"
+}

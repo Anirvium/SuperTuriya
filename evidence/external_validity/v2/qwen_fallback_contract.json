@@ -1,0 +1,41 @@
+{
+  "artifact_schema": "superturiya-external-v2-fallback-execution-contract-v1",
+  "benchmark_id": "superturiya-independent-external-v2",
+  "cases_aggregate_sha256": "65355b5037671874294d488d5b4238a3695b140c2f3b73afdb50af4ea9cfa513",
+  "claim_boundary": {
+    "primary_frozen_gpt_experiment_replaced": false,
+    "report_as": "separate_same-model_fallback_experiment",
+    "scoring_protocol_unchanged": true
+  },
+  "contract_sha256": "e7a3ae15171ef586e9ec6e5080515a855820c8b76ba142c51222d8366f525cba",
+  "endpoint_sha256": "dfd2a15f09373fda210f3abc40f9c258363058225f1ec5b33ce607d37ff1ae57",
+  "execution_wrapper_sha256": "a67c33d2ee69fdd3fcd6214af838b50078edf2b06a1c262a03cd9377879ab203",
+  "experiment": {
+    "baseline_and_final_same_cases": true,
+    "baseline_and_final_same_model": true,
+    "baseline_and_final_same_replay_and_verifier": true,
+    "mode": "live",
+    "model": "qwen/qwen3.8-27b",
+    "prompt_or_rule_tuning_after_freeze": false,
+    "temperature": 0.0,
+    "trial_count": 3
+  },
+  "original_experiment": {
+    "completed_checkpoints_at_decision": 72,
+    "expected_checkpoints": 144,
+    "model": "openai/gpt-oss-120b",
+    "raw_artifact_existed_at_decision": false,
+    "status": "paused_on_free_tier_capacity"
+  },
+  "pre_registered_at": "2026-08-31T06:47:57Z",
+  "private_labels_accessed_for_selection": false,
+  "provider_performance_observed_for_fallback_model": false,
+  "resumable_harness_sha256": "15142c7d22bdde27793f04909fa3215a154c49373e5f4cbec735bb1bf1a06696",
+  "selection_reason": "Primary model daily token capacity was exhausted before a complete raw artifact existed, with approximately ten hours remaining before submission.",
+  "source": {
+    "rate_limit_reference": "https://console.groq.com/docs/rate-limits",
+    "selection_basis": "documented free-plan capacity and deadline feasibility, not benchmark performance"
+  },
+  "status": "pre_registered_before_fallback_model_execution",
+  "system_under_test_sha256": "b49f961ae86aedd2cbdf85ada2209fbb97307ffa3e76d29e4fcae636e024ee9e"
+}

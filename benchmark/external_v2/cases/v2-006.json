@@ -1,0 +1,90 @@
+{
+  "case_id": "v2-006",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-006",
+    "quantity": 1,
+    "region": "us-east-1",
+    "status": "fulfilled"
+  },
+  "goal": "Roll out one sandbox release in us-east-1 after catalog validation.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "available",
+    "faulty_order": [
+      "fulfill.simulate",
+      "catalog.lookup"
+    ],
+    "faulty_quantity_arg": 1,
+    "memory_region": "us-east-1",
+    "request_id": "REQ-7102",
+    "requested_quantity": 1,
+    "requested_region": "us-east-1",
+    "requires_approval": false
+  },
+  "scenario_family": "software_release_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-006",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-006",
+      "region": "us-east-1",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7102"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "release_manager",
+      "step_id": "v2-006-s1",
+      "summary": "REQ-7102 requests 1 sandbox release rollout in us-east-1."
+    },
+    {
+      "evidence_refs": [],
+      "index": 2,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-006-s2",
+      "summary": "The sandbox rollout is started before release-catalog validation."
+    },
+    {
+      "evidence_refs": [
+        "CAT-006"
+      ],
+      "index": 3,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-006-s3",
+      "summary": "Only after the rollout attempt, the release catalog is checked and reports available."
+    },
+    {
+      "evidence_refs": [
+        "CAT-006"
+      ],
+      "index": 4,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-006-s4",
+      "summary": "The run reports the rollout complete with the late catalog reference."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": false,
+    "quantity_constraint": true,
+    "require_evidence": true,
+    "result_validation": true,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

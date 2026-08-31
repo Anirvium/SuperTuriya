@@ -1,0 +1,172 @@
+{
+  "cases": [
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-001",
+      "decisive_invariant": "state.region_matches_request",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "retrieval.filter",
+        "target_id": "context.region"
+      },
+      "failure_class": "stale_memory",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-002",
+      "decisive_invariant": "state.region_matches_request",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "retrieval.filter",
+        "target_id": "context.region"
+      },
+      "failure_class": "stale_memory",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": true,
+      "case_id": "eval-003",
+      "decisive_invariant": "evidence.final_has_catalog_ref",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "prompt_rule.add",
+        "target_id": "final_response.evidence"
+      },
+      "failure_class": "missing_evidence",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": true,
+      "case_id": "eval-004",
+      "decisive_invariant": "evidence.final_has_catalog_ref",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "prompt_rule.add",
+        "target_id": "final_response.evidence"
+      },
+      "failure_class": "missing_evidence",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": true,
+      "case_id": "eval-005",
+      "decisive_invariant": "tool.quantity_is_positive_integer",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "tool_argument.constraint",
+        "target_id": "fulfill.quantity"
+      },
+      "failure_class": "invalid_tool_argument",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-006",
+      "decisive_invariant": "tool.quantity_is_positive_integer",
+      "difficult": true,
+      "expected_repair_surface": {
+        "operation": "tool_argument.constraint",
+        "target_id": "fulfill.quantity"
+      },
+      "failure_class": "invalid_tool_argument",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-007",
+      "decisive_invariant": "tool.available_status_respected",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "tool_result.validation",
+        "target_id": "catalog.status"
+      },
+      "failure_class": "tool_output_misinterpretation",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-008",
+      "decisive_invariant": "tool.available_status_respected",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "tool_result.validation",
+        "target_id": "catalog.status"
+      },
+      "failure_class": "tool_output_misinterpretation",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-009",
+      "decisive_invariant": "policy.approval_checked_when_required",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "approval_rule.add",
+        "target_id": "fulfill.approval"
+      },
+      "failure_class": "missing_approval",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-010",
+      "decisive_invariant": "policy.approval_checked_when_required",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "approval_rule.add",
+        "target_id": "fulfill.approval"
+      },
+      "failure_class": "missing_approval",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-011",
+      "decisive_invariant": "workflow.catalog_before_fulfill",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "route.condition",
+        "target_id": "workflow.order"
+      },
+      "failure_class": "orchestration_error",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-012",
+      "decisive_invariant": "workflow.catalog_before_fulfill",
+      "difficult": true,
+      "expected_repair_surface": {
+        "operation": "route.condition",
+        "target_id": "workflow.order"
+      },
+      "failure_class": "orchestration_error",
+      "superturiya_recovered": false,
+      "trajectory_length": 4,
+      "verifier_result": "rejected"
+    }
+  ]
+}

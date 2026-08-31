@@ -1,0 +1,72 @@
+{
+  "allowed_operations": [
+    "approval_rule.add",
+    "prompt_rule.add",
+    "prompt_rule.replace",
+    "recovery_step.insert",
+    "retrieval.filter",
+    "route.condition",
+    "tool_argument.constraint",
+    "tool_result.validation"
+  ],
+  "artifact_schema": "superturiya-system-under-test-freeze-v1",
+  "credential_values_recorded": false,
+  "evaluation_boundary": {
+    "claim_scope": "cloud_operations_scenario_families",
+    "eligibility_rule": "derived_true_after_initial_failure_validation",
+    "failure_taxonomy_sha256": "c5ab28a8c87a0f37d9a03b13767e039e294f9225a76d515f9e2d0244d2c84e25",
+    "failure_taxonomy_version": "1.0.0",
+    "model_visible_case_fields": [
+      "case_id",
+      "goal",
+      "initial_state",
+      "tool_descriptions",
+      "trajectory"
+    ],
+    "model_visible_initial_state_fields": [
+      "approval_granted",
+      "catalog_status",
+      "memory_region",
+      "request_id",
+      "requested_quantity",
+      "requested_region",
+      "requires_approval"
+    ],
+    "model_visible_invariant_fields": [
+      "evidence_refs",
+      "invariant_id",
+      "passed"
+    ]
+  },
+  "experiment_contract": {
+    "baseline_and_final_same_cases": true,
+    "baseline_and_final_same_model": true,
+    "baseline_and_final_same_replay_and_verifier": true,
+    "mode": "live",
+    "model": "openai/gpt-oss-120b",
+    "prompt_or_rule_tuning_after_freeze": false,
+    "scoring_after_raw_prediction_persistence": true,
+    "temperature": 0.0,
+    "trial_count": 3
+  },
+  "frozen_at": "2026-08-30T09:53:19.042346+00:00",
+  "git_state_at_freeze": {
+    "commit": "bbe7fb9cc55d028796628ee4db0710767e4e70f6",
+    "worktree_dirty": true
+  },
+  "source_hashes": {
+    "superturiya/adaptive.py": "926b1fb5f04d16c0048c8694a0a345ee4cd1095dacc613ffb86bd1f18f1f514b",
+    "superturiya/external_runtime.py": "b15e5f2ed4437861c9afb590d07b8869e99caadddbce5586255a2efa86712318",
+    "superturiya/external_v2.py": "8a448b6963075c12c66e4ffcfd78ebc4da480461a13751e483a034b243cdc7b8"
+  },
+  "status": "frozen",
+  "supported_failure_classes": [
+    "invalid_tool_argument",
+    "missing_approval",
+    "missing_evidence",
+    "orchestration_error",
+    "stale_memory",
+    "tool_output_misinterpretation"
+  ],
+  "system_under_test_sha256": "b49f961ae86aedd2cbdf85ada2209fbb97307ffa3e76d29e4fcae636e024ee9e"
+}

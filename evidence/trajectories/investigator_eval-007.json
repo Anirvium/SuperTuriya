@@ -1,0 +1,34 @@
+{
+  "agent_id": "investigator_agent",
+  "mode": "frozen",
+  "model": "frozen-investigator-v1",
+  "output": {
+    "confidence": 0.93,
+    "critical_step": "eval-007-s3",
+    "decisive_invariant": "tool.available_status_respected",
+    "downstream_effects": [
+      "task.fulfilled"
+    ],
+    "evidence_refs": [
+      "ev-eval-007-catalog"
+    ],
+    "failure_class": "tool_output_misinterpretation",
+    "observed_divergence": "tool.available_status_respected failed at eval-007-s3",
+    "preceding_state": "step_2",
+    "root_cause": "Earliest evidence-backed violation of tool.available_status_respected."
+  },
+  "prompt": "Find the earliest consequential divergence. Use only supplied evidence. critical_step must be exactly one step_id copied from the supplied trajectory. Return critical_step, preceding_state, observed_divergence, failure_class, root_cause, evidence_refs, downstream_effects, confidence, and decisive_invariant. The decisive_invariant must be one invariant_id present in invariant_violations.\n{\"case_id\":\"eval-007\",\"goal\":\"Fulfil req-eval-007 in eu-north when catalog status is available.\",\"initial_state\":{\"approval_granted\":false,\"catalog_status\":\"available\",\"memory_region\":\"eu-north\",\"request_id\":\"req-eval-007\",\"requested_quantity\":1,\"requested_region\":\"eu-north\",\"requires_approval\":false},\"invariant_violations\":[{\"actual\":\"unavailable\",\"evidence_refs\":[\"ev-eval-007-catalog\"],\"expected\":\"available\",\"invariant_id\":\"tool.available_status_respected\",\"passed\":false},{\"actual\":\"failed\",\"evidence_refs\":[\"fulfill.simulate\"],\"expected\":\"fulfilled\",\"invariant_id\":\"task.fulfilled\",\"passed\":false}],\"tool_descriptions\":{\"approval.check\":\"Returns the approval decision and evidence identifier.\",\"catalog.lookup\":\"Returns availability, region, and an evidence identifier.\",\"fulfill.simulate\":\"Sandboxed deterministic fulfilment tool; quantity must be positive integer.\",\"profile.lookup\":\"Returns stored profile context with age metadata.\"},\"trajectory\":[{\"evidence_refs\":[],\"index\":1,\"kind\":\"input\",\"source\":\"user\",\"step_id\":\"eval-007-s1\",\"summary\":\"Requested eu-north fulfilment.\"},{\"evidence_refs\":[\"ev-eval-007-catalog\"],\"index\":2,\"kind\":\"tool\",\"source\":\"catalog.lookup\",\"step_id\":\"eval-007-s2\",\"summary\":\"Returned status='available'.\"},{\"evidence_refs\":[\"ev-eval-007-catalog\"],\"index\":3,\"kind\":\"decision\",\"source\":\"planner\",\"step_id\":\"eval-007-s3\",\"summary\":\"Interpreted available as unavailable.\"},{\"evidence_refs\":[\"ev-eval-007-catalog\"],\"index\":4,\"kind\":\"action\",\"source\":\"planner\",\"step_id\":\"eval-007-s4\",\"summary\":\"Declined a valid request.\"}]}",
+  "prompt_hash": "8d952f2ce7fb2153df13f016ef433a2603c3d8b9231f72b4b2202ea84e674246",
+  "provider": "submitted-evidence",
+  "runtime_ms": 0.0035,
+  "temperature": 0.0,
+  "usage": {
+    "agent_id": "investigator_agent",
+    "completion_tokens": 10,
+    "estimated_cost_usd": 0.0,
+    "mode": "frozen",
+    "prompt_tokens": 109,
+    "token_source": "whitespace_proxy",
+    "total_tokens": 119
+  }
+}

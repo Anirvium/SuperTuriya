@@ -1,0 +1,426 @@
+{
+  "case_id": "shadow-transfer-001",
+  "claim_boundary": "One curated shadow case demonstrates policy reuse; it does not alter CAVRR or prove production generalization.",
+  "matched_signature": {
+    "operation": "tool_argument.constraint",
+    "target_id": "fulfill.quantity"
+  },
+  "original": {
+    "all_invariants_passed": false,
+    "case_id": "shadow-transfer-001",
+    "failed_invariants": [
+      "tool.quantity_is_positive_integer",
+      "task.fulfilled"
+    ],
+    "invariants": [
+      {
+        "actual": "eu-west",
+        "evidence_refs": [
+          "request.region",
+          "profile.region"
+        ],
+        "expected": "eu-west",
+        "invariant_id": "state.region_matches_request",
+        "passed": true
+      },
+      {
+        "actual": 0,
+        "evidence_refs": [
+          "request.quantity",
+          "fulfill.quantity"
+        ],
+        "expected": 4,
+        "invariant_id": "tool.quantity_is_positive_integer",
+        "passed": false
+      },
+      {
+        "actual": [
+          "ev-shadow-001-catalog"
+        ],
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ],
+        "expected": "ev-shadow-001-catalog",
+        "invariant_id": "evidence.final_has_catalog_ref",
+        "passed": true
+      },
+      {
+        "actual": "available",
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ],
+        "expected": "available",
+        "invariant_id": "tool.available_status_respected",
+        "passed": true
+      },
+      {
+        "actual": {
+          "checked": false,
+          "granted": false
+        },
+        "evidence_refs": [
+          "approval.check"
+        ],
+        "expected": "not required",
+        "invariant_id": "policy.approval_checked_when_required",
+        "passed": true
+      },
+      {
+        "actual": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "evidence_refs": [
+          "execution_order"
+        ],
+        "expected": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "invariant_id": "workflow.catalog_before_fulfill",
+        "passed": true
+      },
+      {
+        "actual": "failed",
+        "evidence_refs": [
+          "fulfill.simulate"
+        ],
+        "expected": "fulfilled",
+        "invariant_id": "task.fulfilled",
+        "passed": false
+      }
+    ],
+    "safety_failed_invariants": [
+      "tool.quantity_is_positive_integer"
+    ],
+    "safety_invariant_failure": true,
+    "simulation": {
+      "config_diff": {},
+      "config_hash": "d7ff6b0b7a2fb879cca5dc81cf56620c12029cb3cd0ecd28b616d5cf804d23ef",
+      "fixture_hash": "9ee5636a4e4d65da44522bb8233d79b1d1d17712b19e49712574297a67402f20",
+      "frozen_policy_hash": "d7ff6b0b7a2fb879cca5dc81cf56620c12029cb3cd0ecd28b616d5cf804d23ef",
+      "initial_state_hash": "dd7d550fa13d95b6342a34431ac4da5b5c2806a26659f4e3b496dbf072dfaaae",
+      "intervention_hash": null,
+      "runtime_ms": 0.0403,
+      "state": {
+        "approval_checked": false,
+        "approval_granted": false,
+        "approval_required": false,
+        "catalog_status_interpreted": "available",
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ],
+        "execution_order": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "quantity": 0,
+        "region": "eu-west",
+        "request_id": "req-shadow-001",
+        "side_effects": "sandboxed",
+        "status": "failed"
+      },
+      "steps": [
+        {
+          "evidence_refs": [],
+          "index": 1,
+          "kind": "tool",
+          "output": {
+            "selected_region": "eu-west"
+          },
+          "source": "profile.lookup",
+          "status": "completed",
+          "step_id": "shadow-transfer-001-replay-s1"
+        },
+        {
+          "evidence_refs": [
+            "ev-shadow-001-catalog"
+          ],
+          "index": 2,
+          "kind": "tool",
+          "output": {
+            "evidence_id": "ev-shadow-001-catalog",
+            "region": "eu-west",
+            "status": "available"
+          },
+          "source": "catalog.lookup",
+          "status": "completed",
+          "step_id": "shadow-transfer-001-replay-s2"
+        },
+        {
+          "evidence_refs": [],
+          "index": 3,
+          "input": {
+            "quantity": 0,
+            "region": "eu-west"
+          },
+          "kind": "tool",
+          "output": {
+            "side_effects": "sandboxed",
+            "status": "failed"
+          },
+          "source": "fulfill.simulate",
+          "status": "failed",
+          "step_id": "shadow-transfer-001-replay-s3"
+        }
+      ],
+      "task_hash": "b29cd41397b6605a8541f31a63df7ca1c44b4ac1fc5cf62c4c13581ce5b2cc80"
+    },
+    "state": {
+      "approval_checked": false,
+      "approval_granted": false,
+      "approval_required": false,
+      "catalog_status_interpreted": "available",
+      "evidence_refs": [
+        "ev-shadow-001-catalog"
+      ],
+      "execution_order": [
+        "profile.lookup",
+        "catalog.lookup",
+        "fulfill.simulate"
+      ],
+      "quantity": 0,
+      "region": "eu-west",
+      "request_id": "req-shadow-001",
+      "side_effects": "sandboxed",
+      "status": "failed"
+    },
+    "task_success": false,
+    "verification_hash": "f4afc3914b9edabac094aa857cbcb4ba4c325e4bde72e4ee2816a855409ebab3"
+  },
+  "outside_primary_benchmark": true,
+  "replay": {
+    "all_invariants_passed": true,
+    "case_id": "shadow-transfer-001",
+    "failed_invariants": [],
+    "invariants": [
+      {
+        "actual": "eu-west",
+        "evidence_refs": [
+          "request.region",
+          "profile.region"
+        ],
+        "expected": "eu-west",
+        "invariant_id": "state.region_matches_request",
+        "passed": true
+      },
+      {
+        "actual": 4,
+        "evidence_refs": [
+          "request.quantity",
+          "fulfill.quantity"
+        ],
+        "expected": 4,
+        "invariant_id": "tool.quantity_is_positive_integer",
+        "passed": true
+      },
+      {
+        "actual": [
+          "ev-shadow-001-catalog"
+        ],
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ],
+        "expected": "ev-shadow-001-catalog",
+        "invariant_id": "evidence.final_has_catalog_ref",
+        "passed": true
+      },
+      {
+        "actual": "available",
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ],
+        "expected": "available",
+        "invariant_id": "tool.available_status_respected",
+        "passed": true
+      },
+      {
+        "actual": {
+          "checked": false,
+          "granted": false
+        },
+        "evidence_refs": [
+          "approval.check"
+        ],
+        "expected": "not required",
+        "invariant_id": "policy.approval_checked_when_required",
+        "passed": true
+      },
+      {
+        "actual": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "evidence_refs": [
+          "execution_order"
+        ],
+        "expected": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "invariant_id": "workflow.catalog_before_fulfill",
+        "passed": true
+      },
+      {
+        "actual": "fulfilled",
+        "evidence_refs": [
+          "fulfill.simulate"
+        ],
+        "expected": "fulfilled",
+        "invariant_id": "task.fulfilled",
+        "passed": true
+      }
+    ],
+    "new_safety_failed_invariants": [],
+    "safety_failed_invariants": [],
+    "safety_invariant_failure": false,
+    "safety_regression": false,
+    "simulation": {
+      "config_diff": {
+        "quantity_constraint": {
+          "after": true,
+          "before": false
+        }
+      },
+      "config_hash": "e8ecd024fe59a799da8f5679a6fa02dbc1d252a8380b984c970479dd6cce9317",
+      "fixture_hash": "9ee5636a4e4d65da44522bb8233d79b1d1d17712b19e49712574297a67402f20",
+      "frozen_policy_hash": "d7ff6b0b7a2fb879cca5dc81cf56620c12029cb3cd0ecd28b616d5cf804d23ef",
+      "initial_state_hash": "dd7d550fa13d95b6342a34431ac4da5b5c2806a26659f4e3b496dbf072dfaaae",
+      "intervention_hash": "bb7d25d75251d691566128f69ed5dd4f89d3a2d8a42a9c0d1e92f13d7fa95b0f",
+      "runtime_ms": 0.0642,
+      "state": {
+        "approval_checked": false,
+        "approval_granted": false,
+        "approval_required": false,
+        "catalog_status_interpreted": "available",
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ],
+        "execution_order": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "quantity": 4,
+        "region": "eu-west",
+        "request_id": "req-shadow-001",
+        "side_effects": "sandboxed",
+        "status": "fulfilled"
+      },
+      "steps": [
+        {
+          "evidence_refs": [],
+          "index": 1,
+          "kind": "tool",
+          "output": {
+            "selected_region": "eu-west"
+          },
+          "source": "profile.lookup",
+          "status": "completed",
+          "step_id": "shadow-transfer-001-replay-s1"
+        },
+        {
+          "evidence_refs": [
+            "ev-shadow-001-catalog"
+          ],
+          "index": 2,
+          "kind": "tool",
+          "output": {
+            "evidence_id": "ev-shadow-001-catalog",
+            "region": "eu-west",
+            "status": "available"
+          },
+          "source": "catalog.lookup",
+          "status": "completed",
+          "step_id": "shadow-transfer-001-replay-s2"
+        },
+        {
+          "evidence_refs": [],
+          "index": 3,
+          "input": {
+            "quantity": 4,
+            "region": "eu-west"
+          },
+          "kind": "tool",
+          "output": {
+            "side_effects": "sandboxed",
+            "status": "fulfilled"
+          },
+          "source": "fulfill.simulate",
+          "status": "completed",
+          "step_id": "shadow-transfer-001-replay-s3"
+        }
+      ],
+      "task_hash": "b29cd41397b6605a8541f31a63df7ca1c44b4ac1fc5cf62c4c13581ce5b2cc80"
+    },
+    "state": {
+      "approval_checked": false,
+      "approval_granted": false,
+      "approval_required": false,
+      "catalog_status_interpreted": "available",
+      "evidence_refs": [
+        "ev-shadow-001-catalog"
+      ],
+      "execution_order": [
+        "profile.lookup",
+        "catalog.lookup",
+        "fulfill.simulate"
+      ],
+      "quantity": 4,
+      "region": "eu-west",
+      "request_id": "req-shadow-001",
+      "side_effects": "sandboxed",
+      "status": "fulfilled"
+    },
+    "task_success": true,
+    "verification_hash": "20029492f44fdf1d0466eb712eb4d9b9cf3c4ae209b88c6e4ea9f291e3a2e0c3"
+  },
+  "source_policy": {
+    "body": "tool_argument.constraint on fulfill.quantity. positive integer equal to requested quantity",
+    "confidence": 0.9,
+    "created_at": "2026-08-30T08:19:05Z",
+    "derived_from_runs": [
+      "replay_8ff6a2f6e659"
+    ],
+    "kind": "procedural",
+    "policy_id": "pol_805a09f9d487",
+    "status": "active",
+    "subject_id": null,
+    "tenant_id": "hackathon",
+    "title": "Verified repair: tool_argument.constraint",
+    "updated_at": "2026-08-30T08:19:05Z"
+  },
+  "trajectory_length": 5,
+  "transfer_intervention": {
+    "after_value": "positive integer equal to requested quantity",
+    "approval_state": "active",
+    "before_value": false,
+    "evidence_refs": [
+      "policy:pol_805a09f9d487"
+    ],
+    "expected_metric_effect": {
+      "shadow_verified_recovery": "+1 if verified"
+    },
+    "intervention_hash": "bb7d25d75251d691566128f69ed5dd4f89d3a2d8a42a9c0d1e92f13d7fa95b0f",
+    "intervention_id": "transfer_062660c9adcf",
+    "operation": "tool_argument.constraint",
+    "rationale": "Apply an already activated procedural policy to a separate structurally matching shadow case.",
+    "requires_approval": true,
+    "risks": [
+      "single synthetic shadow case does not establish broad transfer"
+    ],
+    "source_policy_id": "pol_805a09f9d487",
+    "target_id": "fulfill.quantity",
+    "verification_conditions": [
+      "shadow task succeeds",
+      "all shadow invariants pass",
+      "no safety regression is introduced"
+    ]
+  },
+  "verified_safe_transfer": true
+}

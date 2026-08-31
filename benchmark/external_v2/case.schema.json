@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://superturiya.local/schemas/external-v2-case.json",
+  "title": "SuperTuriya independent external-v2 visible case",
+  "type": "object",
+  "required": [
+    "case_id", "split", "difficult", "scenario_family", "goal",
+    "initial_state", "tool_fixtures", "workflow_config", "trajectory", "expected_state"
+  ],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^v2-[0-9]{3}$"},
+    "split": {"const": "held_out"},
+    "difficult": {"type": "boolean"},
+    "scenario_family": {
+      "enum": [
+        "resource_provisioning",
+        "software_release_control",
+        "data_access_control",
+        "incident_recovery_control"
+      ]
+    },
+    "goal": {"type": "string", "minLength": 1},
+    "initial_state": {
+      "type": "object",
+      "required": [
+        "request_id", "requested_region", "requested_quantity", "memory_region",
+        "catalog_status", "requires_approval", "approval_granted",
+        "faulty_quantity_arg", "faulty_order"
+      ],
+      "properties": {
+        "request_id": {"type": "string", "minLength": 1},
+        "requested_region": {"type": "string", "minLength": 1},
+        "requested_quantity": {"type": "integer", "minimum": 1},
+        "memory_region": {"type": "string", "minLength": 1},
+        "catalog_status": {"type": "string", "minLength": 1},
+        "requires_approval": {"type": "boolean"},
+        "approval_granted": {"type": "boolean"},
+        "faulty_quantity_arg": {},
+        "faulty_order": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "tool_fixtures": {
+      "type": "object",
+      "required": ["catalog.lookup", "approval.check", "fulfill.simulate"],
+      "properties": {
+        "catalog.lookup": {
+          "type": "object",
+          "required": ["status", "region", "evidence_id"],
+          "properties": {
+            "status": {"type": "string", "minLength": 1},
+            "region": {"type": "string", "minLength": 1},
+            "evidence_id": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "approval.check": {
+          "type": "object",
+          "required": ["granted", "evidence_id"],
+          "properties": {
+            "granted": {"type": "boolean"},
+            "evidence_id": {"type": "string"}
+          },
+          "additionalProperties": false
+        },
+        "fulfill.simulate": {
+          "type": "object",
+          "required": ["side_effects"],
+          "properties": {
+            "side_effects": {"const": "sandboxed"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "workflow_config": {
+      "type": "object",
+      "required": [
+        "retrieval_filter", "require_evidence", "quantity_constraint",
+        "result_validation", "approval_rule", "enforce_order"
+      ],
+      "properties": {
+        "retrieval_filter": {"type": "string", "minLength": 1},
+        "require_evidence": {"type": "boolean"},
+        "quantity_constraint": {"type": "boolean"},
+        "result_validation": {"type": "boolean"},
+        "approval_rule": {"type": "boolean"},
+        "enforce_order": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "expected_state": {
+      "type": "object",
+      "required": ["region", "quantity", "status", "approval_checked", "catalog_evidence_id"],
+      "properties": {
+        "region": {"type": "string", "minLength": 1},
+        "quantity": {"type": "integer", "minimum": 1},
+        "status": {"type": "string", "minLength": 1},
+        "approval_checked": {"type": "boolean"},
+        "catalog_evidence_id": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "trajectory": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["step_id", "index", "kind", "source", "summary", "evidence_refs"],
+        "properties": {
+          "step_id": {"type": "string", "minLength": 1},
+          "index": {"type": "integer"},
+          "kind": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "summary": {"type": "string", "minLength": 1},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

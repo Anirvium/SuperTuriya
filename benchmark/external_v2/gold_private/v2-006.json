@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "route.condition",
+      "target_id": "workflow.order"
+    }
+  ],
+  "adjudication_note": "The side-effecting fulfillment occurs at s2 before the required catalog lookup at s3. Enforcing the catalog-before-fulfill route condition prevents the premature action.",
+  "case_id": "v2-006",
+  "decisive_invariant": "workflow.catalog_before_fulfill",
+  "expected_repair_surface": {
+    "operation": "route.condition",
+    "target_id": "workflow.order"
+  },
+  "gold_critical_steps": [
+    "v2-006-s2"
+  ],
+  "gold_failure_class": "orchestration_error",
+  "label_canary": "V2_GOLD_CANARY_V2_006_ORDER"
+}

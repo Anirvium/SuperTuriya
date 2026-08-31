@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "recovery_step.insert",
+      "target_id": "finalizer.attach_evidence"
+    }
+  ],
+  "adjudication_note": "The recovery catalog reference is present at s2 and s3, but absent from the terminal record at s4. The bounded repair is to insert finalization recovery that carries forward the existing evidence reference.",
+  "case_id": "v2-013",
+  "decisive_invariant": "evidence.final_has_catalog_ref",
+  "expected_repair_surface": {
+    "operation": "recovery_step.insert",
+    "target_id": "finalizer.attach_evidence"
+  },
+  "gold_critical_steps": [
+    "v2-013-s4"
+  ],
+  "gold_failure_class": "missing_evidence",
+  "label_canary": "V2_GOLD_CANARY_V2_013_EVIDENCE"
+}

@@ -1,0 +1,102 @@
+{
+  "case_id": "v2-002",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-002",
+    "quantity": 4,
+    "region": "eu-west-1",
+    "status": "fulfilled"
+  },
+  "goal": "Provision four ephemeral build runners in eu-west-1.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "available",
+    "faulty_order": [
+      "catalog.lookup",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": "four",
+    "memory_region": "eu-west-1",
+    "request_id": "REQ-7002",
+    "requested_quantity": 4,
+    "requested_region": "eu-west-1",
+    "requires_approval": false
+  },
+  "scenario_family": "resource_provisioning",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-002",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-002",
+      "region": "eu-west-1",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7002"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "operator",
+      "step_id": "v2-002-s1",
+      "summary": "REQ-7002 requests 4 ephemeral build runners in eu-west-1."
+    },
+    {
+      "evidence_refs": [
+        "CAT-002"
+      ],
+      "index": 2,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-002-s2",
+      "summary": "The catalog reports runner capacity available in eu-west-1."
+    },
+    {
+      "evidence_refs": [
+        "request:REQ-7002"
+      ],
+      "index": 3,
+      "kind": "decision",
+      "source": "agent",
+      "step_id": "v2-002-s3",
+      "summary": "The requested quantity 4 is converted into the tool argument string 'four'."
+    },
+    {
+      "evidence_refs": [
+        "CAT-002"
+      ],
+      "index": 4,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-002-s4",
+      "summary": "Sandbox fulfillment is called with quantity='four'."
+    },
+    {
+      "evidence_refs": [
+        "CAT-002"
+      ],
+      "index": 5,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-002-s5",
+      "summary": "The run claims the runner request was submitted."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": true,
+    "quantity_constraint": false,
+    "require_evidence": true,
+    "result_validation": true,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

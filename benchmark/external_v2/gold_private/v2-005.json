@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "tool_result.validation",
+      "target_id": "catalog.status"
+    }
+  ],
+  "adjudication_note": "The catalog explicitly returns unavailable at s2. s3 reverses that operational meaning. Validating the tool result before routing to fulfillment is the bounded repair.",
+  "case_id": "v2-005",
+  "decisive_invariant": "tool.available_status_respected",
+  "expected_repair_surface": {
+    "operation": "tool_result.validation",
+    "target_id": "catalog.status"
+  },
+  "gold_critical_steps": [
+    "v2-005-s3"
+  ],
+  "gold_failure_class": "tool_output_misinterpretation",
+  "label_canary": "V2_GOLD_CANARY_V2_005_STATUS"
+}

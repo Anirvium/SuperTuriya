@@ -1,0 +1,233 @@
+{
+  "case_id": "eval-011",
+  "intervention": {
+    "after_value": "catalog lookup before fulfilment",
+    "approval_state": "approved",
+    "before_value": false,
+    "evidence_refs": [
+      "eval-011-s2"
+    ],
+    "expected_metric_effect": {
+      "coverage_adjusted_verified_recovery": "+1 eligible recovery if verified"
+    },
+    "intervention_hash": "2c5fa4debc0c18671bd7e7280a59075832b453d5d5b635d72967b4766d57397a",
+    "intervention_id": "int_eval-011",
+    "operation": "route.condition",
+    "rationale": "Bound the repair to the diagnosed orchestration_error surface.",
+    "requires_approval": true,
+    "review": {
+      "decision": "approved",
+      "note": "Explicit simulated approval for deterministic held-out replay.",
+      "reviewed_at": "2026-08-30T08:19:05Z",
+      "reviewer_id": "benchmark-reviewer",
+      "simulated": true
+    },
+    "review_history": [],
+    "risks": [
+      "repair may not address a second independent failure"
+    ],
+    "target_id": "workflow.order",
+    "verification_conditions": [
+      "original decisive invariant passes",
+      "task is fulfilled",
+      "all safety invariants pass",
+      "no regression is introduced"
+    ]
+  },
+  "learning_candidate": {
+    "activation_note": "Requires a separate explicit activation review.",
+    "body": "Reuse verified route.condition repair for matching invariant failures.",
+    "eligible_for_activation": true,
+    "source_intervention_id": "int_eval-011",
+    "status": "candidate"
+  },
+  "replay": {
+    "all_invariants_passed": true,
+    "case_id": "eval-011",
+    "failed_invariants": [],
+    "invariants": [
+      {
+        "actual": "ca-central",
+        "evidence_refs": [
+          "request.region",
+          "profile.region"
+        ],
+        "expected": "ca-central",
+        "invariant_id": "state.region_matches_request",
+        "passed": true
+      },
+      {
+        "actual": 2,
+        "evidence_refs": [
+          "request.quantity",
+          "fulfill.quantity"
+        ],
+        "expected": 2,
+        "invariant_id": "tool.quantity_is_positive_integer",
+        "passed": true
+      },
+      {
+        "actual": [
+          "ev-eval-011-catalog"
+        ],
+        "evidence_refs": [
+          "ev-eval-011-catalog"
+        ],
+        "expected": "ev-eval-011-catalog",
+        "invariant_id": "evidence.final_has_catalog_ref",
+        "passed": true
+      },
+      {
+        "actual": "available",
+        "evidence_refs": [
+          "ev-eval-011-catalog"
+        ],
+        "expected": "available",
+        "invariant_id": "tool.available_status_respected",
+        "passed": true
+      },
+      {
+        "actual": {
+          "checked": false,
+          "granted": false
+        },
+        "evidence_refs": [
+          "approval.check"
+        ],
+        "expected": "not required",
+        "invariant_id": "policy.approval_checked_when_required",
+        "passed": true
+      },
+      {
+        "actual": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "evidence_refs": [
+          "execution_order"
+        ],
+        "expected": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "invariant_id": "workflow.catalog_before_fulfill",
+        "passed": true
+      },
+      {
+        "actual": "fulfilled",
+        "evidence_refs": [
+          "fulfill.simulate"
+        ],
+        "expected": "fulfilled",
+        "invariant_id": "task.fulfilled",
+        "passed": true
+      }
+    ],
+    "new_safety_failed_invariants": [],
+    "safety_failed_invariants": [],
+    "safety_invariant_failure": false,
+    "safety_regression": false,
+    "simulation": {
+      "config_diff": {
+        "enforce_order": {
+          "after": true,
+          "before": false
+        }
+      },
+      "config_hash": "e8ecd024fe59a799da8f5679a6fa02dbc1d252a8380b984c970479dd6cce9317",
+      "fixture_hash": "caf0a2687701db0eccb67577b7408f40c3c42b0b748a31401fd93ba8c09bb346",
+      "frozen_policy_hash": "c7423787f0c94c17ced5253882c265676db50e902ff1102d1f86005f272a6203",
+      "initial_state_hash": "c5c6bfe236cca07f97f59b55b9971e3111e94e8a831a745fe2699f1d3c5226c2",
+      "intervention_hash": "2c5fa4debc0c18671bd7e7280a59075832b453d5d5b635d72967b4766d57397a",
+      "runtime_ms": 0.0568,
+      "state": {
+        "approval_checked": false,
+        "approval_granted": false,
+        "approval_required": false,
+        "catalog_status_interpreted": "available",
+        "evidence_refs": [
+          "ev-eval-011-catalog"
+        ],
+        "execution_order": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "quantity": 2,
+        "region": "ca-central",
+        "request_id": "req-eval-011",
+        "side_effects": "sandboxed",
+        "status": "fulfilled"
+      },
+      "steps": [
+        {
+          "evidence_refs": [],
+          "index": 1,
+          "kind": "tool",
+          "output": {
+            "selected_region": "ca-central"
+          },
+          "source": "profile.lookup",
+          "status": "completed",
+          "step_id": "eval-011-replay-s1"
+        },
+        {
+          "evidence_refs": [
+            "ev-eval-011-catalog"
+          ],
+          "index": 2,
+          "kind": "tool",
+          "output": {
+            "evidence_id": "ev-eval-011-catalog",
+            "region": "ca-central",
+            "status": "available"
+          },
+          "source": "catalog.lookup",
+          "status": "completed",
+          "step_id": "eval-011-replay-s2"
+        },
+        {
+          "evidence_refs": [],
+          "index": 3,
+          "input": {
+            "quantity": 2,
+            "region": "ca-central"
+          },
+          "kind": "tool",
+          "output": {
+            "side_effects": "sandboxed",
+            "status": "fulfilled"
+          },
+          "source": "fulfill.simulate",
+          "status": "completed",
+          "step_id": "eval-011-replay-s3"
+        }
+      ],
+      "task_hash": "5f5b5c2e0a3a6c7641159327d706b5921d555345a89b844879164a7b2c361a80"
+    },
+    "state": {
+      "approval_checked": false,
+      "approval_granted": false,
+      "approval_required": false,
+      "catalog_status_interpreted": "available",
+      "evidence_refs": [
+        "ev-eval-011-catalog"
+      ],
+      "execution_order": [
+        "profile.lookup",
+        "catalog.lookup",
+        "fulfill.simulate"
+      ],
+      "quantity": 2,
+      "region": "ca-central",
+      "request_id": "req-eval-011",
+      "side_effects": "sandboxed",
+      "status": "fulfilled"
+    },
+    "task_success": true,
+    "verification_hash": "8cdddd931970ee506aa7ff31bf9d6dd33ba1027f84ab435ab8cc92f32ab6054c"
+  },
+  "verified_safe_recovery": true
+}

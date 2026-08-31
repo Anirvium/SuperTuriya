@@ -1,0 +1,49 @@
+{
+  "artifact_schema": "same-model-live-probe-v1",
+  "contract": {
+    "baseline_and_final_share_environment": true,
+    "credential_present": true,
+    "credential_recorded": false,
+    "endpoint_sha256": "dfd2a15f09373fda210f3abc40f9c258363058225f1ec5b33ce607d37ff1ae57",
+    "requested_model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "transport_policy": {
+      "max_retries": 6,
+      "min_interval_seconds": 2.2,
+      "retry_base_seconds": 5.0
+    }
+  },
+  "created_at": "2026-08-30T03:44:26Z",
+  "json_object_received": true,
+  "prompt_hash": "b20a0ef37a2384bf2a7749c56f8d70f7de4bf1db14b369cc19963725dc18cdaf",
+  "provider_identity_present": true,
+  "response_content_recorded": false,
+  "returned_model": "openai/gpt-oss-120b",
+  "status": "ready",
+  "strict_schema_enforced": true,
+  "transport": {
+    "paced_sleep_seconds": 0.0,
+    "policy": {
+      "max_retries": 6,
+      "min_interval_seconds": 2.2,
+      "retry_base_seconds": 5.0
+    },
+    "request_attempts": 1,
+    "retry_count": 0,
+    "retry_events": [],
+    "retry_sleep_seconds": 0.0,
+    "successful_calls": 1
+  },
+  "usage": {
+    "completion_time": 0.181896471,
+    "completion_tokens": 88,
+    "completion_tokens_details": {
+      "reasoning_tokens": 66
+    },
+    "prompt_time": 0.008282916,
+    "prompt_tokens": 194,
+    "queue_time": 0.360830583,
+    "total_time": 0.190179387,
+    "total_tokens": 282
+  }
+}

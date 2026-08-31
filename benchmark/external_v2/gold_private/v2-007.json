@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "approval_rule.add",
+      "target_id": "fulfill.approval"
+    }
+  ],
+  "adjudication_note": "Approval is required and available, but s3 skips the check entirely. Adding and recording the approval rule before fulfillment repairs the governed path.",
+  "case_id": "v2-007",
+  "decisive_invariant": "policy.approval_checked_when_required",
+  "expected_repair_surface": {
+    "operation": "approval_rule.add",
+    "target_id": "fulfill.approval"
+  },
+  "gold_critical_steps": [
+    "v2-007-s3"
+  ],
+  "gold_failure_class": "missing_approval",
+  "label_canary": "V2_GOLD_CANARY_V2_007_APPROVAL"
+}

@@ -5,6 +5,12 @@ __pycache__/
 .pytest_cache/
 .coverage
 .codex_deps/
+.env
+.env.*
+!.env.example
 var/*.db
 var/*.db-*
 tmp/pdfs/rendered/
+output/
+evidence/external_validity/v2/*_checkpoints/
+evidence/external_validity/v2/*.log

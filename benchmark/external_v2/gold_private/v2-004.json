@@ -1,0 +1,25 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "retrieval.filter",
+      "target_id": "context.region"
+    },
+    {
+      "operation": "approval_rule.add",
+      "target_id": "fulfill.approval"
+    }
+  ],
+  "adjudication_note": "This is intentionally multi-causal. s3 selects the wrong region from stale memory, while s5 independently skips a required approval check. Both are defensible critical steps; the decisive classification is stale-memory because the first state divergence is the region substitution.",
+  "case_id": "v2-004",
+  "decisive_invariant": "state.region_matches_request",
+  "expected_repair_surface": {
+    "operation": "retrieval.filter",
+    "target_id": "context.region"
+  },
+  "gold_critical_steps": [
+    "v2-004-s3",
+    "v2-004-s5"
+  ],
+  "gold_failure_class": "stale_memory",
+  "label_canary": "V2_GOLD_CANARY_V2_004_MULTICAUSAL"
+}

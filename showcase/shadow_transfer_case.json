@@ -1,0 +1,105 @@
+{
+  "case": {
+    "case_id": "shadow-transfer-001",
+    "split": "showcase",
+    "title": "Activated quantity policy transfers to build-worker provisioning",
+    "goal": "Provision 4 ephemeral build workers in eu-west after catalog validation and cite evidence.",
+    "eligible": false,
+    "difficult": false,
+    "initial_state": {
+      "request_id": "req-shadow-001",
+      "requested_region": "eu-west",
+      "requested_quantity": 4,
+      "requires_approval": false,
+      "approval_granted": false,
+      "memory_region": "eu-west",
+      "catalog_status": "available",
+      "faulty_quantity_arg": 0,
+      "faulty_order": [
+        "profile.lookup",
+        "catalog.lookup",
+        "fulfill.simulate"
+      ]
+    },
+    "workflow_config": {
+      "retrieval_filter": "latest",
+      "require_evidence": true,
+      "quantity_constraint": false,
+      "result_validation": true,
+      "approval_rule": true,
+      "enforce_order": true
+    },
+    "tool_fixtures": {
+      "profile.lookup": {
+        "region": "eu-west",
+        "age_days": 1
+      },
+      "catalog.lookup": {
+        "region": "eu-west",
+        "status": "available",
+        "evidence_id": "ev-shadow-001-catalog"
+      },
+      "approval.check": {
+        "approved": false
+      },
+      "fulfill.simulate": {
+        "side_effects": "sandboxed"
+      }
+    },
+    "trajectory": [
+      {
+        "step_id": "shadow-001-s1",
+        "index": 1,
+        "kind": "input",
+        "source": "user",
+        "summary": "Requested four ephemeral build workers in eu-west.",
+        "evidence_refs": []
+      },
+      {
+        "step_id": "shadow-001-s2",
+        "index": 2,
+        "kind": "context",
+        "source": "profile.lookup",
+        "summary": "Tenant context confirmed eu-west.",
+        "evidence_refs": []
+      },
+      {
+        "step_id": "shadow-001-s3",
+        "index": 3,
+        "kind": "tool",
+        "source": "catalog.lookup",
+        "summary": "Catalog confirmed build-worker availability.",
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ]
+      },
+      {
+        "step_id": "shadow-001-s4",
+        "index": 4,
+        "kind": "tool_call",
+        "source": "fulfill.simulate",
+        "summary": "Called provisioning with quantity=0.",
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ]
+      },
+      {
+        "step_id": "shadow-001-s5",
+        "index": 5,
+        "kind": "tool_result",
+        "source": "fulfill.simulate",
+        "summary": "Provisioning rejected the zero quantity.",
+        "evidence_refs": [
+          "ev-shadow-001-catalog"
+        ]
+      }
+    ],
+    "expected_state": {
+      "region": "eu-west",
+      "quantity": 4,
+      "status": "fulfilled",
+      "approval_checked": false,
+      "catalog_evidence_id": "ev-shadow-001-catalog"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "tool_result.validation",
+      "target_id": "catalog.status"
+    }
+  ],
+  "adjudication_note": "The catalog output at s2 is unambiguously unavailable. s3 is the first incorrect operational interpretation, so validating that result must prevent the failover attempt.",
+  "case_id": "v2-014",
+  "decisive_invariant": "tool.available_status_respected",
+  "expected_repair_surface": {
+    "operation": "tool_result.validation",
+    "target_id": "catalog.status"
+  },
+  "gold_critical_steps": [
+    "v2-014-s3"
+  ],
+  "gold_failure_class": "tool_output_misinterpretation",
+  "label_canary": "V2_GOLD_CANARY_V2_014_STATUS"
+}

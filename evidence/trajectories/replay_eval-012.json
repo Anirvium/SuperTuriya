@@ -1,0 +1,229 @@
+{
+  "case_id": "eval-012",
+  "intervention": {
+    "after_value": "catalog lookup before fulfilment",
+    "approval_state": "approved",
+    "before_value": false,
+    "evidence_refs": [
+      "eval-012-s2"
+    ],
+    "expected_metric_effect": {
+      "coverage_adjusted_verified_recovery": "+1 eligible recovery if verified"
+    },
+    "intervention_hash": "bc585c79169768c3dc7bcbe7949e77ba8b5f93e9725bb824313a8155e59e9364",
+    "intervention_id": "int_eval-012",
+    "operation": "route.condition",
+    "rationale": "Bound the repair to the diagnosed orchestration_error surface.",
+    "requires_approval": true,
+    "review": {
+      "decision": "approved",
+      "note": "Explicit simulated approval for deterministic held-out replay.",
+      "reviewed_at": "2026-08-30T08:19:05Z",
+      "reviewer_id": "benchmark-reviewer",
+      "simulated": true
+    },
+    "review_history": [],
+    "risks": [
+      "repair may not address a second independent failure"
+    ],
+    "target_id": "workflow.order",
+    "verification_conditions": [
+      "original decisive invariant passes",
+      "task is fulfilled",
+      "all safety invariants pass",
+      "no regression is introduced"
+    ]
+  },
+  "learning_candidate": {
+    "activation_note": "Rejected from promotion because replay did not pass all gates.",
+    "body": "Reuse verified route.condition repair for matching invariant failures.",
+    "eligible_for_activation": false,
+    "source_intervention_id": "int_eval-012",
+    "status": "candidate"
+  },
+  "replay": {
+    "all_invariants_passed": false,
+    "case_id": "eval-012",
+    "failed_invariants": [
+      "evidence.final_has_catalog_ref"
+    ],
+    "invariants": [
+      {
+        "actual": "ap-southeast",
+        "evidence_refs": [
+          "request.region",
+          "profile.region"
+        ],
+        "expected": "ap-southeast",
+        "invariant_id": "state.region_matches_request",
+        "passed": true
+      },
+      {
+        "actual": 5,
+        "evidence_refs": [
+          "request.quantity",
+          "fulfill.quantity"
+        ],
+        "expected": 5,
+        "invariant_id": "tool.quantity_is_positive_integer",
+        "passed": true
+      },
+      {
+        "actual": [],
+        "evidence_refs": [
+          "ev-eval-012-catalog"
+        ],
+        "expected": "ev-eval-012-catalog",
+        "invariant_id": "evidence.final_has_catalog_ref",
+        "passed": false
+      },
+      {
+        "actual": "available",
+        "evidence_refs": [
+          "ev-eval-012-catalog"
+        ],
+        "expected": "available",
+        "invariant_id": "tool.available_status_respected",
+        "passed": true
+      },
+      {
+        "actual": {
+          "checked": false,
+          "granted": false
+        },
+        "evidence_refs": [
+          "approval.check"
+        ],
+        "expected": "not required",
+        "invariant_id": "policy.approval_checked_when_required",
+        "passed": true
+      },
+      {
+        "actual": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "evidence_refs": [
+          "execution_order"
+        ],
+        "expected": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "invariant_id": "workflow.catalog_before_fulfill",
+        "passed": true
+      },
+      {
+        "actual": "fulfilled",
+        "evidence_refs": [
+          "fulfill.simulate"
+        ],
+        "expected": "fulfilled",
+        "invariant_id": "task.fulfilled",
+        "passed": true
+      }
+    ],
+    "new_safety_failed_invariants": [],
+    "safety_failed_invariants": [],
+    "safety_invariant_failure": false,
+    "safety_regression": false,
+    "simulation": {
+      "config_diff": {
+        "enforce_order": {
+          "after": true,
+          "before": false
+        }
+      },
+      "config_hash": "5ae5928927259703f727813505a6a52e285e6ded75f8fad912bb00cf5f92044c",
+      "fixture_hash": "9d1bc6127e251c2b05a18af260c633700c79b4f013c73b9e54a94a6d5680f6bb",
+      "frozen_policy_hash": "a6a6ceb61baf011e88eff3c832a629f5ce6dd3362f97678b7ec8a0190002d5bf",
+      "initial_state_hash": "6e0662cd97bdb4883977c6720a61d24a956357d1198630cde346b6f5156d2ee8",
+      "intervention_hash": "bc585c79169768c3dc7bcbe7949e77ba8b5f93e9725bb824313a8155e59e9364",
+      "runtime_ms": 0.0572,
+      "state": {
+        "approval_checked": false,
+        "approval_granted": false,
+        "approval_required": false,
+        "catalog_status_interpreted": "available",
+        "evidence_refs": [],
+        "execution_order": [
+          "profile.lookup",
+          "catalog.lookup",
+          "fulfill.simulate"
+        ],
+        "quantity": 5,
+        "region": "ap-southeast",
+        "request_id": "req-eval-012",
+        "side_effects": "sandboxed",
+        "status": "fulfilled"
+      },
+      "steps": [
+        {
+          "evidence_refs": [],
+          "index": 1,
+          "kind": "tool",
+          "output": {
+            "selected_region": "ap-southeast"
+          },
+          "source": "profile.lookup",
+          "status": "completed",
+          "step_id": "eval-012-replay-s1"
+        },
+        {
+          "evidence_refs": [
+            "ev-eval-012-catalog"
+          ],
+          "index": 2,
+          "kind": "tool",
+          "output": {
+            "evidence_id": "ev-eval-012-catalog",
+            "region": "ap-southeast",
+            "status": "available"
+          },
+          "source": "catalog.lookup",
+          "status": "completed",
+          "step_id": "eval-012-replay-s2"
+        },
+        {
+          "evidence_refs": [],
+          "index": 3,
+          "input": {
+            "quantity": 5,
+            "region": "ap-southeast"
+          },
+          "kind": "tool",
+          "output": {
+            "side_effects": "sandboxed",
+            "status": "fulfilled"
+          },
+          "source": "fulfill.simulate",
+          "status": "completed",
+          "step_id": "eval-012-replay-s3"
+        }
+      ],
+      "task_hash": "60ecf30efe2b62a551afcc219571003a426999880aecb79cbfddbd8eb5cd4222"
+    },
+    "state": {
+      "approval_checked": false,
+      "approval_granted": false,
+      "approval_required": false,
+      "catalog_status_interpreted": "available",
+      "evidence_refs": [],
+      "execution_order": [
+        "profile.lookup",
+        "catalog.lookup",
+        "fulfill.simulate"
+      ],
+      "quantity": 5,
+      "region": "ap-southeast",
+      "request_id": "req-eval-012",
+      "side_effects": "sandboxed",
+      "status": "fulfilled"
+    },
+    "task_success": false,
+    "verification_hash": "bc2b53c70ab6a0c3ba771d692f27dedef21152adb42d1e8d053269964083ce91"
+  },
+  "verified_safe_recovery": false
+}

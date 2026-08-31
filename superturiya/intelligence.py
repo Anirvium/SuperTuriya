@@ -11,9 +11,16 @@ from .models import (
     clean_text,
     extract_capitalized_entities,
     mean,
+    new_id,
     token_set,
     utc_now,
 )
+from .adaptive import (
+    AdaptiveEvaluationRunner,
+    transition_intervention,
+    validate_intervention,
+)
+from .evaluation import EvaluationHarness, validate_benchmark
 from .quantum_layer import QuantumInspiredTrajectoryAnalyzer
 from .store import SuperTuriyaStore
 
@@ -55,6 +62,8 @@ class SuperTuriyaEngine:
     def __init__(self, store: SuperTuriyaStore) -> None:
         self.store = store
         self.quantum_analyzer = QuantumInspiredTrajectoryAnalyzer()
+        self.adaptive_runner = AdaptiveEvaluationRunner()
+        self.evaluation_harness = EvaluationHarness(runtime=self.adaptive_runner)
 
     def capture_observations(self, payload: Mapping[str, Any]) -> JsonDict:
         raw = payload.get("observations", payload)
@@ -362,6 +371,186 @@ class SuperTuriyaEngine:
             "time": utc_now(),
         }
         return state
+
+    def hackathon_state(self, payload: Optional[Mapping[str, Any]] = None) -> JsonDict:
+        payload = payload or {}
+        tenant_id = clean_text(payload.get("tenant_id") or "hackathon")
+        evaluations = self.store.list_evaluation_runs(tenant_id, limit=5)
+        cases = [
+            {
+                "case_id": case["case_id"],
+                "split": case["split"],
+                "title": case["title"],
+                "goal": case["goal"],
+                "difficult": bool(case.get("difficult", False)),
+            }
+            for case in self.adaptive_runner.cases
+        ]
+        return {
+            "benchmark": validate_benchmark(),
+            "cases": cases,
+            "latest_evaluation": evaluations[0]["report"] if evaluations else None,
+            "evaluation_history": evaluations,
+            "interventions": self.store.list_interventions(tenant_id, limit=50),
+            "replays": self.store.list_replay_results(tenant_id, limit=50),
+            "governance": {
+                "lifecycle": ["candidate", "approved", "active"],
+                "alternates": ["rejected", "deferred"],
+                "automatic_activation": False,
+            },
+        }
+
+    def run_hackathon_evaluation(self, payload: Mapping[str, Any]) -> JsonDict:
+        mode = clean_text(payload.get("mode") or "frozen").lower()
+        if mode not in {"frozen", "live"}:
+            raise ValueError("mode must be frozen or live")
+        tenant_id = clean_text(payload.get("tenant_id") or "hackathon")
+        report = self.evaluation_harness.compare(mode)
+        stored = self.store.save_evaluation_run(report, tenant_id)
+        for result in report["final"]["results"]:
+            intervention = result["intervention"]
+            self.store.add_intervention(
+                {
+                    "tenant_id": tenant_id,
+                    "case_id": result["case_id"],
+                    "payload": intervention,
+                    "reviewer_id": intervention.get("review", {}).get("reviewer_id"),
+                    "reviewed_at": intervention.get("review", {}).get("reviewed_at"),
+                }
+            )
+            self.store.add_replay_result(
+                {
+                    "tenant_id": tenant_id,
+                    "case_id": result["case_id"],
+                    "intervention_id": intervention["intervention_id"],
+                    "mode": mode,
+                    "verified_safe_recovery": result["verified_safe_recovery"],
+                    "safety_regression": result["replay"]["safety_regression"],
+                    "result": result,
+                }
+            )
+        return {**report, "stored_evaluation": stored["evaluation_id"]}
+
+    def prepare_hackathon_case(self, payload: Mapping[str, Any]) -> JsonDict:
+        case_id = clean_text(payload.get("case_id"))
+        if not case_id:
+            raise ValueError("case_id is required")
+        mode = clean_text(payload.get("mode") or "frozen").lower()
+        tenant_id = clean_text(payload.get("tenant_id") or "hackathon")
+        demo = self.adaptive_runner.case_demo(case_id, mode)
+        candidate = dict(demo["intervention"])
+        candidate["intervention_id"] = new_id("int")
+        candidate.pop("intervention_hash", None)
+        candidate = validate_intervention(candidate)
+        demo["intervention"] = candidate
+        demo["adaptation_trajectory"]["output"] = candidate
+        stored = self.store.add_intervention(
+            {
+                "tenant_id": tenant_id,
+                "case_id": case_id,
+                "payload": candidate,
+            }
+        )
+        return {**demo, "stored_intervention": stored}
+
+    def review_hackathon_intervention(self, payload: Mapping[str, Any]) -> JsonDict:
+        intervention_id = clean_text(payload.get("intervention_id"))
+        decision = clean_text(payload.get("decision")).lower()
+        reviewer_id = clean_text(payload.get("reviewer_id"))
+        note = clean_text(payload.get("note"))
+        tenant_id = clean_text(payload.get("tenant_id") or "hackathon")
+        if not intervention_id or not decision:
+            raise ValueError("intervention_id and decision are required")
+        stored = self.store.get_intervention(intervention_id)
+        candidate = stored["payload"]
+        reviewed = transition_intervention(candidate, decision, reviewer_id, note, simulated=False)
+        updated = self.store.add_intervention(
+            {
+                "tenant_id": tenant_id,
+                "case_id": stored["case_id"],
+                "run_id": stored.get("run_id"),
+                "payload": reviewed,
+                "reviewer_id": reviewer_id,
+                "reviewed_at": reviewed["review"]["reviewed_at"],
+                "created_at": stored["created_at"],
+            }
+        )
+        if decision != "approved":
+            return {"intervention": updated, "replay": None}
+        replay = self.adaptive_runner.approve_and_replay(
+            stored["case_id"], reviewed, reviewer_id, note
+        )
+        replay_record = self.store.add_replay_result(
+            {
+                "tenant_id": tenant_id,
+                "case_id": stored["case_id"],
+                "intervention_id": intervention_id,
+                "mode": clean_text(payload.get("mode") or "frozen"),
+                "verified_safe_recovery": replay["verified_safe_recovery"],
+                "safety_regression": replay["replay"]["safety_regression"],
+                "result": replay,
+            }
+        )
+        return {"intervention": updated, "replay": replay, "stored_replay": replay_record}
+
+    def activate_hackathon_intervention(self, payload: Mapping[str, Any]) -> JsonDict:
+        intervention_id = clean_text(payload.get("intervention_id"))
+        reviewer_id = clean_text(payload.get("reviewer_id"))
+        note = clean_text(payload.get("note"))
+        tenant_id = clean_text(payload.get("tenant_id") or "hackathon")
+        stored = self.store.get_intervention(intervention_id)
+        if stored["status"] != "approved":
+            raise ValueError("only an approved intervention may be activated")
+        replays = self.store.list_replay_results(tenant_id, stored["case_id"], limit=20)
+        verified = [
+            item
+            for item in replays
+            if item["intervention_id"] == intervention_id
+            and bool(item["verified_safe_recovery"])
+            and not bool(item["safety_regression"])
+        ]
+        if not verified:
+            raise ValueError("activation requires a verified safe replay")
+        active_payload = transition_intervention(
+            stored["payload"], "active", reviewer_id, note, simulated=False
+        )
+        active = self.store.add_intervention(
+            {
+                "tenant_id": tenant_id,
+                "case_id": stored["case_id"],
+                "payload": active_payload,
+                "reviewer_id": reviewer_id,
+                "reviewed_at": active_payload["review"]["reviewed_at"],
+                "created_at": stored["created_at"],
+            }
+        )
+        policy = self.store.add_policy(
+            {
+                "tenant_id": tenant_id,
+                "kind": "procedural",
+                "title": "Verified repair: %s" % active_payload["operation"],
+                "body": "%s on %s. %s"
+                % (
+                    active_payload["operation"],
+                    active_payload["target_id"],
+                    active_payload["after_value"],
+                ),
+                "derived_from_runs": [verified[0]["replay_id"]],
+                "confidence": 0.9,
+                "status": "candidate",
+            }
+        )
+        policy = self.store.transition_policy(policy["policy_id"], "approved", reviewer_id, note)
+        policy = self.store.transition_policy(policy["policy_id"], "active", reviewer_id, note)
+        return {"intervention": active, "procedural_policy": policy, "verified_replay": verified[0]}
+
+    def review_policy(self, payload: Mapping[str, Any]) -> JsonDict:
+        return self.store.transition_policy(
+            clean_text(payload.get("policy_id")),
+            clean_text(payload.get("decision")),
+            clean_text(payload.get("reviewer_id")),
+            clean_text(payload.get("note")),
+        )
 
     def _observations_for_payload(
         self,

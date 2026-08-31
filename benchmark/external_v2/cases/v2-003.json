@@ -1,0 +1,90 @@
+{
+  "case_id": "v2-003",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-003",
+    "quantity": 2,
+    "region": "us-west-2",
+    "status": "fulfilled"
+  },
+  "goal": "Reserve two sandbox GPU slots in us-west-2 and retain validation evidence.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "available",
+    "faulty_order": [
+      "catalog.lookup",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": 2,
+    "memory_region": "us-west-2",
+    "request_id": "REQ-7003",
+    "requested_quantity": 2,
+    "requested_region": "us-west-2",
+    "requires_approval": false
+  },
+  "scenario_family": "resource_provisioning",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-003",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-003",
+      "region": "us-west-2",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7003"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "operator",
+      "step_id": "v2-003-s1",
+      "summary": "REQ-7003 requests 2 sandbox GPU slots in us-west-2."
+    },
+    {
+      "evidence_refs": [
+        "CAT-003"
+      ],
+      "index": 2,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-003-s2",
+      "summary": "The catalog reports two-slot capacity available in us-west-2 and returns evidence CAT-003."
+    },
+    {
+      "evidence_refs": [
+        "CAT-003"
+      ],
+      "index": 3,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-003-s3",
+      "summary": "Two sandbox GPU slots are reserved in us-west-2."
+    },
+    {
+      "evidence_refs": [],
+      "index": 4,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-003-s4",
+      "summary": "The final record states that the reservation completed but carries no catalog evidence reference."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": true,
+    "quantity_constraint": true,
+    "require_evidence": false,
+    "result_validation": true,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

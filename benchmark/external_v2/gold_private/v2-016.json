@@ -1,0 +1,25 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "route.condition",
+      "target_id": "workflow.order"
+    },
+    {
+      "operation": "tool_result.validation",
+      "target_id": "catalog.status"
+    }
+  ],
+  "adjudication_note": "This is multi-causal. s2 performs the side effect before validation, and s4 later misinterprets an unavailable catalog result. The order violation is decisive because it permits the action before the evidence exists; validating the later result is also required for a fully safe repair.",
+  "case_id": "v2-016",
+  "decisive_invariant": "workflow.catalog_before_fulfill",
+  "expected_repair_surface": {
+    "operation": "route.condition",
+    "target_id": "workflow.order"
+  },
+  "gold_critical_steps": [
+    "v2-016-s2",
+    "v2-016-s4"
+  ],
+  "gold_failure_class": "orchestration_error",
+  "label_canary": "V2_GOLD_CANARY_V2_016_ORDER_STATUS"
+}

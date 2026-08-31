@@ -3,6 +3,7 @@ name = "superturiya"
 version = "0.1.0"
 description = "Trajectory Intelligence platform for auditable, self-improving AI agents."
 requires-python = ">=3.9"
+license = { file = "LICENSE" }
 dependencies = []
 
 [tool.ruff]

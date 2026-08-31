@@ -1,0 +1,35 @@
+{
+  "agent_id": "investigator_agent",
+  "mode": "frozen",
+  "model": "frozen-investigator-v1",
+  "output": {
+    "confidence": 0.78,
+    "critical_step": "eval-012-s2",
+    "decisive_invariant": "workflow.catalog_before_fulfill",
+    "downstream_effects": [
+      "evidence.final_has_catalog_ref",
+      "task.fulfilled"
+    ],
+    "evidence_refs": [
+      "eval-012-s2"
+    ],
+    "failure_class": "orchestration_error",
+    "observed_divergence": "workflow.catalog_before_fulfill failed at eval-012-s2",
+    "preceding_state": "step_1",
+    "root_cause": "Earliest evidence-backed violation of workflow.catalog_before_fulfill."
+  },
+  "prompt": "Find the earliest consequential divergence. Use only supplied evidence. critical_step must be exactly one step_id copied from the supplied trajectory. Return critical_step, preceding_state, observed_divergence, failure_class, root_cause, evidence_refs, downstream_effects, confidence, and decisive_invariant. The decisive_invariant must be one invariant_id present in invariant_violations.\n{\"case_id\":\"eval-012\",\"goal\":\"Fulfil req-eval-012 in ap-southeast after catalog validation and cite evidence.\",\"initial_state\":{\"approval_granted\":false,\"catalog_status\":\"available\",\"memory_region\":\"ap-southeast\",\"request_id\":\"req-eval-012\",\"requested_quantity\":5,\"requested_region\":\"ap-southeast\",\"requires_approval\":false},\"invariant_violations\":[{\"actual\":[],\"evidence_refs\":[\"ev-eval-012-catalog\"],\"expected\":\"ev-eval-012-catalog\",\"invariant_id\":\"evidence.final_has_catalog_ref\",\"passed\":false},{\"actual\":[\"profile.lookup\",\"fulfill.simulate\",\"catalog.lookup\"],\"evidence_refs\":[\"execution_order\"],\"expected\":[\"profile.lookup\",\"catalog.lookup\",\"fulfill.simulate\"],\"invariant_id\":\"workflow.catalog_before_fulfill\",\"passed\":false},{\"actual\":\"failed\",\"evidence_refs\":[\"fulfill.simulate\"],\"expected\":\"fulfilled\",\"invariant_id\":\"task.fulfilled\",\"passed\":false}],\"tool_descriptions\":{\"approval.check\":\"Returns the approval decision and evidence identifier.\",\"catalog.lookup\":\"Returns availability, region, and an evidence identifier.\",\"fulfill.simulate\":\"Sandboxed deterministic fulfilment tool; quantity must be positive integer.\",\"profile.lookup\":\"Returns stored profile context with age metadata.\"},\"trajectory\":[{\"evidence_refs\":[],\"index\":1,\"kind\":\"input\",\"source\":\"user\",\"step_id\":\"eval-012-s1\",\"summary\":\"Requested validated evidence-linked fulfilment.\"},{\"evidence_refs\":[],\"index\":2,\"kind\":\"route\",\"source\":\"orchestrator\",\"step_id\":\"eval-012-s2\",\"summary\":\"Routed to fulfilment before catalog lookup.\"},{\"evidence_refs\":[],\"index\":3,\"kind\":\"action\",\"source\":\"fulfill.simulate\",\"step_id\":\"eval-012-s3\",\"summary\":\"Failed early and carried no evidence.\"},{\"evidence_refs\":[\"ev-eval-012-catalog\"],\"index\":4,\"kind\":\"tool\",\"source\":\"catalog.lookup\",\"step_id\":\"eval-012-s4\",\"summary\":\"Catalog returned available after the failed action.\"}]}",
+  "prompt_hash": "5eb1ca3c0f48812585cc300c14fce60a22534ef6078938730b866b235b186b35",
+  "provider": "submitted-evidence",
+  "runtime_ms": 0.0039,
+  "temperature": 0.0,
+  "usage": {
+    "agent_id": "investigator_agent",
+    "completion_tokens": 10,
+    "estimated_cost_usd": 0.0,
+    "mode": "frozen",
+    "prompt_tokens": 123,
+    "token_source": "whitespace_proxy",
+    "total_tokens": 133
+  }
+}

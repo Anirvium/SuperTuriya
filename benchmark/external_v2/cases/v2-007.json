@@ -1,0 +1,101 @@
+{
+  "case_id": "v2-007",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": true,
+    "catalog_evidence_id": "CAT-007",
+    "quantity": 3,
+    "region": "ap-south-1",
+    "status": "fulfilled"
+  },
+  "goal": "Deploy three sandbox replicas in ap-south-1 after recording the required approval check.",
+  "initial_state": {
+    "approval_granted": true,
+    "catalog_status": "available",
+    "faulty_order": [
+      "catalog.lookup",
+      "approval.check",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": 3,
+    "memory_region": "ap-south-1",
+    "request_id": "REQ-7103",
+    "requested_quantity": 3,
+    "requested_region": "ap-south-1",
+    "requires_approval": true
+  },
+  "scenario_family": "software_release_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-007",
+      "granted": true
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-007",
+      "region": "ap-south-1",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7103"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "release_manager",
+      "step_id": "v2-007-s1",
+      "summary": "REQ-7103 requests 3 production-like sandbox replicas in ap-south-1 and requires change approval."
+    },
+    {
+      "evidence_refs": [
+        "CAT-007"
+      ],
+      "index": 2,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-007-s2",
+      "summary": "The release catalog reports the artifact available in ap-south-1."
+    },
+    {
+      "evidence_refs": [],
+      "index": 3,
+      "kind": "policy",
+      "source": "agent",
+      "step_id": "v2-007-s3",
+      "summary": "The workflow proceeds directly to deployment without calling approval.check."
+    },
+    {
+      "evidence_refs": [
+        "CAT-007"
+      ],
+      "index": 4,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-007-s4",
+      "summary": "Three sandbox replicas are deployed."
+    },
+    {
+      "evidence_refs": [
+        "CAT-007"
+      ],
+      "index": 5,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-007-s5",
+      "summary": "The run reports success without an approval record."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": false,
+    "enforce_order": true,
+    "quantity_constraint": true,
+    "require_evidence": true,
+    "result_validation": true,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

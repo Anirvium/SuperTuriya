@@ -1,0 +1,894 @@
+{
+  "aggregate": {
+    "absolute_improvement_mean": 0.0,
+    "absolute_improvement_stdev": 0.0,
+    "baseline_cavrr_mean": 0.5,
+    "baseline_cavrr_stdev": 0.0,
+    "critical_step_localization_accuracy_mean": 1.0,
+    "critical_step_localization_accuracy_stdev": 0.0,
+    "decisive_invariant_accuracy_mean": 0.8125,
+    "decisive_invariant_accuracy_stdev": 0.0,
+    "failure_class_accuracy_mean": 0.625,
+    "failure_class_accuracy_stdev": 0.0,
+    "final_cavrr_mean": 0.5,
+    "final_cavrr_stdev": 0.0,
+    "repair_surface_accuracy_mean": 0.4167,
+    "repair_surface_accuracy_stdev": 0.0361,
+    "safety_regression_rate_mean": 0.0,
+    "safety_regression_rate_stdev": 0.0
+  },
+  "artifact_schema": "superturiya-external-v2-scored-evidence-v1",
+  "benchmark_freeze": {
+    "author_id": "chatgpt-person-a-ai",
+    "case_count": 16,
+    "cases_aggregate_sha256": "65355b5037671874294d488d5b4238a3695b140c2f3b73afdb50af4ea9cfa513",
+    "gold_aggregate_sha256": "2522231b0a680600b689648d08bed596c894d2ad68960013d05ac6d1666d9204",
+    "reviewer_id": "piyushapriyadarshi0-owner-reviewer"
+  },
+  "benchmark_id": "superturiya-independent-external-v2",
+  "claim_eligible": true,
+  "created_at": "2026-08-31T08:07:34.802923+00:00",
+  "experiment": "comparison",
+  "mode": "live",
+  "paired_case_uncertainty": {
+    "case_count": 16,
+    "case_level_outcomes": [
+      {
+        "baseline_recovery_rate": 1.0,
+        "baseline_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "case_id": "v2-001",
+        "final_recovery_rate": 1.0,
+        "final_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 1.0,
+        "baseline_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "case_id": "v2-002",
+        "final_recovery_rate": 1.0,
+        "final_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 1.0,
+        "baseline_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "case_id": "v2-003",
+        "final_recovery_rate": 1.0,
+        "final_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 0.0,
+        "baseline_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "case_id": "v2-004",
+        "final_recovery_rate": 0.0,
+        "final_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 0.0,
+        "baseline_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "case_id": "v2-005",
+        "final_recovery_rate": 0.0,
+        "final_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 1.0,
+        "baseline_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "case_id": "v2-006",
+        "final_recovery_rate": 1.0,
+        "final_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 1.0,
+        "baseline_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "case_id": "v2-007",
+        "final_recovery_rate": 1.0,
+        "final_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 0.0,
+        "baseline_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "case_id": "v2-008",
+        "final_recovery_rate": 0.0,
+        "final_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 1.0,
+        "baseline_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "case_id": "v2-009",
+        "final_recovery_rate": 1.0,
+        "final_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 1.0,
+        "baseline_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "case_id": "v2-010",
+        "final_recovery_rate": 1.0,
+        "final_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 0.0,
+        "baseline_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "case_id": "v2-011",
+        "final_recovery_rate": 0.0,
+        "final_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 0.0,
+        "baseline_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "case_id": "v2-012",
+        "final_recovery_rate": 0.0,
+        "final_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 1.0,
+        "baseline_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "case_id": "v2-013",
+        "final_recovery_rate": 1.0,
+        "final_trial_outcomes": [
+          true,
+          true,
+          true
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 0.0,
+        "baseline_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "case_id": "v2-014",
+        "final_recovery_rate": 0.0,
+        "final_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 0.0,
+        "baseline_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "case_id": "v2-015",
+        "final_recovery_rate": 0.0,
+        "final_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "paired_difference": 0.0
+      },
+      {
+        "baseline_recovery_rate": 0.0,
+        "baseline_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "case_id": "v2-016",
+        "final_recovery_rate": 0.0,
+        "final_trial_outcomes": [
+          false,
+          false,
+          false
+        ],
+        "paired_difference": 0.0
+      }
+    ],
+    "confidence_level": 0.95,
+    "mean_paired_cavrr_difference": 0.0,
+    "method": "paired_nonparametric_bootstrap_over_cases",
+    "percentile_interval": [
+      0.0,
+      0.0
+    ],
+    "random_seed": 20260830,
+    "resamples": 10000,
+    "small_sample_warning": true,
+    "trial_count": 3,
+    "trial_handling": "trial outcomes aggregated within case before resampling",
+    "unit_of_resampling": "case"
+  },
+  "private_canary_leakage_detected": false,
+  "raw_predictions_path": "evidence/external_validity/v2/raw_live_comparison_qwen_fallback.json",
+  "raw_predictions_persisted_before_scoring": true,
+  "raw_predictions_sha256": "5017a1bd3e7086f5b3df77b7620290a7a31d235c1d8d7d5b38e81f82d16a2420",
+  "system_under_test_sha256": "b49f961ae86aedd2cbdf85ada2209fbb97307ffa3e76d29e4fcae636e024ee9e",
+  "trial_count": 3,
+  "trials": [
+    {
+      "cases": [
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-001",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-002",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-003",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-004",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-005",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-006",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-007",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-008",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": false,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-009",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-010",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-011",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-012",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-013",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-014",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-015",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-016",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        }
+      ],
+      "metrics": {
+        "absolute_improvement": 0.0,
+        "baseline_cavrr": 0.5,
+        "baseline_verified_safe_recoveries": 8,
+        "critical_step_localization_accuracy": 1.0,
+        "decisive_invariant_accuracy": 0.8125,
+        "eligible_cases": 16,
+        "failure_class_accuracy": 0.625,
+        "final_cavrr": 0.5,
+        "final_verified_safe_recoveries": 8,
+        "repair_surface_accuracy": 0.375,
+        "safety_regression_rate": 0.0
+      }
+    },
+    {
+      "cases": [
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-001",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-002",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-003",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-004",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-005",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-006",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-007",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-008",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": false,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-009",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-010",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-011",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-012",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-013",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-014",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-015",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-016",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        }
+      ],
+      "metrics": {
+        "absolute_improvement": 0.0,
+        "baseline_cavrr": 0.5,
+        "baseline_verified_safe_recoveries": 8,
+        "critical_step_localization_accuracy": 1.0,
+        "decisive_invariant_accuracy": 0.8125,
+        "eligible_cases": 16,
+        "failure_class_accuracy": 0.625,
+        "final_cavrr": 0.5,
+        "final_verified_safe_recoveries": 8,
+        "repair_surface_accuracy": 0.4375,
+        "safety_regression_rate": 0.0
+      }
+    },
+    {
+      "cases": [
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-001",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-002",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-003",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-004",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-005",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-006",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-007",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-008",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": false,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-009",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-010",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-011",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-012",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": true,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": true,
+          "case_id": "v2-013",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": false,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": true
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-014",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": false,
+          "difficult": false,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-015",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": true,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        },
+        {
+          "baseline_verified_safe_recovery": false,
+          "case_id": "v2-016",
+          "critical_step_correct": true,
+          "decisive_invariant_correct": true,
+          "difficult": true,
+          "failure_class_correct": false,
+          "repair_surface_correct": false,
+          "safety_regression": false,
+          "verified_safe_recovery": false
+        }
+      ],
+      "metrics": {
+        "absolute_improvement": 0.0,
+        "baseline_cavrr": 0.5,
+        "baseline_verified_safe_recoveries": 8,
+        "critical_step_localization_accuracy": 1.0,
+        "decisive_invariant_accuracy": 0.8125,
+        "eligible_cases": 16,
+        "failure_class_accuracy": 0.625,
+        "final_cavrr": 0.5,
+        "final_verified_safe_recoveries": 8,
+        "repair_surface_accuracy": 0.4375,
+        "safety_regression_rate": 0.0
+      }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "agent_id": "adaptation_agent",
+  "mode": "frozen",
+  "model": "frozen-adaptation-v1",
+  "output": {
+    "after_value": "catalog lookup before fulfilment",
+    "approval_state": "candidate",
+    "before_value": false,
+    "evidence_refs": [
+      "eval-012-s2"
+    ],
+    "expected_metric_effect": {
+      "coverage_adjusted_verified_recovery": "+1 eligible recovery if verified"
+    },
+    "intervention_hash": "d78705ce8d4b449ae9d3fa6f26d1f0a003fe9f373a33c7725c9a17a83cb577fa",
+    "intervention_id": "int_eval-012",
+    "operation": "route.condition",
+    "rationale": "Bound the repair to the diagnosed orchestration_error surface.",
+    "requires_approval": true,
+    "risks": [
+      "repair may not address a second independent failure"
+    ],
+    "target_id": "workflow.order",
+    "verification_conditions": [
+      "original decisive invariant passes",
+      "task is fulfilled",
+      "all safety invariants pass",
+      "no regression is introduced"
+    ]
+  },
+  "prompt": "Propose the smallest typed bounded intervention that directly addresses the investigator's decisive invariant and root cause. Choose exactly one repair_surface_id from allowed_interventions, then list evidence, risks, expected metric effect, and verification conditions. Candidate approval is applied mechanically after this selection; it is governance metadata, not a reason to choose an approval-related repair surface. Do not claim that one repair fixes unrelated conditions.\n{\"allowed_interventions\":[{\"after_value\":\"check and record approval before fulfilment\",\"operation\":\"approval_rule.add\",\"repair_surface_id\":\"approval_rule.add::fulfill.approval\",\"target_id\":\"fulfill.approval\"},{\"after_value\":\"require catalog evidence\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::final_response.evidence\",\"target_id\":\"final_response.evidence\"},{\"after_value\":\"review the trace before acting\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.be_careful\",\"target_id\":\"planner.be_careful\"},{\"after_value\":\"positive integer equal to requested quantity\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.quantity_range\",\"target_id\":\"planner.quantity_range\"},{\"after_value\":\"render requested quantity as integer\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.quantity_type\",\"target_id\":\"planner.quantity_type\"},{\"after_value\":\"strict status mapping\",\"operation\":\"prompt_rule.replace\",\"repair_surface_id\":\"prompt_rule.replace::planner.catalog_mapping\",\"target_id\":\"planner.catalog_mapping\"},{\"after_value\":\"latest\",\"operation\":\"prompt_rule.replace\",\"repair_surface_id\":\"prompt_rule.replace::planner.region_precedence\",\"target_id\":\"planner.region_precedence\"},{\"after_value\":\"require catalog evidence\",\"operation\":\"recovery_step.insert\",\"repair_surface_id\":\"recovery_step.insert::finalizer.attach_evidence\",\"target_id\":\"finalizer.attach_evidence\"},{\"after_value\":\"catalog lookup before fulfilment\",\"operation\":\"recovery_step.insert\",\"repair_surface_id\":\"recovery_step.insert::workflow.preflight\",\"target_id\":\"workflow.preflight\"},{\"after_value\":\"latest\",\"operation\":\"retrieval.filter\",\"repair_surface_id\":\"retrieval.filter::context.region\",\"target_id\":\"context.region\"},{\"after_value\":\"check and record approval before fulfilment\",\"operation\":\"route.condition\",\"repair_surface_id\":\"route.condition::workflow.approval_route\",\"target_id\":\"workflow.approval_route\"},{\"after_value\":\"catalog lookup before fulfilment\",\"operation\":\"route.condition\",\"repair_surface_id\":\"route.condition::workflow.order\",\"target_id\":\"workflow.order\"},{\"after_value\":\"positive integer equal to requested quantity\",\"operation\":\"tool_argument.constraint\",\"repair_surface_id\":\"tool_argument.constraint::fulfill.quantity\",\"target_id\":\"fulfill.quantity\"},{\"after_value\":\"strict status mapping\",\"operation\":\"tool_result.validation\",\"repair_surface_id\":\"tool_result.validation::catalog.status\",\"target_id\":\"catalog.status\"}],\"case\":{\"case_id\":\"eval-012\",\"goal\":\"Fulfil req-eval-012 in ap-southeast after catalog validation and cite evidence.\",\"initial_state\":{\"approval_granted\":false,\"catalog_status\":\"available\",\"memory_region\":\"ap-southeast\",\"request_id\":\"req-eval-012\",\"requested_quantity\":5,\"requested_region\":\"ap-southeast\",\"requires_approval\":false},\"tool_descriptions\":{\"approval.check\":\"Returns the approval decision and evidence identifier.\",\"catalog.lookup\":\"Returns availability, region, and an evidence identifier.\",\"fulfill.simulate\":\"Sandboxed deterministic fulfilment tool; quantity must be positive integer.\",\"profile.lookup\":\"Returns stored profile context with age metadata.\"},\"trajectory\":[{\"evidence_refs\":[],\"index\":1,\"kind\":\"input\",\"source\":\"user\",\"step_id\":\"eval-012-s1\",\"summary\":\"Requested validated evidence-linked fulfilment.\"},{\"evidence_refs\":[],\"index\":2,\"kind\":\"route\",\"source\":\"orchestrator\",\"step_id\":\"eval-012-s2\",\"summary\":\"Routed to fulfilment before catalog lookup.\"},{\"evidence_refs\":[],\"index\":3,\"kind\":\"action\",\"source\":\"fulfill.simulate\",\"step_id\":\"eval-012-s3\",\"summary\":\"Failed early and carried no evidence.\"},{\"evidence_refs\":[\"ev-eval-012-catalog\"],\"index\":4,\"kind\":\"tool\",\"source\":\"catalog.lookup\",\"step_id\":\"eval-012-s4\",\"summary\":\"Catalog returned available after the failed action.\"}]},\"investigation\":{\"confidence\":0.78,\"critical_step\":\"eval-012-s2\",\"decisive_invariant\":\"workflow.catalog_before_fulfill\",\"downstream_effects\":[\"evidence.final_has_catalog_ref\",\"task.fulfilled\"],\"evidence_refs\":[\"eval-012-s2\"],\"failure_class\":\"orchestration_error\",\"observed_divergence\":\"workflow.catalog_before_fulfill failed at eval-012-s2\",\"preceding_state\":\"step_1\",\"root_cause\":\"Earliest evidence-backed violation of workflow.catalog_before_fulfill.\"}}",
+  "prompt_hash": "2017518380819191c5bc94dcaa9183d291f967c2b82f4c04e1ab6ac035c0a872",
+  "provider": "submitted-evidence",
+  "runtime_ms": 0.0218,
+  "temperature": 0.0,
+  "usage": {
+    "agent_id": "adaptation_agent",
+    "completion_tokens": 42,
+    "estimated_cost_usd": 0.0,
+    "mode": "frozen",
+    "prompt_tokens": 215,
+    "token_source": "whitespace_proxy",
+    "total_tokens": 257
+  }
+}

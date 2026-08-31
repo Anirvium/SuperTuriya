@@ -1,0 +1,49 @@
+{
+  "classes": [
+    {
+      "decisive_invariants": [
+        "state.region_matches_request"
+      ],
+      "definition": "Persisted or retrieved operational context overrides the current explicit request.",
+      "id": "stale_memory"
+    },
+    {
+      "decisive_invariants": [
+        "evidence.final_has_catalog_ref"
+      ],
+      "definition": "A completed or attempted action is not linked to the required validation evidence.",
+      "id": "missing_evidence"
+    },
+    {
+      "decisive_invariants": [
+        "tool.quantity_is_positive_integer"
+      ],
+      "definition": "A tool call receives a quantity with the wrong type, sign, or requested value.",
+      "id": "invalid_tool_argument"
+    },
+    {
+      "decisive_invariants": [
+        "tool.available_status_respected"
+      ],
+      "definition": "A deterministic tool result is mapped to the wrong operational meaning.",
+      "id": "tool_output_misinterpretation"
+    },
+    {
+      "decisive_invariants": [
+        "policy.approval_checked_when_required"
+      ],
+      "definition": "A governed action proceeds without checking and recording a required approval.",
+      "id": "missing_approval"
+    },
+    {
+      "decisive_invariants": [
+        "workflow.catalog_before_fulfill"
+      ],
+      "definition": "A side-effecting action is ordered before its required validation step.",
+      "id": "orchestration_error"
+    }
+  ],
+  "scope": "Cloud-operations scenario families implemented over the frozen region, quantity, validation-evidence, approval, and execution-order simulator. This is not a cross-domain taxonomy.",
+  "taxonomy_id": "superturiya-cloud-operations-failure-taxonomy",
+  "version": "1.0.0"
+}

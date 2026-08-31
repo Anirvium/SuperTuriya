@@ -1,0 +1,102 @@
+{
+  "case_id": "v2-014",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-014",
+    "quantity": 2,
+    "region": "eu-west-1",
+    "status": "blocked_unavailable"
+  },
+  "goal": "Activate two sandbox failover units in eu-west-1 only if recovery capacity is available.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "unavailable",
+    "faulty_order": [
+      "catalog.lookup",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": 2,
+    "memory_region": "eu-west-1",
+    "request_id": "REQ-7302",
+    "requested_quantity": 2,
+    "requested_region": "eu-west-1",
+    "requires_approval": false
+  },
+  "scenario_family": "incident_recovery_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-014",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-014",
+      "region": "eu-west-1",
+      "status": "unavailable"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7302"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "incident_commander",
+      "step_id": "v2-014-s1",
+      "summary": "REQ-7302 requests 2 sandbox failover units in eu-west-1."
+    },
+    {
+      "evidence_refs": [
+        "CAT-014"
+      ],
+      "index": 2,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-014-s2",
+      "summary": "The recovery catalog returns status='unavailable' for the requested failover unit."
+    },
+    {
+      "evidence_refs": [
+        "CAT-014"
+      ],
+      "index": 3,
+      "kind": "interpretation",
+      "source": "agent",
+      "step_id": "v2-014-s3",
+      "summary": "The unavailable result is interpreted as if capacity were available."
+    },
+    {
+      "evidence_refs": [
+        "CAT-014"
+      ],
+      "index": 4,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-014-s4",
+      "summary": "Two sandbox failover units are attempted."
+    },
+    {
+      "evidence_refs": [
+        "CAT-014"
+      ],
+      "index": 5,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-014-s5",
+      "summary": "The run reports failover capacity activated."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": true,
+    "quantity_constraint": true,
+    "require_evidence": true,
+    "result_validation": false,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

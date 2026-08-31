@@ -1,0 +1,32 @@
+{
+  "agent_id": "investigator_agent",
+  "mode": "frozen",
+  "model": "frozen-investigator-v1",
+  "output": {
+    "confidence": 0.93,
+    "critical_step": "eval-001-s2",
+    "decisive_invariant": "state.region_matches_request",
+    "downstream_effects": [],
+    "evidence_refs": [
+      "mem-eval-001-old"
+    ],
+    "failure_class": "stale_memory",
+    "observed_divergence": "state.region_matches_request failed at eval-001-s2",
+    "preceding_state": "step_1",
+    "root_cause": "Earliest evidence-backed violation of state.region_matches_request."
+  },
+  "prompt": "Find the earliest consequential divergence. Use only supplied evidence. critical_step must be exactly one step_id copied from the supplied trajectory. Return critical_step, preceding_state, observed_divergence, failure_class, root_cause, evidence_refs, downstream_effects, confidence, and decisive_invariant. The decisive_invariant must be one invariant_id present in invariant_violations.\n{\"case_id\":\"eval-001\",\"goal\":\"Fulfil req-eval-001 in north-eu with quantity 2 and evidence.\",\"initial_state\":{\"approval_granted\":false,\"catalog_status\":\"available\",\"memory_region\":\"us-east\",\"request_id\":\"req-eval-001\",\"requested_quantity\":2,\"requested_region\":\"north-eu\",\"requires_approval\":false},\"invariant_violations\":[{\"actual\":\"us-east\",\"evidence_refs\":[\"request.region\",\"profile.region\"],\"expected\":\"north-eu\",\"invariant_id\":\"state.region_matches_request\",\"passed\":false}],\"tool_descriptions\":{\"approval.check\":\"Returns the approval decision and evidence identifier.\",\"catalog.lookup\":\"Returns availability, region, and an evidence identifier.\",\"fulfill.simulate\":\"Sandboxed deterministic fulfilment tool; quantity must be positive integer.\",\"profile.lookup\":\"Returns stored profile context with age metadata.\"},\"trajectory\":[{\"evidence_refs\":[],\"index\":1,\"kind\":\"input\",\"source\":\"user\",\"step_id\":\"eval-001-s1\",\"summary\":\"Requested north-eu sandbox.\"},{\"evidence_refs\":[\"mem-eval-001-old\"],\"index\":2,\"kind\":\"memory\",\"source\":\"profile.lookup\",\"step_id\":\"eval-001-s2\",\"summary\":\"Selected 120-day-old us-east preference.\"},{\"evidence_refs\":[\"ev-eval-001-catalog\"],\"index\":3,\"kind\":\"tool\",\"source\":\"catalog.lookup\",\"step_id\":\"eval-001-s3\",\"summary\":\"Catalog confirmed north-eu availability.\"},{\"evidence_refs\":[\"ev-eval-001-catalog\"],\"index\":4,\"kind\":\"action\",\"source\":\"fulfill.simulate\",\"step_id\":\"eval-001-s4\",\"summary\":\"Fulfilled in us-east.\"}]}",
+  "prompt_hash": "0a896653567a23971bbf4e4799d8d8bbcadf778dd0ea11cd9cd65d5ebee266b3",
+  "provider": "submitted-evidence",
+  "runtime_ms": 0.0074,
+  "temperature": 0.0,
+  "usage": {
+    "agent_id": "investigator_agent",
+    "completion_tokens": 10,
+    "estimated_cost_usd": 0.0,
+    "mode": "frozen",
+    "prompt_tokens": 110,
+    "token_source": "whitespace_proxy",
+    "total_tokens": 120
+  }
+}

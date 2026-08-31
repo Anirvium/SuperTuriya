@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "retrieval.filter",
+      "target_id": "context.region"
+    }
+  ],
+  "adjudication_note": "The explicit request names ap-south-1, but the trajectory selects us-east-1 from persisted context at s3. Correcting that selection is the earliest bounded repair that restores the requested region.",
+  "case_id": "v2-001",
+  "decisive_invariant": "state.region_matches_request",
+  "expected_repair_surface": {
+    "operation": "retrieval.filter",
+    "target_id": "context.region"
+  },
+  "gold_critical_steps": [
+    "v2-001-s3"
+  ],
+  "gold_failure_class": "stale_memory",
+  "label_canary": "V2_GOLD_CANARY_V2_001_REGION"
+}

@@ -1,0 +1,100 @@
+{
+  "case_id": "v2-016",
+  "difficult": true,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-016",
+    "quantity": 1,
+    "region": "us-east-1",
+    "status": "blocked_unavailable"
+  },
+  "goal": "Activate one sandbox rollback unit in us-east-1 only after catalog validation confirms availability.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "unavailable",
+    "faulty_order": [
+      "fulfill.simulate",
+      "catalog.lookup"
+    ],
+    "faulty_quantity_arg": 1,
+    "memory_region": "us-east-1",
+    "request_id": "REQ-7304",
+    "requested_quantity": 1,
+    "requested_region": "us-east-1",
+    "requires_approval": false
+  },
+  "scenario_family": "incident_recovery_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-016",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-016",
+      "region": "us-east-1",
+      "status": "unavailable"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7304"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "incident_commander",
+      "step_id": "v2-016-s1",
+      "summary": "REQ-7304 requests 1 sandbox rollback unit in us-east-1 only after recovery-catalog validation."
+    },
+    {
+      "evidence_refs": [],
+      "index": 2,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-016-s2",
+      "summary": "The rollback unit is attempted before any recovery-catalog lookup."
+    },
+    {
+      "evidence_refs": [
+        "CAT-016"
+      ],
+      "index": 3,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-016-s3",
+      "summary": "The delayed catalog lookup returns status='unavailable' for the rollback unit."
+    },
+    {
+      "evidence_refs": [
+        "CAT-016"
+      ],
+      "index": 4,
+      "kind": "interpretation",
+      "source": "agent",
+      "step_id": "v2-016-s4",
+      "summary": "The delayed unavailable result is still treated as consistent with the earlier action."
+    },
+    {
+      "evidence_refs": [
+        "CAT-016"
+      ],
+      "index": 5,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-016-s5",
+      "summary": "The run reports the rollback unit activated."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": false,
+    "quantity_constraint": true,
+    "require_evidence": true,
+    "result_validation": false,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

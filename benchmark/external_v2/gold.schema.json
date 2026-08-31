@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://superturiya.local/schemas/external-v2-gold.json",
+  "title": "SuperTuriya independent external-v2 private gold",
+  "type": "object",
+  "required": [
+    "case_id", "gold_critical_steps", "gold_failure_class", "decisive_invariant",
+    "expected_repair_surface", "acceptable_repairs", "adjudication_note", "label_canary"
+  ],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^v2-[0-9]{3}$"},
+    "gold_critical_steps": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "gold_failure_class": {
+      "enum": [
+        "stale_memory",
+        "missing_evidence",
+        "invalid_tool_argument",
+        "tool_output_misinterpretation",
+        "missing_approval",
+        "orchestration_error"
+      ]
+    },
+    "decisive_invariant": {
+      "enum": [
+        "state.region_matches_request",
+        "evidence.final_has_catalog_ref",
+        "tool.quantity_is_positive_integer",
+        "tool.available_status_respected",
+        "policy.approval_checked_when_required",
+        "workflow.catalog_before_fulfill"
+      ]
+    },
+    "expected_repair_surface": {"$ref": "#/$defs/repair"},
+    "acceptable_repairs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/repair"}},
+    "adjudication_note": {"type": "string", "minLength": 1},
+    "label_canary": {"type": "string", "pattern": "^V2_GOLD_CANARY_[A-Z0-9_]+$"}
+  },
+  "$defs": {
+    "repair": {
+      "type": "object",
+      "required": ["operation", "target_id"],
+      "properties": {
+        "operation": {
+          "enum": [
+            "prompt_rule.add", "prompt_rule.replace", "tool_argument.constraint",
+            "tool_result.validation", "retrieval.filter", "route.condition",
+            "recovery_step.insert", "approval_rule.add"
+          ]
+        },
+        "target_id": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

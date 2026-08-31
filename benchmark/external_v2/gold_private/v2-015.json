@@ -1,0 +1,25 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "retrieval.filter",
+      "target_id": "context.region"
+    },
+    {
+      "operation": "recovery_step.insert",
+      "target_id": "finalizer.attach_evidence"
+    }
+  ],
+  "adjudication_note": "This case is multi-causal: s3 selects the stale recovery region and s6 independently drops the catalog evidence. Both are defensible critical steps; the stale-region selection is decisive because it causes the first incorrect action state.",
+  "case_id": "v2-015",
+  "decisive_invariant": "state.region_matches_request",
+  "expected_repair_surface": {
+    "operation": "retrieval.filter",
+    "target_id": "context.region"
+  },
+  "gold_critical_steps": [
+    "v2-015-s3",
+    "v2-015-s6"
+  ],
+  "gold_failure_class": "stale_memory",
+  "label_canary": "V2_GOLD_CANARY_V2_015_REGION_EVIDENCE"
+}

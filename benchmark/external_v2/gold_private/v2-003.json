@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "recovery_step.insert",
+      "target_id": "finalizer.attach_evidence"
+    }
+  ],
+  "adjudication_note": "The catalog evidence exists at s2 and is used during fulfillment, but the final record at s4 omits it. A bounded recovery step at the finalization surface can attach the existing catalog reference without changing the requested action.",
+  "case_id": "v2-003",
+  "decisive_invariant": "evidence.final_has_catalog_ref",
+  "expected_repair_surface": {
+    "operation": "recovery_step.insert",
+    "target_id": "finalizer.attach_evidence"
+  },
+  "gold_critical_steps": [
+    "v2-003-s4"
+  ],
+  "gold_failure_class": "missing_evidence",
+  "label_canary": "V2_GOLD_CANARY_V2_003_EVIDENCE"
+}

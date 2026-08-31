@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "benchmark_id": "superturiya-external-structural-transfer-v1",
+  "frozen_at": "2026-08-29T00:00:00Z",
+  "freeze_status": "sealed",
+  "case_count": 12,
+  "split": "held_out",
+  "cases_file": "cases.json",
+  "labels_file": "labels.json",
+  "cases_file_sha256": "5a4331157a7334a9ceae37ac4738292ed3aa617f30a156a3324af8f7a48438b6",
+  "labels_file_sha256": "4deb121ce6f55e08a83aecc7456b156943ba95e7b284c1980b921fd5041807cc",
+  "case_content_hash": "8ccd3b63f15f8518aa005aa3d8f3f62edc3b5ff5256ca86741215d89da61be4c",
+  "label_content_hash": "06cd1389a11f3366fd719894076eecf29fa1a8d7ac04397f24047af71107f3a7",
+  "case_ids": [
+    "xval-001",
+    "xval-002",
+    "xval-003",
+    "xval-004",
+    "xval-005",
+    "xval-006",
+    "xval-007",
+    "xval-008",
+    "xval-009",
+    "xval-010",
+    "xval-011",
+    "xval-012"
+  ],
+  "domains": [
+    "software_release",
+    "data_access",
+    "incident_rollback"
+  ],
+  "trajectory_length_range": [5, 7],
+  "failure_class_count": 6,
+  "multi_causal_case_ids": [
+    "xval-002",
+    "xval-006",
+    "xval-012"
+  ],
+  "authoring_independence": {
+    "independent_from_primary_case_ids": true,
+    "independent_from_primary_wording": true,
+    "independent_from_primary_step_sequences": true,
+    "third_party_authored": false,
+    "blind_external_adjudication": false,
+    "classification": "internally_authored_structural_transfer",
+    "disclosure": "This benchmark strengthens structural transfer evidence but is not represented as a third-party independent evaluation."
+  },
+  "freeze_sequence": {
+    "cases_and_labels_authored_before_external_runner": true,
+    "initial_failure_validated_before_freeze": true,
+    "baseline_or_final_outputs_generated_before_hash_freeze": false,
+    "post_freeze_tuning_allowed": false
+  },
+  "immutability_rule": "Any byte change to cases.json or labels.json creates a new benchmark version and requires a new directory, manifest, and evidence namespace.",
+  "allowed_post_freeze_changes": [
+    "evaluator implementation",
+    "runtime isolation tests",
+    "LIVE runner",
+    "ablation harness",
+    "versioned evidence artifacts"
+  ]
+}

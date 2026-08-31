@@ -1,0 +1,32 @@
+{
+  "agent_id": "investigator_agent",
+  "mode": "frozen",
+  "model": "frozen-investigator-v1",
+  "output": {
+    "confidence": 0.93,
+    "critical_step": "eval-004-s3",
+    "decisive_invariant": "evidence.final_has_catalog_ref",
+    "downstream_effects": [],
+    "evidence_refs": [
+      "eval-004-s3"
+    ],
+    "failure_class": "missing_evidence",
+    "observed_divergence": "evidence.final_has_catalog_ref failed at eval-004-s3",
+    "preceding_state": "step_2",
+    "root_cause": "Earliest evidence-backed violation of evidence.final_has_catalog_ref."
+  },
+  "prompt": "Find the earliest consequential divergence. Use only supplied evidence. critical_step must be exactly one step_id copied from the supplied trajectory. Return critical_step, preceding_state, observed_divergence, failure_class, root_cause, evidence_refs, downstream_effects, confidence, and decisive_invariant. The decisive_invariant must be one invariant_id present in invariant_violations.\n{\"case_id\":\"eval-004\",\"goal\":\"Fulfil req-eval-004 in eu-west with quantity 2 and cite catalog evidence.\",\"initial_state\":{\"approval_granted\":false,\"catalog_status\":\"available\",\"memory_region\":\"eu-west\",\"request_id\":\"req-eval-004\",\"requested_quantity\":2,\"requested_region\":\"eu-west\",\"requires_approval\":false},\"invariant_violations\":[{\"actual\":[],\"evidence_refs\":[\"ev-eval-004-catalog\"],\"expected\":\"ev-eval-004-catalog\",\"invariant_id\":\"evidence.final_has_catalog_ref\",\"passed\":false}],\"tool_descriptions\":{\"approval.check\":\"Returns the approval decision and evidence identifier.\",\"catalog.lookup\":\"Returns availability, region, and an evidence identifier.\",\"fulfill.simulate\":\"Sandboxed deterministic fulfilment tool; quantity must be positive integer.\",\"profile.lookup\":\"Returns stored profile context with age metadata.\"},\"trajectory\":[{\"evidence_refs\":[],\"index\":1,\"kind\":\"input\",\"source\":\"user\",\"step_id\":\"eval-004-s1\",\"summary\":\"Requested evidence-linked fulfilment.\"},{\"evidence_refs\":[\"ev-eval-004-catalog\"],\"index\":2,\"kind\":\"tool\",\"source\":\"catalog.lookup\",\"step_id\":\"eval-004-s2\",\"summary\":\"Catalog evidence was available.\"},{\"evidence_refs\":[],\"index\":3,\"kind\":\"decision\",\"source\":\"planner\",\"step_id\":\"eval-004-s3\",\"summary\":\"Finalizer omitted the evidence reference.\"},{\"evidence_refs\":[],\"index\":4,\"kind\":\"action\",\"source\":\"fulfill.simulate\",\"step_id\":\"eval-004-s4\",\"summary\":\"Fulfilled without evidence.\"}]}",
+  "prompt_hash": "1418b10654f4f4e36305e8cd6b43272d197883c6b7634fa6719be18bfec380c4",
+  "provider": "submitted-evidence",
+  "runtime_ms": 0.004,
+  "temperature": 0.0,
+  "usage": {
+    "agent_id": "investigator_agent",
+    "completion_tokens": 10,
+    "estimated_cost_usd": 0.0,
+    "mode": "frozen",
+    "prompt_tokens": 114,
+    "token_source": "whitespace_proxy",
+    "total_tokens": 124
+  }
+}

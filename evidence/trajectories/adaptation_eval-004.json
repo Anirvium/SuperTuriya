@@ -1,0 +1,45 @@
+{
+  "agent_id": "adaptation_agent",
+  "mode": "frozen",
+  "model": "frozen-adaptation-v1",
+  "output": {
+    "after_value": "require catalog evidence",
+    "approval_state": "candidate",
+    "before_value": false,
+    "evidence_refs": [
+      "eval-004-s3"
+    ],
+    "expected_metric_effect": {
+      "coverage_adjusted_verified_recovery": "+1 eligible recovery if verified"
+    },
+    "intervention_hash": "3fe3c6f109769f44a70dfa9e8ba4b7855e8397511dba3d0e06ab4bd8b83ecb0e",
+    "intervention_id": "int_eval-004",
+    "operation": "prompt_rule.add",
+    "rationale": "Bound the repair to the diagnosed missing_evidence surface.",
+    "requires_approval": true,
+    "risks": [
+      "repair may not address a second independent failure"
+    ],
+    "target_id": "final_response.evidence",
+    "verification_conditions": [
+      "original decisive invariant passes",
+      "task is fulfilled",
+      "all safety invariants pass",
+      "no regression is introduced"
+    ]
+  },
+  "prompt": "Propose the smallest typed bounded intervention that directly addresses the investigator's decisive invariant and root cause. Choose exactly one repair_surface_id from allowed_interventions, then list evidence, risks, expected metric effect, and verification conditions. Candidate approval is applied mechanically after this selection; it is governance metadata, not a reason to choose an approval-related repair surface. Do not claim that one repair fixes unrelated conditions.\n{\"allowed_interventions\":[{\"after_value\":\"check and record approval before fulfilment\",\"operation\":\"approval_rule.add\",\"repair_surface_id\":\"approval_rule.add::fulfill.approval\",\"target_id\":\"fulfill.approval\"},{\"after_value\":\"require catalog evidence\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::final_response.evidence\",\"target_id\":\"final_response.evidence\"},{\"after_value\":\"review the trace before acting\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.be_careful\",\"target_id\":\"planner.be_careful\"},{\"after_value\":\"positive integer equal to requested quantity\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.quantity_range\",\"target_id\":\"planner.quantity_range\"},{\"after_value\":\"render requested quantity as integer\",\"operation\":\"prompt_rule.add\",\"repair_surface_id\":\"prompt_rule.add::planner.quantity_type\",\"target_id\":\"planner.quantity_type\"},{\"after_value\":\"strict status mapping\",\"operation\":\"prompt_rule.replace\",\"repair_surface_id\":\"prompt_rule.replace::planner.catalog_mapping\",\"target_id\":\"planner.catalog_mapping\"},{\"after_value\":\"latest\",\"operation\":\"prompt_rule.replace\",\"repair_surface_id\":\"prompt_rule.replace::planner.region_precedence\",\"target_id\":\"planner.region_precedence\"},{\"after_value\":\"require catalog evidence\",\"operation\":\"recovery_step.insert\",\"repair_surface_id\":\"recovery_step.insert::finalizer.attach_evidence\",\"target_id\":\"finalizer.attach_evidence\"},{\"after_value\":\"catalog lookup before fulfilment\",\"operation\":\"recovery_step.insert\",\"repair_surface_id\":\"recovery_step.insert::workflow.preflight\",\"target_id\":\"workflow.preflight\"},{\"after_value\":\"latest\",\"operation\":\"retrieval.filter\",\"repair_surface_id\":\"retrieval.filter::context.region\",\"target_id\":\"context.region\"},{\"after_value\":\"check and record approval before fulfilment\",\"operation\":\"route.condition\",\"repair_surface_id\":\"route.condition::workflow.approval_route\",\"target_id\":\"workflow.approval_route\"},{\"after_value\":\"catalog lookup before fulfilment\",\"operation\":\"route.condition\",\"repair_surface_id\":\"route.condition::workflow.order\",\"target_id\":\"workflow.order\"},{\"after_value\":\"positive integer equal to requested quantity\",\"operation\":\"tool_argument.constraint\",\"repair_surface_id\":\"tool_argument.constraint::fulfill.quantity\",\"target_id\":\"fulfill.quantity\"},{\"after_value\":\"strict status mapping\",\"operation\":\"tool_result.validation\",\"repair_surface_id\":\"tool_result.validation::catalog.status\",\"target_id\":\"catalog.status\"}],\"case\":{\"case_id\":\"eval-004\",\"goal\":\"Fulfil req-eval-004 in eu-west with quantity 2 and cite catalog evidence.\",\"initial_state\":{\"approval_granted\":false,\"catalog_status\":\"available\",\"memory_region\":\"eu-west\",\"request_id\":\"req-eval-004\",\"requested_quantity\":2,\"requested_region\":\"eu-west\",\"requires_approval\":false},\"tool_descriptions\":{\"approval.check\":\"Returns the approval decision and evidence identifier.\",\"catalog.lookup\":\"Returns availability, region, and an evidence identifier.\",\"fulfill.simulate\":\"Sandboxed deterministic fulfilment tool; quantity must be positive integer.\",\"profile.lookup\":\"Returns stored profile context with age metadata.\"},\"trajectory\":[{\"evidence_refs\":[],\"index\":1,\"kind\":\"input\",\"source\":\"user\",\"step_id\":\"eval-004-s1\",\"summary\":\"Requested evidence-linked fulfilment.\"},{\"evidence_refs\":[\"ev-eval-004-catalog\"],\"index\":2,\"kind\":\"tool\",\"source\":\"catalog.lookup\",\"step_id\":\"eval-004-s2\",\"summary\":\"Catalog evidence was available.\"},{\"evidence_refs\":[],\"index\":3,\"kind\":\"decision\",\"source\":\"planner\",\"step_id\":\"eval-004-s3\",\"summary\":\"Finalizer omitted the evidence reference.\"},{\"evidence_refs\":[],\"index\":4,\"kind\":\"action\",\"source\":\"fulfill.simulate\",\"step_id\":\"eval-004-s4\",\"summary\":\"Fulfilled without evidence.\"}]},\"investigation\":{\"confidence\":0.93,\"critical_step\":\"eval-004-s3\",\"decisive_invariant\":\"evidence.final_has_catalog_ref\",\"downstream_effects\":[],\"evidence_refs\":[\"eval-004-s3\"],\"failure_class\":\"missing_evidence\",\"observed_divergence\":\"evidence.final_has_catalog_ref failed at eval-004-s3\",\"preceding_state\":\"step_2\",\"root_cause\":\"Earliest evidence-backed violation of evidence.final_has_catalog_ref.\"}}",
+  "prompt_hash": "ce07b83a4baea8de22c24b66fe7cbaa73096d6cf1843c30a1a2ea2d0fa8e4571",
+  "provider": "submitted-evidence",
+  "runtime_ms": 0.022,
+  "temperature": 0.0,
+  "usage": {
+    "agent_id": "adaptation_agent",
+    "completion_tokens": 41,
+    "estimated_cost_usd": 0.0,
+    "mode": "frozen",
+    "prompt_tokens": 206,
+    "token_source": "whitespace_proxy",
+    "total_tokens": 247
+  }
+}

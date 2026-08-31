@@ -1,0 +1,28 @@
+{
+  "artifact_count": 3,
+  "artifact_schema": "external-v2-evidence-manifest-v1",
+  "benchmark_id": "superturiya-independent-external-v2",
+  "benchmark_manifest_sha256": "478d99ffd48cc13b93b018589eac0713038557be1530106c5fcdd1197f948bdb",
+  "case_count": 16,
+  "created_at": "2026-08-31T08:07:34.884797+00:00",
+  "credential_values_recorded": false,
+  "files": [
+    {
+      "path": "qwen_fallback_contract.json",
+      "sha256": "7cdf303ef961c20895b4df8124aef6ee49c12f00a62bbd0dd36cb2bc53074044",
+      "size_bytes": 2028
+    },
+    {
+      "path": "raw_live_comparison_qwen_fallback.json",
+      "sha256": "5017a1bd3e7086f5b3df77b7620290a7a31d235c1d8d7d5b38e81f82d16a2420",
+      "size_bytes": 2566694
+    },
+    {
+      "path": "scored_live_comparison_qwen_fallback.json",
+      "sha256": "82981feb880df745ef511cb81c780e9e71d2f654a5fc1e275936f8ff96eaa18f",
+      "size_bytes": 27642
+    }
+  ],
+  "system_under_test_manifest_sha256": "b061f7d3aba6147829a473df6468b88c0abb1440a583408525aecfba0c8ec424",
+  "system_under_test_sha256": "b49f961ae86aedd2cbdf85ada2209fbb97307ffa3e76d29e4fcae636e024ee9e"
+}

@@ -1,0 +1,25 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "route.condition",
+      "target_id": "workflow.order"
+    },
+    {
+      "operation": "recovery_step.insert",
+      "target_id": "finalizer.attach_evidence"
+    }
+  ],
+  "adjudication_note": "This case has two independent defects: fulfillment precedes catalog validation at s2, and the final record omits the available catalog evidence at s5. The ordering defect is decisive because it occurs before any valid authorization evidence exists for the side effect.",
+  "case_id": "v2-008",
+  "decisive_invariant": "workflow.catalog_before_fulfill",
+  "expected_repair_surface": {
+    "operation": "route.condition",
+    "target_id": "workflow.order"
+  },
+  "gold_critical_steps": [
+    "v2-008-s2",
+    "v2-008-s4"
+  ],
+  "gold_failure_class": "orchestration_error",
+  "label_canary": "V2_GOLD_CANARY_V2_008_ORDER_EVIDENCE"
+}

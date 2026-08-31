@@ -1,0 +1,26 @@
+{
+  "artifact_schema": "external-isolation-audit-v1",
+  "benchmark_id": "superturiya-external-structural-transfer-v1",
+  "checks": {
+    "in_process_file_open_guard": true,
+    "runtime_import_boundary": {
+      "superturiya.external_runtime": {
+        "forbidden_tokens_found": [],
+        "passed": true,
+        "source_sha256": "6064ba2804e895c6764b7222e84c5ad5f48bbb1b2909a3b4243ac5ba97c21883"
+      },
+      "superturiya.external_runtime_cli": {
+        "forbidden_tokens_found": [],
+        "passed": true,
+        "source_sha256": "21763304c961dab0d0f25f1b3d21265a38ddc23301c08d661c10525b22d0cc25"
+      }
+    },
+    "runtime_output_has_no_gold_canary": true,
+    "runtime_source_has_no_evaluator_tokens": true,
+    "scoring_occurs_after_prediction_persistence": true,
+    "subprocess_has_cases_without_gold_file": true,
+    "subprocess_output_has_no_gold_canary": true
+  },
+  "created_at": "2026-08-30T08:19:06Z",
+  "passed": true
+}

@@ -1,0 +1,102 @@
+{
+  "case_id": "v2-011",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-011",
+    "quantity": 2,
+    "region": "ap-south-1",
+    "status": "blocked_unavailable"
+  },
+  "goal": "Create two sandbox dataset grants in ap-south-1 only when the entitlement profile is available.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "unavailable",
+    "faulty_order": [
+      "catalog.lookup",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": 2,
+    "memory_region": "ap-south-1",
+    "request_id": "REQ-7203",
+    "requested_quantity": 2,
+    "requested_region": "ap-south-1",
+    "requires_approval": false
+  },
+  "scenario_family": "data_access_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-011",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-011",
+      "region": "ap-south-1",
+      "status": "unavailable"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7203"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "data_steward",
+      "step_id": "v2-011-s1",
+      "summary": "REQ-7203 requests 2 sandbox dataset grants in ap-south-1."
+    },
+    {
+      "evidence_refs": [
+        "CAT-011"
+      ],
+      "index": 2,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-011-s2",
+      "summary": "The entitlement catalog returns status='unavailable' for the requested dataset profile."
+    },
+    {
+      "evidence_refs": [
+        "CAT-011"
+      ],
+      "index": 3,
+      "kind": "interpretation",
+      "source": "agent",
+      "step_id": "v2-011-s3",
+      "summary": "The unavailable result is treated as a valid entitlement match."
+    },
+    {
+      "evidence_refs": [
+        "CAT-011"
+      ],
+      "index": 4,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-011-s4",
+      "summary": "Two sandbox grants are attempted."
+    },
+    {
+      "evidence_refs": [
+        "CAT-011"
+      ],
+      "index": 5,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-011-s5",
+      "summary": "The workflow reports access granted."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": true,
+    "quantity_constraint": true,
+    "require_evidence": true,
+    "result_validation": false,
+    "retrieval_filter": "current_request_region_only"
+  }
+}

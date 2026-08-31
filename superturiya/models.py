@@ -96,6 +96,9 @@ def row_to_dict(row: Mapping[str, Any]) -> JsonDict:
         "learning_candidate",
         "full_report",
         "attrs",
+        "payload",
+        "result",
+        "report",
     ):
         if key in result:
             result[key] = json_load(result[key], [] if key.endswith("s") else {})

@@ -1,0 +1,115 @@
+{
+  "author_id": "chatgpt-person-a-ai",
+  "benchmark_id": "superturiya-independent-external-v2",
+  "cases_aggregate_sha256": "65355b5037671874294d488d5b4238a3695b140c2f3b73afdb50af4ea9cfa513",
+  "failure_taxonomy_sha256": "c5ab28a8c87a0f37d9a03b13767e039e294f9225a76d515f9e2d0244d2c84e25",
+  "file_hashes": {
+    "cases": {
+      "v2-001.json": "e06f6728b3de491d529999452db8d59f6a40d6cbfcbfd6e9d73279c2a4654c1b",
+      "v2-002.json": "10c7362278fd7e34dbc1878eb0e83a9d2a9ccd7467e1fdfbd007d2b79d1bd7e4",
+      "v2-003.json": "94670a4dafb5db25a00a09787c06ef4049dcb435011fce6f89c8ec4118dd996f",
+      "v2-004.json": "3939aeefec9896a8db58e4eda8c2e25216e7bc6963b961c722758b02ebdfd6e6",
+      "v2-005.json": "5a7ac64131993ebe1072288c71bc9720d5091e06db554354cc25876123c89807",
+      "v2-006.json": "f6d613efb4ff9314c76e445cde18e08131a60a6439d19952ca6a000c6042f5d1",
+      "v2-007.json": "e1296213d50ca996efb8eab74fd15b89c71a6a4877b37f8cb332ffcef98bc8ea",
+      "v2-008.json": "647493775d5758d354bdac8d865b7cc66ba38ceac40223d1fc022f297a82f1c5",
+      "v2-009.json": "945efbbb2840ee9bda174fa853813a737161c12bbccb9c132800fccf68de2daf",
+      "v2-010.json": "d13dfc433692244afbc35cd0854fde2657f4631bc38a76c6696bdda7a9bac48f",
+      "v2-011.json": "4ede56baf5c7162598605aae7f3fe2c3a0e1870a28f242bb773f61340dfd46bc",
+      "v2-012.json": "c7f5e5affdfe92f7fb8411a196c4f93b3873ccdb7740b3f70f98e9384384c7c7",
+      "v2-013.json": "7af6d20fef03ef9d0cc49a48ee303a49b001209080768d8c9820df1fda61463c",
+      "v2-014.json": "610662eaf1dbd3849803364c5778e591700d957e610382e7fc148f7602bb56a9",
+      "v2-015.json": "971cfe643808ee902ea8467606cafbc78515eb5a4045e506e6f54a545dab7453",
+      "v2-016.json": "0b440063c15d966fdfb20ba0203a320b44dfc903076f5654f09853a07835b09f"
+    },
+    "gold_private": {
+      "v2-001.json": "562b299c6271ba6e3e0d97989e64bec23322edf6232b56f62ce550a59dcfca41",
+      "v2-002.json": "fb26d7c3557e3b7ed65de30eb22b915083fdfebd825ae961a20def3d4440cc21",
+      "v2-003.json": "ec4f9205b0f690c7dfa21a329c2b3de515fa39990de25226e6687da6adc737d4",
+      "v2-004.json": "63bcd1ae9a722efcdf398d91b6cd7b264d837c4d793331c5a9f6938a46e26f64",
+      "v2-005.json": "6267596235eb68b2815482294576aac8ae87cc63bbb4847e72dba91bb9ee5efc",
+      "v2-006.json": "679659e294f727507e14761a0bcc06e8ab9d280653ff03a50c3f7f10bcb7a3bb",
+      "v2-007.json": "59f0255a827e2561bbc1c91b0ba3db20bfe8a32c1cfc02fbebbe4c2fc933ac4a",
+      "v2-008.json": "4342216c9e2fd08f858c271acacb851d362c9a884d40ad2693c5a03f04c20ffb",
+      "v2-009.json": "06f9f88a365cbf00b62a0a59a6ef4e6be1eac8b202ef723a6a130052ebd40479",
+      "v2-010.json": "32ebbf6220a796c6437ad4bac9bc520ad4839d26b69d2f071cb4bc86f23f60a0",
+      "v2-011.json": "2668fa37a0c7e0e81feade92295cfa3020eb62669eb8508d886bd4159c81515d",
+      "v2-012.json": "2c593940b8930b57ce4f48aec10e5a386a71b4ffc9eb3d3ea90fb5c05ca86951",
+      "v2-013.json": "32e7a8d15963be9afa982444f8503ac8f3d90c1ddaaae888f9a9ce396d7dcb5c",
+      "v2-014.json": "4a9f8a170c7fbaaa42fb54640cc2a39d6108a17daa38f1e6dc6b55b658049bc8",
+      "v2-015.json": "f4b634d0e283328c612141afa23d3e6b4f0c21b8566e19814b9597622a527e6f",
+      "v2-016.json": "6f9ba9b9eefdd391794b1c5d3a551adfbe795c513d44ff9576730911484bdbc7"
+    }
+  },
+  "frozen_at": "2026-08-30T15:13:49.876811+00:00",
+  "git_state_at_freeze": {
+    "commit": "bbe7fb9cc55d028796628ee4db0710767e4e70f6",
+    "worktree_dirty": true
+  },
+  "gold_aggregate_sha256": "2522231b0a680600b689648d08bed596c894d2ad68960013d05ac6d1666d9204",
+  "independence_attestation": "Cases and private gold were authored without access to SuperTuriya prompts or model outputs; the named reviewer checked the final package before freeze.",
+  "post_freeze_tuning_prohibited": true,
+  "reviewer_id": "piyushapriyadarshi0-owner-reviewer",
+  "schema_version": "2.1",
+  "status": "frozen",
+  "validation": {
+    "case_count": 16,
+    "case_ids": [
+      "v2-001",
+      "v2-002",
+      "v2-003",
+      "v2-004",
+      "v2-005",
+      "v2-006",
+      "v2-007",
+      "v2-008",
+      "v2-009",
+      "v2-010",
+      "v2-011",
+      "v2-012",
+      "v2-013",
+      "v2-014",
+      "v2-015",
+      "v2-016"
+    ],
+    "claim_scope": "cloud_operations_scenario_families",
+    "difficult_count": 5,
+    "eligibility_rule": "derived_true_after_initial_failure_validation",
+    "eligible_count": 16,
+    "failure_taxonomy": {
+      "sha256": "c5ab28a8c87a0f37d9a03b13767e039e294f9225a76d515f9e2d0244d2c84e25",
+      "taxonomy_id": "superturiya-cloud-operations-failure-taxonomy",
+      "version": "1.0.0"
+    },
+    "gold_isolation": "separate_directory",
+    "initially_failing_count": 16,
+    "model_projection_contract": {
+      "case_count_audited": 16,
+      "hidden_fields_present": false,
+      "initial_state_fields": [
+        "approval_granted",
+        "catalog_status",
+        "memory_region",
+        "request_id",
+        "requested_quantity",
+        "requested_region",
+        "requires_approval"
+      ],
+      "top_level_fields": [
+        "case_id",
+        "goal",
+        "initial_state",
+        "tool_descriptions",
+        "trajectory"
+      ]
+    },
+    "scenario_families": [
+      "data_access_control",
+      "incident_recovery_control",
+      "resource_provisioning",
+      "software_release_control"
+    ],
+    "schema": "superturiya-external-v2-authoring-validation-v1",
+    "valid": true
+  }
+}

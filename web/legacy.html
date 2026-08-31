@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SuperTuriya</title>
+    <link rel="stylesheet" href="/legacy.css">
+  </head>
+  <body>
+    <svg class="symbols" aria-hidden="true">
+      <symbol id="icon-refresh" viewBox="0 0 24 24">
+        <path d="M20 11a8 8 0 1 0-2.3 5.7"></path>
+        <path d="M20 4v7h-7"></path>
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+      </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m16.5 16.5 4 4"></path>
+      </symbol>
+      <symbol id="icon-score" viewBox="0 0 24 24">
+        <path d="M4 19V5"></path>
+        <path d="M4 19h16"></path>
+        <path d="M8 15v-4"></path>
+        <path d="M12 15V8"></path>
+        <path d="M16 15v-2"></path>
+      </symbol>
+      <symbol id="icon-erase" viewBox="0 0 24 24">
+        <path d="M4 7h16"></path>
+        <path d="M9 7V5h6v2"></path>
+        <path d="M7 7l1 13h8l1-13"></path>
+      </symbol>
+      <symbol id="icon-spark" viewBox="0 0 24 24">
+        <path d="M12 2l1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2z"></path>
+        <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15z"></path>
+      </symbol>
+      <symbol id="icon-shield" viewBox="0 0 24 24">
+        <path d="M12 3l7 3v5c0 4.4-2.8 8-7 10-4.2-2-7-5.6-7-10V6l7-3z"></path>
+        <path d="M9 12l2 2 4-5"></path>
+      </symbol>
+      <symbol id="icon-network" viewBox="0 0 24 24">
+        <circle cx="6" cy="7" r="3"></circle>
+        <circle cx="18" cy="7" r="3"></circle>
+        <circle cx="12" cy="17" r="3"></circle>
+        <path d="M8.5 9.2l2 5"></path>
+        <path d="M15.5 9.2l-2 5"></path>
+      </symbol>
+    </svg>
+
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">ST</div>
+          <div>
+            <h1>SuperTuriya</h1>
+            <p>Trajectory Intelligence Command Layer</p>
+          </div>
+        </div>
+        <div class="loop-stages" aria-label="Intelligence loop">
+          <span>Observe</span>
+          <span>Synthesize</span>
+          <span>Trace</span>
+          <span>Score</span>
+          <span>Improve</span>
+        </div>
+        <div class="scope">
+          <label>Tenant<input id="tenant" value="demo"></label>
+          <label>Subject<input id="subject" value="user_42"></label>
+          <button id="refresh" class="icon-button" title="Refresh">
+            <svg><use href="#icon-refresh"></use></svg>
+          </button>
+        </div>
+      </header>
+
+      <section class="executive-strip">
+        <div class="executive-card primary">
+          <span class="eyebrow">Live Intelligence Loop</span>
+          <strong id="hero-utility">0.00</strong>
+          <p id="hero-status">No trajectory selected</p>
+        </div>
+        <div class="executive-card">
+          <svg><use href="#icon-network"></use></svg>
+          <div>
+            <span class="eyebrow">Evidence Graph</span>
+            <strong id="hero-graph">0 nodes / 0 edges</strong>
+          </div>
+        </div>
+        <div class="executive-card">
+          <svg><use href="#icon-spark"></use></svg>
+          <div>
+            <span class="eyebrow">Pattern Bank</span>
+            <strong id="hero-memory">0 memories</strong>
+          </div>
+        </div>
+        <div class="executive-card">
+          <svg><use href="#icon-shield"></use></svg>
+          <div>
+            <span class="eyebrow">Governance</span>
+            <strong id="hero-governance">0 policies</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="metric-strip" id="counts"></section>
+
+      <main class="workspace">
+        <section class="column narrow">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Trace</h2>
+              <button id="start-run" class="button" title="Start run">
+                <svg><use href="#icon-plus"></use></svg><span>Start</span>
+              </button>
+            </div>
+            <label>Agent<input id="agent-id" value="planner_agent"></label>
+            <label>Goal<textarea id="run-goal" rows="3">Improve a decision using evidence, memory, and recovery checks.</textarea></label>
+            <div class="active-run" id="active-run">No active run</div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Step</h2>
+              <button id="add-step" class="button" title="Record step">
+                <svg><use href="#icon-plus"></use></svg><span>Add</span>
+              </button>
+            </div>
+            <div class="inline-grid">
+              <label>Kind
+                <select id="step-kind">
+                  <option>decision</option>
+                  <option>tool</option>
+                  <option>memory</option>
+                  <option>retrieval</option>
+                </select>
+              </label>
+              <label>Status
+                <select id="step-status">
+                  <option>completed</option>
+                  <option>failed</option>
+                  <option>running</option>
+                </select>
+              </label>
+            </div>
+            <label>Source<input id="step-source" value="planner_agent"></label>
+            <label>Input<textarea id="step-input" rows="3">Evaluate current evidence.</textarea></label>
+            <label>Output<textarea id="step-output" rows="4">Decision used retrieved memory and fresh evidence.</textarea></label>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Observation</h2>
+              <button id="capture-observation" class="button" title="Capture observation">
+                <svg><use href="#icon-plus"></use></svg><span>Capture</span>
+              </button>
+            </div>
+            <div class="inline-grid">
+              <label>Type
+                <select id="obs-type">
+                  <option>message</option>
+                  <option>user_message</option>
+                  <option>tool_result</option>
+                  <option>feedback</option>
+                  <option>policy_event</option>
+                </select>
+              </label>
+              <label>Source<input id="obs-source" value="operator"></label>
+            </div>
+            <label>Content<textarea id="obs-content" rows="5">User needs concise evidence-linked recommendations.</textarea></label>
+          </div>
+        </section>
+
+        <section class="column wide">
+          <div class="panel score-panel">
+            <div class="panel-head">
+              <h2>Trajectory Score</h2>
+              <div class="button-row">
+                <button id="score-run" class="button" title="Score run">
+                  <svg><use href="#icon-score"></use></svg><span>Score</span>
+                </button>
+                <button id="counterfactuals" class="button ghost" title="Counterfactuals">
+                  <svg><use href="#icon-score"></use></svg><span>Audit</span>
+                </button>
+              </div>
+            </div>
+            <div class="utility">
+              <div>
+                <span class="eyebrow">Utility</span>
+                <strong id="utility-value">0.00</strong>
+              </div>
+              <p id="score-explanation">No score loaded.</p>
+            </div>
+            <div class="metrics" id="metrics"></div>
+          </div>
+
+          <div class="panel graph-panel">
+            <div class="panel-head">
+              <h2>Provenance Map</h2>
+              <button id="extract-memory" class="button" title="Extract memories">
+                <svg><use href="#icon-plus"></use></svg><span>Extract</span>
+              </button>
+            </div>
+            <canvas id="graph" width="960" height="420"></canvas>
+            <div class="map-insights" id="map-insights"></div>
+          </div>
+
+          <div class="split">
+            <div class="panel">
+              <h2>Runs</h2>
+              <div id="runs" class="list"></div>
+            </div>
+            <div class="panel">
+              <h2>Counterfactuals</h2>
+              <div id="counterfactual-list" class="list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="column narrow">
+          <div class="panel quantum-panel">
+            <div class="panel-head">
+              <h2>Interpretation</h2>
+              <button id="quantum-interpret" class="button" title="Interpret trajectory">
+                <svg><use href="#icon-spark"></use></svg><span>Analyze</span>
+              </button>
+            </div>
+            <div class="ambiguity-meter">
+              <span class="eyebrow">Ambiguity</span>
+              <strong id="ambiguity-value">0.00</strong>
+              <div class="bar"><span id="ambiguity-bar"></span></div>
+            </div>
+            <div id="interpretations" class="list compact"></div>
+          </div>
+
+          <div class="panel experience-panel">
+            <div class="panel-head">
+              <h2>Experience State</h2>
+              <span id="experience-label" class="state-pill">No state</span>
+            </div>
+            <div class="experience-grid">
+              <div>
+                <span class="eyebrow">Function</span>
+                <strong id="function-score">0.00</strong>
+              </div>
+              <div>
+                <span class="eyebrow">Coherence</span>
+                <strong id="experience-coherence">0.00</strong>
+              </div>
+              <div>
+                <span class="eyebrow">Gap</span>
+                <strong id="experience-gap">0.00</strong>
+              </div>
+              <div>
+                <span class="eyebrow">Memory Fidelity</span>
+                <strong id="memory-fidelity">0.00</strong>
+              </div>
+            </div>
+            <div id="experience-readout" class="state-readout">Run an interpretation to load state.</div>
+            <div id="state-graph-summary" class="list compact"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Memory</h2>
+              <button id="search-memory" class="icon-button" title="Search memory">
+                <svg><use href="#icon-search"></use></svg>
+              </button>
+            </div>
+            <label>Query<input id="memory-query" value="therapy avoidance recovery evidence"></label>
+            <div id="memory-results" class="list"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Policies</h2>
+              <button id="synth-policy" class="button" title="Synthesize policies">
+                <svg><use href="#icon-plus"></use></svg><span>Synth</span>
+              </button>
+            </div>
+            <div id="policies" class="list"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Governance</h2>
+              <button id="erase-subject" class="button danger" title="Erase subject">
+                <svg><use href="#icon-erase"></use></svg><span>Erase</span>
+              </button>
+            </div>
+            <div id="audit" class="list compact"></div>
+          </div>
+        </section>
+      </main>
+
+      <div id="toast" class="toast" role="status"></div>
+    </div>
+    <script src="/legacy.js"></script>
+  </body>
+</html>

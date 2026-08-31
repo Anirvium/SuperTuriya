@@ -174,6 +174,43 @@ class SuperTuriyaStore:
                     metadata TEXT NOT NULL
                 );
 
+                CREATE TABLE IF NOT EXISTS interventions (
+                    intervention_id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    subject_id TEXT,
+                    case_id TEXT NOT NULL,
+                    run_id TEXT,
+                    operation TEXT NOT NULL,
+                    target_id TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    payload TEXT NOT NULL,
+                    reviewer_id TEXT,
+                    reviewed_at TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS replay_results (
+                    replay_id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    subject_id TEXT,
+                    case_id TEXT NOT NULL,
+                    intervention_id TEXT NOT NULL,
+                    mode TEXT NOT NULL,
+                    verified_safe_recovery INTEGER NOT NULL,
+                    safety_regression INTEGER NOT NULL,
+                    result TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS evaluation_runs (
+                    evaluation_id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    mode TEXT NOT NULL,
+                    report TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+
                 CREATE INDEX IF NOT EXISTS idx_observations_scope
                     ON observations (tenant_id, subject_id, timestamp);
                 CREATE INDEX IF NOT EXISTS idx_observations_run
@@ -190,6 +227,12 @@ class SuperTuriyaStore:
                     ON quantum_trajectory_reports (tenant_id, subject_id, created_at);
                 CREATE INDEX IF NOT EXISTS idx_quantum_reports_run
                     ON quantum_trajectory_reports (run_id, created_at);
+                CREATE INDEX IF NOT EXISTS idx_interventions_scope
+                    ON interventions (tenant_id, case_id, status, updated_at);
+                CREATE INDEX IF NOT EXISTS idx_replay_results_scope
+                    ON replay_results (tenant_id, case_id, created_at);
+                CREATE INDEX IF NOT EXISTS idx_evaluation_runs_scope
+                    ON evaluation_runs (tenant_id, created_at);
                 """
             )
             self._connection.commit()
@@ -306,7 +349,7 @@ class SuperTuriyaStore:
             "text": clean_text(payload.get("text")),
             "derived_from": json_dump(payload.get("derived_from") or []),
             "confidence": float(payload.get("confidence", 0.65)),
-            "status": clean_text(payload.get("status") or "active"),
+            "status": clean_text(payload.get("status") or "active").lower(),
             "created_at": clean_text(payload.get("created_at") or now),
             "updated_at": clean_text(payload.get("updated_at") or now),
             "expires_at": clean_text(payload.get("expires_at")) or None,
@@ -820,7 +863,7 @@ class SuperTuriyaStore:
             "body": clean_text(payload.get("body")),
             "derived_from_runs": json_dump(payload.get("derived_from_runs") or []),
             "confidence": float(payload.get("confidence", 0.7)),
-            "status": clean_text(payload.get("status") or "active"),
+            "status": clean_text(payload.get("status") or "candidate").lower(),
             "created_at": clean_text(payload.get("created_at") or now),
             "updated_at": clean_text(payload.get("updated_at") or now),
         }
@@ -856,20 +899,250 @@ class SuperTuriyaStore:
         return row_to_dict(row)
 
     def list_policies(
-        self, tenant_id: Optional[str] = None, subject_id: Optional[str] = None, limit: int = 100
+        self,
+        tenant_id: Optional[str] = None,
+        subject_id: Optional[str] = None,
+        limit: int = 100,
+        status: Optional[str] = "active",
     ) -> List[JsonDict]:
-        clauses: List[str] = ["status = ?"]
-        params: List[Any] = ["active"]
+        clauses: List[str] = []
+        params: List[Any] = []
+        if status:
+            clauses.append("status = ?")
+            params.append(clean_text(status).lower())
         if tenant_id:
             clauses.append("tenant_id = ?")
             params.append(tenant_id)
         if subject_id:
             clauses.append("(subject_id = ? OR subject_id IS NULL)")
             params.append(subject_id)
-        where = f"WHERE {' AND '.join(clauses)}"
+        where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
         rows = self._connection.execute(
             f"SELECT * FROM policies {where} ORDER BY updated_at DESC LIMIT ?",
             [*params, limit],
+        ).fetchall()
+        return [row_to_dict(row) for row in rows]
+
+    def transition_policy(
+        self,
+        policy_id: str,
+        status: str,
+        reviewer_id: str,
+        note: str = "",
+    ) -> JsonDict:
+        policy = self.get_policy(policy_id)
+        target = clean_text(status).lower()
+        transitions = {
+            "candidate": {"approved", "rejected", "deferred"},
+            "approved": {"active"},
+            "deferred": {"candidate"},
+            "active": set(),
+            "rejected": set(),
+        }
+        if target not in transitions.get(policy["status"], set()):
+            raise ValueError(f"invalid policy transition: {policy['status']} -> {target}")
+        reviewer = clean_text(reviewer_id)
+        if not reviewer:
+            raise ValueError("reviewer_id is required")
+        now = utc_now()
+        with self._lock:
+            self._connection.execute(
+                "UPDATE policies SET status = ?, updated_at = ? WHERE policy_id = ?",
+                (target, now, policy_id),
+            )
+            self._connection.commit()
+        self.add_audit(
+            policy["tenant_id"],
+            "policy.review",
+            "policy",
+            policy_id,
+            policy.get("subject_id"),
+            {
+                "from": policy["status"],
+                "to": target,
+                "reviewer_id": reviewer,
+                "note": clean_text(note),
+            },
+        )
+        return self.get_policy(policy_id)
+
+    def add_intervention(self, payload: Mapping[str, Any]) -> JsonDict:
+        now = utc_now()
+        intervention_payload = dict(payload.get("payload") or payload)
+        record = {
+            "intervention_id": clean_text(
+                payload.get("intervention_id")
+                or intervention_payload.get("intervention_id")
+                or new_id("int")
+            ),
+            "tenant_id": clean_text(payload.get("tenant_id") or "hackathon"),
+            "subject_id": clean_text(payload.get("subject_id")) or None,
+            "case_id": clean_text(payload.get("case_id")),
+            "run_id": clean_text(payload.get("run_id")) or None,
+            "operation": clean_text(intervention_payload.get("operation")),
+            "target_id": clean_text(intervention_payload.get("target_id")),
+            "status": clean_text(intervention_payload.get("approval_state") or "candidate").lower(),
+            "payload": json_dump(intervention_payload),
+            "reviewer_id": clean_text(payload.get("reviewer_id")) or None,
+            "reviewed_at": clean_text(payload.get("reviewed_at")) or None,
+            "created_at": clean_text(payload.get("created_at") or now),
+            "updated_at": clean_text(payload.get("updated_at") or now),
+        }
+        if not record["case_id"]:
+            raise ValueError("intervention.case_id is required")
+        with self._lock:
+            self._connection.execute(
+                """
+                INSERT OR REPLACE INTO interventions
+                (intervention_id, tenant_id, subject_id, case_id, run_id, operation, target_id,
+                 status, payload, reviewer_id, reviewed_at, created_at, updated_at)
+                VALUES
+                (:intervention_id, :tenant_id, :subject_id, :case_id, :run_id, :operation,
+                 :target_id, :status, :payload, :reviewer_id, :reviewed_at, :created_at, :updated_at)
+                """,
+                record,
+            )
+            self._connection.commit()
+        self.add_audit(
+            record["tenant_id"],
+            "intervention.write",
+            "intervention",
+            record["intervention_id"],
+            record["subject_id"],
+            {
+                "case_id": record["case_id"],
+                "status": record["status"],
+                "reviewer_id": record["reviewer_id"],
+                "review": intervention_payload.get("review"),
+            },
+        )
+        return self.get_intervention(record["intervention_id"])
+
+    def get_intervention(self, intervention_id: str) -> JsonDict:
+        row = self._connection.execute(
+            "SELECT * FROM interventions WHERE intervention_id = ?", (intervention_id,)
+        ).fetchone()
+        if row is None:
+            raise KeyError(f"intervention not found: {intervention_id}")
+        return row_to_dict(row)
+
+    def list_interventions(
+        self,
+        tenant_id: str = "hackathon",
+        case_id: Optional[str] = None,
+        status: Optional[str] = None,
+        limit: int = 100,
+    ) -> List[JsonDict]:
+        clauses = ["tenant_id = ?"]
+        params: List[Any] = [tenant_id]
+        if case_id:
+            clauses.append("case_id = ?")
+            params.append(case_id)
+        if status:
+            clauses.append("status = ?")
+            params.append(status)
+        rows = self._connection.execute(
+            f"SELECT * FROM interventions WHERE {' AND '.join(clauses)} "
+            "ORDER BY updated_at DESC LIMIT ?",
+            [*params, limit],
+        ).fetchall()
+        return [row_to_dict(row) for row in rows]
+
+    def add_replay_result(self, payload: Mapping[str, Any]) -> JsonDict:
+        result = dict(payload.get("result") or {})
+        record = {
+            "replay_id": clean_text(payload.get("replay_id") or new_id("replay")),
+            "tenant_id": clean_text(payload.get("tenant_id") or "hackathon"),
+            "subject_id": clean_text(payload.get("subject_id")) or None,
+            "case_id": clean_text(payload.get("case_id")),
+            "intervention_id": clean_text(payload.get("intervention_id")),
+            "mode": clean_text(payload.get("mode") or "frozen"),
+            "verified_safe_recovery": 1 if payload.get("verified_safe_recovery") else 0,
+            "safety_regression": 1 if payload.get("safety_regression") else 0,
+            "result": json_dump(result),
+            "created_at": clean_text(payload.get("created_at") or utc_now()),
+        }
+        with self._lock:
+            self._connection.execute(
+                """
+                INSERT INTO replay_results
+                (replay_id, tenant_id, subject_id, case_id, intervention_id, mode,
+                 verified_safe_recovery, safety_regression, result, created_at)
+                VALUES
+                (:replay_id, :tenant_id, :subject_id, :case_id, :intervention_id, :mode,
+                 :verified_safe_recovery, :safety_regression, :result, :created_at)
+                """,
+                record,
+            )
+            self._connection.commit()
+        self.add_audit(
+            record["tenant_id"],
+            "replay.verify",
+            "replay_result",
+            record["replay_id"],
+            record["subject_id"],
+            {
+                "case_id": record["case_id"],
+                "intervention_id": record["intervention_id"],
+                "verified_safe_recovery": bool(record["verified_safe_recovery"]),
+            },
+        )
+        row = self._connection.execute(
+            "SELECT * FROM replay_results WHERE replay_id = ?", (record["replay_id"],)
+        ).fetchone()
+        return row_to_dict(row)
+
+    def list_replay_results(
+        self, tenant_id: str = "hackathon", case_id: Optional[str] = None, limit: int = 100
+    ) -> List[JsonDict]:
+        clauses = ["tenant_id = ?"]
+        params: List[Any] = [tenant_id]
+        if case_id:
+            clauses.append("case_id = ?")
+            params.append(case_id)
+        rows = self._connection.execute(
+            f"SELECT * FROM replay_results WHERE {' AND '.join(clauses)} "
+            "ORDER BY created_at DESC LIMIT ?",
+            [*params, limit],
+        ).fetchall()
+        return [row_to_dict(row) for row in rows]
+
+    def save_evaluation_run(self, payload: Mapping[str, Any], tenant_id: str = "hackathon") -> JsonDict:
+        evaluation_id = clean_text(payload.get("evaluation_id") or new_id("eval"))
+        record = {
+            "evaluation_id": evaluation_id,
+            "tenant_id": tenant_id,
+            "mode": clean_text(payload.get("mode") or "frozen"),
+            "report": json_dump(dict(payload)),
+            "created_at": clean_text(payload.get("created_at") or utc_now()),
+        }
+        with self._lock:
+            self._connection.execute(
+                """
+                INSERT OR REPLACE INTO evaluation_runs
+                (evaluation_id, tenant_id, mode, report, created_at)
+                VALUES (:evaluation_id, :tenant_id, :mode, :report, :created_at)
+                """,
+                record,
+            )
+            self._connection.commit()
+        return self.get_evaluation_run(evaluation_id)
+
+    def get_evaluation_run(self, evaluation_id: str) -> JsonDict:
+        row = self._connection.execute(
+            "SELECT * FROM evaluation_runs WHERE evaluation_id = ?", (evaluation_id,)
+        ).fetchone()
+        if row is None:
+            raise KeyError(f"evaluation not found: {evaluation_id}")
+        return row_to_dict(row)
+
+    def list_evaluation_runs(
+        self, tenant_id: str = "hackathon", limit: int = 20
+    ) -> List[JsonDict]:
+        rows = self._connection.execute(
+            "SELECT * FROM evaluation_runs WHERE tenant_id = ? "
+            "ORDER BY created_at DESC LIMIT ?",
+            (tenant_id, limit),
         ).fetchall()
         return [row_to_dict(row) for row in rows]
 
@@ -921,6 +1194,8 @@ class SuperTuriyaStore:
             "scores": "trajectory_scores",
             "interpretations": "quantum_trajectory_reports",
             "policies": "policies",
+            "interventions": "interventions",
+            "replays": "replay_results",
         }
         for key, table in tables.items():
             clauses: List[str] = []
@@ -947,6 +1222,8 @@ class SuperTuriyaStore:
             "quantum_trajectory_reports",
             "traces",
             "policies",
+            "interventions",
+            "replay_results",
         ]
         deleted: Dict[str, int] = {}
         with self._lock:
@@ -977,5 +1254,11 @@ class SuperTuriyaStore:
             "scores": self.list_scores(tenant_id, subject_id, limit=20),
             "quantum_reports": self.list_quantum_reports(tenant_id, subject_id, limit=12),
             "policies": self.list_policies(tenant_id, subject_id, limit=30),
+            "policy_candidates": self.list_policies(
+                tenant_id, subject_id, limit=30, status="candidate"
+            ),
+            "interventions": self.list_interventions(tenant_id, limit=30),
+            "replays": self.list_replay_results(tenant_id, limit=30),
+            "evaluations": self.list_evaluation_runs(tenant_id, limit=5),
             "audit": self.list_audit(tenant_id, subject_id, limit=20),
         }

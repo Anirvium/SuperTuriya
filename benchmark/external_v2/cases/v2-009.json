@@ -1,0 +1,113 @@
+{
+  "case_id": "v2-009",
+  "difficult": false,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-009",
+    "quantity": 1,
+    "region": "eu-west-1",
+    "status": "fulfilled"
+  },
+  "goal": "Create one sandbox data-access grant in eu-west-1 for the current request.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "available",
+    "faulty_order": [
+      "catalog.lookup",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": 1,
+    "memory_region": "ap-south-1",
+    "request_id": "REQ-7201",
+    "requested_quantity": 1,
+    "requested_region": "eu-west-1",
+    "requires_approval": false
+  },
+  "scenario_family": "data_access_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-009",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-009",
+      "region": "eu-west-1",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7201"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "data_steward",
+      "step_id": "v2-009-s1",
+      "summary": "REQ-7201 requests 1 sandbox data-access grant scoped to eu-west-1."
+    },
+    {
+      "evidence_refs": [
+        "memory:ap-south-1"
+      ],
+      "index": 2,
+      "kind": "context",
+      "source": "memory",
+      "step_id": "v2-009-s2",
+      "summary": "A previous access task stored ap-south-1 as the active data region."
+    },
+    {
+      "evidence_refs": [
+        "memory:ap-south-1",
+        "request:REQ-7201"
+      ],
+      "index": 3,
+      "kind": "decision",
+      "source": "agent",
+      "step_id": "v2-009-s3",
+      "summary": "The stored ap-south-1 region is carried into the new grant workflow."
+    },
+    {
+      "evidence_refs": [
+        "CAT-009"
+      ],
+      "index": 4,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-009-s4",
+      "summary": "The entitlement catalog reports the requested access profile available in eu-west-1."
+    },
+    {
+      "evidence_refs": [
+        "CAT-009"
+      ],
+      "index": 5,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-009-s5",
+      "summary": "A sandbox grant is attempted against ap-south-1."
+    },
+    {
+      "evidence_refs": [
+        "CAT-009"
+      ],
+      "index": 6,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-009-s6",
+      "summary": "The run records the access grant in ap-south-1."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": true,
+    "quantity_constraint": true,
+    "require_evidence": true,
+    "result_validation": true,
+    "retrieval_filter": "prefer_persisted_memory_region"
+  }
+}

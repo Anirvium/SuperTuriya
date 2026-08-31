@@ -1,0 +1,20 @@
+{
+  "acceptable_repairs": [
+    {
+      "operation": "tool_argument.constraint",
+      "target_id": "fulfill.quantity"
+    }
+  ],
+  "adjudication_note": "s3 is the first point where the valid integer request is transformed into a non-integer tool argument. Constraining the quantity argument to the requested positive integer repairs the trajectory before the side effect.",
+  "case_id": "v2-002",
+  "decisive_invariant": "tool.quantity_is_positive_integer",
+  "expected_repair_surface": {
+    "operation": "tool_argument.constraint",
+    "target_id": "fulfill.quantity"
+  },
+  "gold_critical_steps": [
+    "v2-002-s3"
+  ],
+  "gold_failure_class": "invalid_tool_argument",
+  "label_canary": "V2_GOLD_CANARY_V2_002_QUANTITY"
+}

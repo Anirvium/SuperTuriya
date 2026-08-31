@@ -1,0 +1,276 @@
+{
+  "aggregate_metrics": {
+    "baseline": {
+      "complete_results_reported": 12,
+      "conditional_recovery_rate": 0.25,
+      "coverage_adjusted_verified_recovery_rate": 0.25,
+      "eligible_initial_failures": 12,
+      "estimated_cost_usd": 0.0,
+      "intervention_coverage": 1.0,
+      "interventions_attempted": 12,
+      "median_runtime_ms": 0.0512,
+      "safety_regression_rate": 0.0,
+      "task_success_after_replay": 0.25,
+      "token_usage": 2131,
+      "verified_safe_recoveries": 3
+    },
+    "improvement": {
+      "absolute_vrr": 0.6667,
+      "additional_verified_recoveries": 8,
+      "relative_vrr": 2.6668
+    },
+    "superturiya": {
+      "complete_results_reported": 12,
+      "conditional_recovery_rate": 0.9167,
+      "coverage_adjusted_verified_recovery_rate": 0.9167,
+      "critical_step_localization_accuracy": 1.0,
+      "eligible_initial_failures": 12,
+      "estimated_cost_usd": 0.0,
+      "failure_class_accuracy": 1.0,
+      "intervention_coverage": 1.0,
+      "interventions_attempted": 12,
+      "median_runtime_ms": 0.0221,
+      "safety_regression_rate": 0.0,
+      "task_success_after_replay": 0.9167,
+      "token_usage": 4494,
+      "verified_safe_recoveries": 11
+    }
+  },
+  "benchmark_freeze": {
+    "case_count": 15,
+    "case_hash": "1ce1700ecc3eb21cf1fa28442131ceceb8bf694093ba98297ddfc3ee6879f05b",
+    "cases_file_sha256": "053725a78acf10f4024b5cc068dc34801e75f3229c41b5e661b6c614e024146a",
+    "development_count": 3,
+    "failure_class_counts": {
+      "invalid_tool_argument": 2,
+      "missing_approval": 2,
+      "missing_evidence": 2,
+      "orchestration_error": 2,
+      "stale_memory": 2,
+      "tool_output_misinterpretation": 2
+    },
+    "freeze_commit": "bbe7fb9cc55d028796628ee4db0710767e4e70f6",
+    "gold_loader_module": "superturiya.evaluation",
+    "held_out_count": 12,
+    "label_hash": "31e1666b99360f12fbbbe9cd786e1975ac05988b7c171e9579170af99976c890",
+    "labels_exposed_to_agents": false,
+    "labels_file_sha256": "19d83916218462eb04ba5af999caa52ea77cfd1cea2a1971ab15071a6996e076",
+    "runtime_module": "superturiya.adaptive",
+    "valid": true
+  },
+  "case_matrix": [
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-001",
+      "decisive_invariant": "state.region_matches_request",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "retrieval.filter",
+        "target_id": "context.region"
+      },
+      "failure_class": "stale_memory",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-002",
+      "decisive_invariant": "state.region_matches_request",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "retrieval.filter",
+        "target_id": "context.region"
+      },
+      "failure_class": "stale_memory",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": true,
+      "case_id": "eval-003",
+      "decisive_invariant": "evidence.final_has_catalog_ref",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "prompt_rule.add",
+        "target_id": "final_response.evidence"
+      },
+      "failure_class": "missing_evidence",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": true,
+      "case_id": "eval-004",
+      "decisive_invariant": "evidence.final_has_catalog_ref",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "prompt_rule.add",
+        "target_id": "final_response.evidence"
+      },
+      "failure_class": "missing_evidence",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": true,
+      "case_id": "eval-005",
+      "decisive_invariant": "tool.quantity_is_positive_integer",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "tool_argument.constraint",
+        "target_id": "fulfill.quantity"
+      },
+      "failure_class": "invalid_tool_argument",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-006",
+      "decisive_invariant": "tool.quantity_is_positive_integer",
+      "difficult": true,
+      "expected_repair_surface": {
+        "operation": "tool_argument.constraint",
+        "target_id": "fulfill.quantity"
+      },
+      "failure_class": "invalid_tool_argument",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-007",
+      "decisive_invariant": "tool.available_status_respected",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "tool_result.validation",
+        "target_id": "catalog.status"
+      },
+      "failure_class": "tool_output_misinterpretation",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-008",
+      "decisive_invariant": "tool.available_status_respected",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "tool_result.validation",
+        "target_id": "catalog.status"
+      },
+      "failure_class": "tool_output_misinterpretation",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-009",
+      "decisive_invariant": "policy.approval_checked_when_required",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "approval_rule.add",
+        "target_id": "fulfill.approval"
+      },
+      "failure_class": "missing_approval",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-010",
+      "decisive_invariant": "policy.approval_checked_when_required",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "approval_rule.add",
+        "target_id": "fulfill.approval"
+      },
+      "failure_class": "missing_approval",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-011",
+      "decisive_invariant": "workflow.catalog_before_fulfill",
+      "difficult": false,
+      "expected_repair_surface": {
+        "operation": "route.condition",
+        "target_id": "workflow.order"
+      },
+      "failure_class": "orchestration_error",
+      "superturiya_recovered": true,
+      "trajectory_length": 4,
+      "verifier_result": "verified_safe_recovery"
+    },
+    {
+      "baseline_recovered": false,
+      "case_id": "eval-012",
+      "decisive_invariant": "workflow.catalog_before_fulfill",
+      "difficult": true,
+      "expected_repair_surface": {
+        "operation": "route.condition",
+        "target_id": "workflow.order"
+      },
+      "failure_class": "orchestration_error",
+      "superturiya_recovered": false,
+      "trajectory_length": 4,
+      "verifier_result": "rejected"
+    }
+  ],
+  "created_at": "2026-08-30T08:19:05Z",
+  "demo_domain": {
+    "name": "enterprise resource-request provisioning",
+    "production_generalization_claimed": false,
+    "source": "curated synthetic deterministic fixtures"
+  },
+  "evaluation_id": "eval_ceda19ec4ebc",
+  "governance": {
+    "activation_path": "verified candidate -> separate human activation -> active policy",
+    "approval_overrides_verifier": false,
+    "replay_path": "candidate -> human approval -> replay -> verifier"
+  },
+  "limitations": [
+    "The benchmark is synthetic and does not establish production generalization.",
+    "Cases, labels, and frozen reasoning rules were co-developed before the recorded freeze commit.",
+    "FROZEN reproduces submitted outputs and deterministic scoring, not model inference.",
+    "The primary benchmark does not claim cross-case policy transfer."
+  ],
+  "positioning": "SuperTuriya turns failed agent trajectories into verified, governed procedural intelligence.",
+  "replay_contract": {
+    "different_valid_path_may_pass": true,
+    "frozen_mode_reproduces_inference": false,
+    "initial_state_frozen": true,
+    "policies_frozen_except_approved_intervention": true,
+    "side_effects": "sandboxed",
+    "task_frozen": true,
+    "tool_fixtures_frozen": true
+  },
+  "reproduction_command": "python3 -m superturiya.hackathon evaluate --mode frozen",
+  "resource_parity": {
+    "baseline_input": "raw agent-visible trajectory",
+    "live_model_provider_parity": "same environment-configured endpoint and model",
+    "same_approval_semantics": true,
+    "same_cases": true,
+    "same_initial_state": true,
+    "same_replay_engine": true,
+    "same_tool_fixtures": true,
+    "same_verifier": true,
+    "superturiya_additional_resources": [
+      "deterministic invariant preflight",
+      "Investigator Agent structured diagnosis",
+      "Adaptation Agent typed repair"
+    ]
+  },
+  "test_command": "python3 -m unittest discover -s tests -v"
+}

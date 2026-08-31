@@ -1,0 +1,111 @@
+{
+  "case_id": "v2-015",
+  "difficult": true,
+  "expected_state": {
+    "approval_checked": false,
+    "catalog_evidence_id": "CAT-015",
+    "quantity": 3,
+    "region": "us-west-2",
+    "status": "fulfilled"
+  },
+  "goal": "Start three sandbox restore workers in us-west-2 and retain catalog validation evidence.",
+  "initial_state": {
+    "approval_granted": false,
+    "catalog_status": "available",
+    "faulty_order": [
+      "catalog.lookup",
+      "fulfill.simulate"
+    ],
+    "faulty_quantity_arg": 3,
+    "memory_region": "us-east-1",
+    "request_id": "REQ-7303",
+    "requested_quantity": 3,
+    "requested_region": "us-west-2",
+    "requires_approval": false
+  },
+  "scenario_family": "incident_recovery_control",
+  "split": "held_out",
+  "tool_fixtures": {
+    "approval.check": {
+      "evidence_id": "APR-015",
+      "granted": false
+    },
+    "catalog.lookup": {
+      "evidence_id": "CAT-015",
+      "region": "us-west-2",
+      "status": "available"
+    },
+    "fulfill.simulate": {
+      "side_effects": "sandboxed"
+    }
+  },
+  "trajectory": [
+    {
+      "evidence_refs": [
+        "request:REQ-7303"
+      ],
+      "index": 1,
+      "kind": "request",
+      "source": "incident_commander",
+      "step_id": "v2-015-s1",
+      "summary": "REQ-7303 requests 3 sandbox restore workers in us-west-2 and requires catalog evidence in the final record."
+    },
+    {
+      "evidence_refs": [
+        "memory:us-east-1"
+      ],
+      "index": 2,
+      "kind": "context",
+      "source": "memory",
+      "step_id": "v2-015-s2",
+      "summary": "The previous incident left us-east-1 stored as the recovery region."
+    },
+    {
+      "evidence_refs": [
+        "memory:us-east-1",
+        "request:REQ-7303"
+      ],
+      "index": 3,
+      "kind": "decision",
+      "source": "agent",
+      "step_id": "v2-015-s3",
+      "summary": "The stored us-east-1 region is selected over the current us-west-2 request."
+    },
+    {
+      "evidence_refs": [
+        "CAT-015"
+      ],
+      "index": 4,
+      "kind": "tool",
+      "source": "catalog.lookup",
+      "step_id": "v2-015-s4",
+      "summary": "The recovery catalog reports restore workers available in us-west-2 with evidence CAT-015."
+    },
+    {
+      "evidence_refs": [
+        "CAT-015"
+      ],
+      "index": 5,
+      "kind": "tool",
+      "source": "fulfill.simulate",
+      "step_id": "v2-015-s5",
+      "summary": "Three sandbox workers are attempted in us-east-1."
+    },
+    {
+      "evidence_refs": [],
+      "index": 6,
+      "kind": "final",
+      "source": "agent",
+      "step_id": "v2-015-s6",
+      "summary": "The terminal record reports completion in us-east-1 and omits the catalog evidence reference."
+    }
+  ],
+  "workflow_config": {
+    "approval_rule": true,
+    "enforce_order": true,
+    "quantity_constraint": true,
+    "require_evidence": false,
+    "result_validation": true,
+    "retrieval_filter": "prefer_persisted_memory_region"
+  }
+}
