@@ -66,12 +66,13 @@ procedural learning.”
 
 ## 3:35-3:55 - Removed experiment
 
-Show the changelog’s “Removed from default demo” row or `/legacy.html` briefly.
+Show the changelog’s “Removed from final validation claim” row.
 
-“We removed the pre-existing quantum-inspired interpretation layer from the
-default hackathon path. It did not contribute evidence to the recovery metric
-and made the product story less precise. It remains available only as disclosed
-legacy functionality.”
+“We initially considered the internally authored structural-transfer v1
+benchmark as final evidence. Its same-model live run produced zero recovery lift,
+and the cases were authored with knowledge of our repair vocabulary. We removed
+it from the final validation claim and built the blinded External-v2 protocol
+instead.”
 
 ## 3:55-4:30 - External-v2 and honest final comparison
 
@@ -104,6 +105,5 @@ make v2-sut-verify
 demo, replay, verification, scores, hashes, and committed evidence. Provider
 inference is optional and is not disguised as deterministic reproduction.”
 
-Do not claim production deployment, broad cross-domain validity, consciousness,
-quantum computing, autonomous self-modification, or novelty for localization and
-replay individually.
+Do not claim production deployment, broad cross-domain validity, autonomous
+self-modification, or novelty for localization and replay individually.

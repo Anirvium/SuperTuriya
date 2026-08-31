@@ -1,8 +1,46 @@
 # SuperTuriya
 
-SuperTuriya governs durable learning for stateful, tool-using agents. It turns a failed trajectory into an evidence-backed diagnosis, one typed bounded intervention, a deterministic replay from frozen state, and—only after verification plus explicit review—an active procedural policy.
+> An agent can propose a repair. It cannot decide that it has learned.
 
-This micro1 Frontier Engineering Challenge build is local-first, credential-free in FROZEN mode, and implemented with the Python standard library and SQLite.
+I built SuperTuriya to govern how stateful, tool-using agents learn from failure.
+It turns a failed trajectory into an evidence-backed diagnosis, one bounded typed
+intervention, a replay from frozen state, and—only after deterministic
+verification plus explicit human review—an active procedural policy.
+
+SuperTuriya is not a better LLM and it is not the provisioning agent shown in
+the demo. It is the reliability and governance layer around an agent:
+
+```text
+failure → diagnosis → typed repair → human approval → frozen replay
+        → deterministic verification → human activation → durable policy
+```
+
+The model proposes. Code verifies. A human governs.
+
+## Built by a human, with Codex
+
+This is a founder-led, spec-driven build. I chose the problem, accepted the
+scope, reviewed benchmark corrections, approved freezes and fallbacks, and own
+the final claims. Codex acted as the engineering collaborator: it helped turn
+those decisions into code, tests, evaluation harnesses, evidence artifacts, and
+documentation. The reasoning models used in experiments have no governance
+authority inside the product.
+
+That division is also the product thesis: assistance is useful; authority must
+remain explicit.
+
+## Run locally
+
+The default demonstration is credential-free and uses only Python’s standard
+library and SQLite.
+
+```bash
+git clone https://github.com/<owner>/SuperTuriya.git
+cd SuperTuriya
+python3 -m superturiya --seed --port 8765
+```
+
+Open `http://127.0.0.1:8765`.
 
 ## Exact demo use case
 
@@ -32,13 +70,9 @@ That negative result is preserved rather than hidden.
 
 FROZEN reproduces committed structured reasoning outputs, deterministic replay, verification, and scoring. It does **not** reproduce model inference. Optional LIVE mode uses a configured OpenAI-compatible endpoint.
 
-## Run the judge demo
+## Judge demo path
 
-```bash
-python3 -m superturiya --seed --port 8765
-```
-
-Open `http://127.0.0.1:8765`, then follow the numbered screen:
+Follow the numbered screen:
 
 1. Investigate `eval-006` to localize the invalid tool argument.
 2. Inspect the evidence and allowlisted typed intervention.
@@ -50,36 +84,18 @@ Try `eval-012 · difficult` to demonstrate safe rejection: the replay does not p
 ## Reproduce the evidence
 
 ```bash
-python3 -m superturiya.hackathon validate
-python3 -m superturiya.hackathon baseline --mode frozen
-python3 -m superturiya.hackathon evaluate --mode frozen
-python3 -m superturiya.hackathon demo --case eval-006 --mode frozen
-python3 -m superturiya.hackathon shadow-transfer
-python3 -m unittest discover -s tests -v
+make evaluate
+make test
+make v2-verify
+make v2-sut-verify
 ```
 
-Equivalent shortcuts are available through `make validate`, `make evaluate`, `make shadow-transfer`, `make test`, and `make run`.
+These commands reproduce the deterministic comparison, run all 58 tests, and
+verify the frozen External-v2 benchmark and SUT hashes without an API key.
 
 Committed evidence is under `evidence/`: complete baseline and final reports, all case-level results, representative Investigator and Adaptation trajectories, replay records, hashes, usage, runtime, and the metric contract. See [reproduction instructions](docs/hackathon/REPRODUCTION.md) and the [evidence manifest](docs/hackathon/EVIDENCE_MANIFEST.md).
 
-## External-validity evaluation
-
-A sealed structural-transfer v1 benchmark tests the same mechanism on 12 new
-five-to-seven-step traces across software release, data access, and incident
-rollback. It was internally authored with knowledge of the six repair surfaces,
-so it is treated as development evidence rather than third-party validation.
-
-```bash
-python3 -m superturiya.external_validity validate
-python3 -m superturiya.external_validity isolation
-python3 -m superturiya.external_validity frozen
-python3 -m superturiya.external_validity ablation --mode frozen
-python3 -m superturiya.external_validity bundle
-```
-
-Frozen structural-transfer result: direct baseline **2/12 (16.67%)** versus SuperTuriya **9/12 (75.00%)**, an absolute gain of seven verified recoveries, with 0.00% safety regression. All three deliberately multi-causal cases remain rejected.
-
-See [external validity protocol](docs/hackathon/EXTERNAL_VALIDITY_V1.md), the sealed [benchmark contract](benchmark/external_v1/README.md), and versioned artifacts under `evidence/external_validity/v1/`.
+## Evidence without hiding the miss
 
 External-v2 is the final evidence gate. It contains 16 blinded/adversarial cases
 authored by an AI acting as Person A without access to SuperTuriya prompts,
@@ -89,30 +105,28 @@ correction, mechanical validation, and content-hash freeze occurred before model
 execution. The cases cover four cloud-operations scenario families over the same
 frozen simulator; this is not claimed as unrelated-domain external validity.
 
-```bash
-make v2-verify
-make v2-sut-verify
-```
+| External-v2 measure | Result |
+|---|---:|
+| Direct baseline recovery | 8/16 · 50.00% |
+| SuperTuriya recovery | 8/16 · 50.00% |
+| Recovery lift | 0.00 percentage points |
+| Critical-step localization | 100.00% |
+| Decisive-invariant accuracy | 81.25% |
+| Mean repair-surface accuracy | 41.67% |
+| Safety regression | 0.00% |
 
-The preregistered primary model run paused after 72/144 checkpoints when its free
-daily capacity was exhausted; no complete raw artifact or score was produced.
-Before observing fallback-model output, a separate Qwen 3.8 27B same-model
-experiment was preregistered for deadline feasibility. It completed all 144
-calls: three trials over the same 16 cases for the direct baseline and
-SuperTuriya. Both recovered **8/16 (50.00%)**, for **0.00 percentage-point
-improvement** and **0.00% safety regression**. SuperTuriya localized accepted
-critical steps at 100.00% and decisive invariants at 81.25%, but repair-surface
-selection remained the bottleneck. No post-freeze tuning or model-shopping was
-performed.
+We preserved this zero-lift result instead of tuning after freeze. It shows the
+current system diagnoses where a trajectory failed more reliably than it selects
+the exact repair surface. Repair selection—not failure localization—is the next
+technical bottleneck.
 
-Raw predictions were persisted before private gold was opened for scoring. The
-run used 160,658 provider tokens, and the committed evidence records no
-credential values or private-label leakage. See the
-[final External-v2 report](docs/hackathon/external_v2_final_report.md),
-[fallback contract](evidence/external_validity/v2/qwen_fallback_contract.json),
-[raw predictions](evidence/external_validity/v2/raw_live_comparison_qwen_fallback.json),
-[scored result](evidence/external_validity/v2/scored_live_comparison_qwen_fallback.json),
-and [content-addressed manifest](evidence/external_validity/v2/manifest.json).
+The full capacity-interruption, preregistered-fallback, raw-prediction, and
+private-scoring methodology is recorded in the
+[final External-v2 report](docs/hackathon/external_v2_final_report.md). The
+[scored result](evidence/external_validity/v2/scored_live_comparison_qwen_fallback.json)
+and [content-addressed manifest](evidence/external_validity/v2/manifest.json) are
+committed for audit. Gold was evaluator-private during inference and published
+only after scoring so judges can reproduce the audit.
 
 See [external-v2 protocol](benchmark/external_v2/protocol.md) and the
 [reviewer instructions](benchmark/external_v2/reviewer_instructions.md).
@@ -156,19 +170,10 @@ Hackathon workflow:
 - `POST /hackathon/interventions/activate`
 - `POST /policies/review`
 
-The pre-existing trajectory-intelligence substrate remains available:
-
-- `POST /observations`
-- `POST /memories/extract`
-- `POST /memories/search`
-- `POST /graphs/upsert`
-- `POST /traces/start`
-- `POST /traces/step`
-- `POST /trajectories/score`
-- `POST /trajectories/counterfactuals`
-- `POST /trajectories/quantum-interpret`
-- `POST /policies/synthesise`
-- `DELETE /subjects/{id}?tenant_id=demo`
+The pre-hackathon trace, memory, graph, policy, governance, and research APIs
+remain available through the preserved legacy console. They are intentionally
+outside the default judge path; see
+[PREEXISTING.md](docs/hackathon/PREEXISTING.md) for the exact boundary.
 
 ## Repository map
 
@@ -190,10 +195,6 @@ AgentRx is credited for trajectory IR, invariant checking, auditable evidence, l
 The product contribution is their governed lifecycle in one local control plane: provenance-grounded diagnosis, strict typed repair, human review, deterministic regression-gated replay, and promotion into reusable procedural intelligence only after a verified safe recovery.
 
 See [PREEXISTING.md](docs/hackathon/PREEXISTING.md) for the frozen pre-hackathon boundary and [FEATURE_SPEC.md](docs/hackathon/FEATURE_SPEC.md) for the accepted scope and contracts.
-
-## Scientific positioning
-
-The original v1 also contains a quantum-inspired interpretation layer. It is classical and deterministic and is not on the default hackathon path. Density-matrix language is used only as an explainable metaphor for uncertainty over competing trajectory interpretations. SuperTuriya does not claim quantum computing, physical quantum cognition, or agent consciousness.
 
 ## License
 

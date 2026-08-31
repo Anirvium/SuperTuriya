@@ -24,5 +24,5 @@
 - [x] T-018: Receive, validate, review, correct, and freeze 16 AI-authored blinded/adversarial opaque cases; prohibit prompt or rule tuning after freeze.
 - [x] T-019: Preserve the capacity-limited primary run, preregister a separate same-model fallback before observing its output, and complete all three fallback trials without mixing model results.
 - [x] T-020: Report recovery, safety, localization, invariant, repair-surface, runtime, and usage evidence without assuming improvement; preserve the observed zero-lift result.
-- [ ] T-021: After T-017 through T-020, implement one sanitized canonical-trace adapter and external-workload showcase under the contract in `EXTERNAL_WORKLOAD_SHOWCASE.md`.
+- [ ] T-021 (deferred until after submission): Implement one sanitized canonical-trace adapter and external-workload showcase without touching the frozen evaluation path. This is optional future portability work and must not delay T-022.
 - [ ] T-022: Complete the five-minute video and HackerEarth form. Reviewer inspection, public-clone reproduction, license, repository push, and evidence packaging are complete.

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#07110f">
     <title>SuperTuriya — Govern Durable Agent Learning</title>
-    <link rel="stylesheet" href="/styles.css?v=20260830-1">
+    <link rel="stylesheet" href="/styles.css?v=20260831-2">
   </head>
   <body>
     <div class="shell">
@@ -16,7 +16,7 @@
         </a>
         <div class="run-state"><span class="pulse"></span><span id="mode-label">DEMO · frozen replay</span></div>
         <div class="header-actions">
-          <a class="text-link" href="#live-evidence">LIVE evidence</a>
+          <a class="text-link" href="#external-proof">Evidence</a>
           <button class="button secondary" id="run-evaluation">Run frozen evaluation</button>
         </div>
       </header>
@@ -26,8 +26,9 @@
           <div class="hero-copy">
             <p class="eyebrow">The control plane for durable agent improvement</p>
             <h1>Govern how agents<br><em>learn from failure.</em></h1>
-            <p>SuperTuriya observes a failed agent run, asks the GPT‑OSS‑120B reasoning model for a bounded diagnosis and repair, replays that repair in a frozen sandbox, and lets a human decide whether verified learning becomes durable policy.</p>
+            <p>SuperTuriya turns a failed agent run into an evidence-backed diagnosis, one bounded typed repair, and a frozen replay. Deterministic code verifies the result; a human decides whether it becomes durable policy.</p>
             <div class="hero-promise"><span>Model proposes</span><i>→</i><span>Verifier proves</span><i>→</i><span>Human governs</span></div>
+            <p class="build-note">Founder-led and spec-driven · Codex-assisted engineering · human-owned scope, freezes and claims</p>
           </div>
           <div class="proof" aria-label="held-out benchmark result">
             <div class="proof-label"><span>Frozen deterministic benchmark</span><button class="info" title="Verified safe recoveries divided by all eligible initially failing held-out cases. This is not the LIVE model result.">?</button></div>
@@ -43,30 +44,30 @@
 
         <section class="orchestra" aria-labelledby="orchestra-title">
           <div class="section-intro">
-            <p class="eyebrow">One system · five bounded authorities</p>
+            <p class="eyebrow">One system · five bounded roles</p>
             <h2 id="orchestra-title">A symphony, not a black box.</h2>
             <p>Each component has one job. No model can silently rewrite policy, approve itself, or overrule verification.</p>
           </div>
           <div class="orchestration-flow">
             <article class="role-card source"><span class="role-index">01</span><small>Agent runtime</small><strong>Trajectory</strong><p>Messages, memory, tools, state and evidence become a frozen failure record.</p></article>
             <span class="flow-arrow" aria-hidden="true">→</span>
-            <article class="role-card model"><span class="role-index">02</span><small>GPT‑OSS‑120B</small><strong>Investigator</strong><p>Localizes the critical step and emits an evidence-backed structured diagnosis.</p></article>
+            <article class="role-card model"><span class="role-index">02</span><small>Reasoning model</small><strong>Investigator</strong><p>Localizes the critical step and emits an evidence-backed structured diagnosis.</p></article>
             <span class="flow-arrow" aria-hidden="true">→</span>
-            <article class="role-card model"><span class="role-index">03</span><small>GPT‑OSS‑120B</small><strong>Adaptation</strong><p>Selects one allowlisted repair surface and states risks and verification conditions.</p></article>
+            <article class="role-card model"><span class="role-index">03</span><small>Reasoning model</small><strong>Adaptation</strong><p>Selects one allowlisted repair surface and states risks and verification conditions.</p></article>
             <span class="flow-arrow" aria-hidden="true">→</span>
             <article class="role-card verifier"><span class="role-index">04</span><small>Deterministic code</small><strong>Verifier</strong><p>Replays from frozen state and rejects unresolved invariants or safety regressions.</p></article>
             <span class="flow-arrow" aria-hidden="true">→</span>
             <article class="role-card human"><span class="role-index">05</span><small>You · human governor</small><strong>Decision</strong><p>Approve replay, reject the candidate, or activate only verified procedural learning.</p></article>
           </div>
-          <div class="authority-note"><strong>Authority boundary</strong><span>The GPT‑OSS‑120B reasoning model produces inspectable judgments—not private chain-of-thought. Verification and promotion remain outside the model.</span></div>
+          <div class="authority-note"><strong>Authority boundary</strong><span>The reasoning model produces inspectable judgments—not private chain-of-thought. Replay, verification, approval and promotion remain outside model authority.</span></div>
         </section>
 
         <section class="live-evidence" id="live-evidence" aria-labelledby="live-title">
           <header class="evidence-header">
             <div>
-              <p class="eyebrow">Recorded provider-backed experiment</p>
-              <h2 id="live-title">What the LIVE GPT‑OSS reasoning model actually did</h2>
-              <p>Same model, same cases, same replay engine. Inspect its structured diagnosis and repair—not an unverifiable reasoning transcript.</p>
+              <p class="eyebrow">Recorded development evidence</p>
+              <h2 id="live-title">What the model outputs make inspectable</h2>
+              <p>This v1 experiment is development evidence, not the final External-v2 claim. Inspect the structured diagnosis and repair—not an unverifiable reasoning transcript.</p>
             </div>
             <span class="evidence-status" id="live-status-pill">Loading evidence…</span>
           </header>
@@ -126,7 +127,7 @@
           <div class="evidence-disclosure"><strong>Evidence disclosure</strong><p id="live-disclosure">Loading the experiment’s validity status…</p><details><summary>Why private chain-of-thought is not displayed</summary><p>SuperTuriya exposes the model outputs needed for audit: critical step, invariant, root cause, evidence, repair, risks and verification conditions. Hidden reasoning tokens are neither reliable evidence nor required for governance.</p></details></div>
         </section>
 
-        <section class="guided-label" id="guided-demo"><p class="eyebrow">Interactive governed-repair console</p><h2>Now take the human seat.</h2><p>Choose a frozen failure, inspect the model-shaped diagnosis, approve a sandbox replay, and activate learning only if verification passes.</p></section>
+        <section class="guided-label" id="guided-demo"><p class="eyebrow">Interactive governed-repair console</p><h2>Take the human governance seat.</h2><p>Choose a frozen failure, inspect the structured diagnosis, approve a sandbox replay, and activate learning only if deterministic verification passes.</p></section>
 
         <section class="casebar">
           <div>
@@ -200,18 +201,34 @@
         <section class="method">
           <div><span>Workload</span><strong>Enterprise resource provisioning</strong></div>
           <div><span>Failure taxonomy</span><strong>6 classes × 2 cases</strong></div>
-          <div><span>Reasoning</span><strong>GPT‑OSS Investigator + Adaptation</strong></div>
+          <div><span>Reasoning</span><strong>Investigator + Adaptation</strong></div>
           <div><span>Authority</span><strong>Deterministic verifier</strong></div>
           <div><span>Learning</span><strong>Candidate → approved → active</strong></div>
+        </section>
+
+        <section class="external-proof" id="external-proof" aria-labelledby="external-proof-title">
+          <div>
+            <p class="eyebrow">Final External-v2 evidence</p>
+            <h2 id="external-proof-title">Diagnosis held up. Repair selection did not—yet.</h2>
+            <p>Across three trials on 16 blinded/adversarial cases, both systems recovered 8/16. We preserved the zero-lift result and did not tune after freeze. SuperTuriya still localized accepted critical steps perfectly and identified decisive invariants strongly, exposing exact repair-surface selection as the next bottleneck.</p>
+          </div>
+          <div class="external-metrics" aria-label="External-v2 results">
+            <div><span>Baseline</span><strong>50.00%</strong></div>
+            <div><span>SuperTuriya</span><strong>50.00%</strong></div>
+            <div><span>Critical step</span><strong>100.00%</strong></div>
+            <div><span>Invariant</span><strong>81.25%</strong></div>
+            <div><span>Repair surface</span><strong>41.67%</strong></div>
+            <div><span>Safety regression</span><strong>0.00%</strong></div>
+          </div>
         </section>
       </main>
 
       <footer>
-        <p>Classical, deterministic implementation. No consciousness or quantum-computing claim. <a href="/legacy.html">Open original v1 console</a>.</p>
+        <p>Founder-led, spec-driven and built with Codex as an engineering collaborator. Runtime authority remains with deterministic verification and explicit human review.</p>
         <p><span id="benchmark-hash">Benchmark hash loading…</span> · micro1 Frontier Engineering Challenge 2026</p>
       </footer>
     </div>
     <div class="toast" id="toast" role="status"></div>
-    <script src="/app.js?v=20260830-1"></script>
+    <script src="/app.js?v=20260831-2"></script>
   </body>
 </html>

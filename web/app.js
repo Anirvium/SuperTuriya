@@ -1,6 +1,11 @@
 const $ = (id) => document.getElementById(id);
 const state = { data: null, external: null, demo: null, interventionId: null, replay: null };
 
+// Keep the product workflow ahead of supporting research evidence in the judge flow.
+const externalProof = $("external-proof");
+const recordedEvidence = $("live-evidence");
+if (externalProof && recordedEvidence) externalProof.after(recordedEvidence);
+
 function percent(value) {
   return `${((Number(value) || 0) * 100).toFixed(2)}%`;
 }
@@ -75,14 +80,14 @@ function renderExternalCase() {
 function renderExternalEvidence(payload) {
   state.external = payload;
   if (payload.status !== "available") {
-    $("live-status-pill").textContent = "LIVE evidence unavailable";
+    $("live-status-pill").textContent = "Recorded evidence unavailable";
     $("live-disclosure").textContent = payload.message || "No completed experiment artifact was found.";
     return;
   }
   const provider = payload.provider;
   const aggregate = payload.aggregate;
   const metrics = payload.metrics;
-  $("live-status-pill").textContent = `${payload.evidence_class} evidence · recorded LIVE`;
+  $("live-status-pill").textContent = `${payload.evidence_class} evidence · recorded run`;
   $("live-status-pill").className = "evidence-status ready";
   $("live-model").textContent = provider.display_name || provider.model || "Unknown model";
   $("live-provider").textContent = provider.name || "OpenAI-compatible provider";
