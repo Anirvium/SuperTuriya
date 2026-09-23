@@ -19,17 +19,24 @@ DIST = ROOT / "dist"
 TARGET = DIST / "kaggle"
 MODEL_SOURCE = "foysalemonshanto/qwen3-8-27b-fp8-repacked-v1/pyTorch/hf-fp8/1"
 WHEEL_SOURCE = "driessmit1/arc3-vllm-h100-wheelhouse-v3"
+PUBLIC_GAMES = ("cd82", "ft09", "ls20", "r11l", "s5i5", "tu93", "vc33", "wa30")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--profile", choices=["smoke", "competition", "repair"], required=True)
+    parser.add_argument(
+        "--profile",
+        choices=["smoke", "competition", "repair", "public-memory", "public-repair"],
+        required=True,
+    )
     args = parser.parse_args()
 
     config_name = {
         "smoke": "smoke.json",
         "competition": "competition.json",
         "repair": "repair-ablation.json",
+        "public-memory": "competition.json",
+        "public-repair": "repair-ablation.json",
     }[args.profile]
     config = Config.load(ROOT / "configs" / config_name)
     DIST.mkdir(parents=True, exist_ok=True)
@@ -43,6 +50,8 @@ def main() -> None:
             "wheel_path": "auto:arc3-vllm-h100-wheelhouse-v3",
             "dataset_sources": [WHEEL_SOURCE],
         }
+    if args.profile.startswith("public-"):
+        kwargs["validation_games"] = PUBLIC_GAMES
     try:
         build(
             config,

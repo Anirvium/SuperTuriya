@@ -271,6 +271,33 @@ class Arc3PackagingTests(unittest.TestCase):
             self.assertEqual(metadata["model_sources"], ["owner/model/pyTorch/fp8/1"])
             self.assertEqual(metadata["dataset_sources"], ["owner/wheelhouse"])
 
+    def test_public_validation_games_are_frozen_in_notebook(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/"model"
+            build(
+                Config(profile="memory", model="fixture"),
+                path,
+                model_path="auto:qwen",
+                model_sources=["owner/model/pyTorch/fp8/1"],
+                wheel_path="auto:wheelhouse",
+                dataset_sources=["owner/wheelhouse"],
+                validation_games=["r11l", "tu93"],
+            )
+            manifest = json.loads((path/"build-manifest.json").read_text())
+            self.assertEqual(manifest["settings"]["validation_games"], ["r11l", "tu93"])
+            notebook = json.loads((path/"submission.ipynb").read_text())
+            source = "\n".join(cell["source"] for cell in notebook["cells"] if cell["cell_type"] == "code")
+            self.assertIn("Public benchmark passed:", source)
+
+            with self.assertRaises(ValueError):
+                build(
+                    Config(profile="memory", model="fixture"),
+                    Path(directory)/"bad",
+                    model_path="auto:qwen",
+                    model_sources=["owner/model/pyTorch/fp8/1"],
+                    validation_games=["../../secret"],
+                )
+
 
 @unittest.skipUnless(importlib.util.find_spec("arcengine"), "requires ARC SDK environment")
 class Arc3RuntimeTests(unittest.TestCase):

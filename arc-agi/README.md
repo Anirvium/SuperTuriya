@@ -81,6 +81,8 @@ and lets the gateway create the real `submission.parquet`.
 | `make build-smoke` | Generate the RTX pipeline validation notebook |
 | `make build-model` | Generate the Qwen 3.8 competition notebook |
 | `make build-repair` | Generate the repair ablation; not the default candidate |
+| `make kaggle-public-memory` | Run the frozen eight-game public benchmark with memory |
+| `make kaggle-public-repair` | Run the same benchmark with executable model repair |
 | `make verify` | Recheck notebook hash, code cells, offline metadata, and inputs |
 | `make push` | Upload the already-built `dist/kaggle` version |
 | `make status` | Query Kaggle for the current notebook version status |
@@ -88,6 +90,12 @@ and lets the gateway create the real `submission.parquet`.
 
 Every rebuild archives the previous generated directory under `dist/archive/`; it does
 not silently overwrite the last artifact.
+
+The public benchmark uses `cd82`, `ft09`, `ls20`, `r11l`, `s5i5`, `tu93`, `vc33`,
+and `wa30` from the official competition input. It runs privately in notebook commit
+mode, writes `arc-agi-run/report.json` plus hash-chained game journals, and still emits
+the placeholder parquet required by Kaggle. These runs do not consume the daily
+competition submission quota.
 
 ## Competition design
 

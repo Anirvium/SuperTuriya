@@ -139,9 +139,19 @@ def main():
         print(json.dumps({"output": str(args.output), "comparisons": len(results)}, indent=2))
     elif args.command == "build":
         from .notebook import build as build_notebook
-        print(build_notebook(Config.load(args.config), args.output, args.username, args.accelerator,
-                             args.model_path, args.model_source, args.dataset_source, args.wheel_path,
-                             args.tensor_parallel, args.kernel_slug, args.title))
+        print(build_notebook(
+            Config.load(args.config),
+            args.output,
+            username=args.username,
+            accelerator=args.accelerator,
+            model_path=args.model_path,
+            model_sources=args.model_source,
+            dataset_sources=args.dataset_source,
+            wheel_path=args.wheel_path,
+            tensor_parallel=args.tensor_parallel,
+            kernel_slug=args.kernel_slug,
+            title=args.title,
+        ))
 
 
 if __name__ == "__main__":

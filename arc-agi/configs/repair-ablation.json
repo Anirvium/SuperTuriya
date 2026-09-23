@@ -16,7 +16,8 @@
   "top_k": 20,
   "context_chars": 30000,
   "recent_transitions": 12,
-  "max_tool_rounds": 2,
+  "max_tool_rounds": 1,
+  "plan_length": 4,
   "vision": true,
   "enable_thinking": true,
   "max_parallel_games": 8

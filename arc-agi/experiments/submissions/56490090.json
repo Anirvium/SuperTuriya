@@ -1,0 +1,21 @@
+{
+  "schema": "superturiya-arc-agi-submission-v1",
+  "competition": "arc-prize-2026-arc-agi-3",
+  "submission_id": 56490090,
+  "submitted_at_utc": "2026-09-23T10:03:12.967000Z",
+  "description": "SuperTuriya v4 baseline: Qwen 3.8 27B FP8 memory profile",
+  "status": "pending",
+  "public_score": null,
+  "private_score": null,
+  "kernel": "piyusha1234/notebook5326562b0c",
+  "kernel_version": 4,
+  "output_file": "submission.parquet",
+  "profile": "memory",
+  "model": "superturiya-qwen38-27b",
+  "source_commit": "423318aeeb2e5860f841977be2274bbc65284fa7",
+  "notebook_sha256": "f7451582afe4fa692acd9e0124a1ae642f85b839dc495b5214f1fe9ed5bc3730",
+  "commit_output_sha256": "71bfd543030e339d87bd9ff744d466218398a1259650b2c255626d27049c88bb",
+  "hardware": "NvidiaRtxPro6000",
+  "internet": false,
+  "notes": "Version 4 passed commit-mode GPU, offline dependency, model load, readiness inference, and parquet validation before submission."
+}

@@ -9,7 +9,8 @@ GAMES ?= ls20,vc33,ft09
 STEPS ?= 40
 
 .PHONY: help setup test doctor list-games cache local-smoke build-smoke build-model \
-	build-repair verify push first-kaggle-test kaggle-model status pull-output _check-token
+	build-repair build-public-memory build-public-repair verify push first-kaggle-test \
+	kaggle-model kaggle-public-memory kaggle-public-repair status submissions pull-output _check-token
 
 help:
 	@echo "One workflow: develop/test here -> build dist/kaggle -> push the same notebook to Kaggle"
@@ -22,6 +23,8 @@ help:
 	@echo "  make first-kaggle-test   Build + upload the first validation version"
 	@echo "  make build-model         Build Qwen 3.8 27B FP8 competition candidate"
 	@echo "  make kaggle-model        Build + upload the model candidate"
+	@echo "  make kaggle-public-memory Run frozen public games with the memory profile"
+	@echo "  make kaggle-public-repair Run the same public games with targeted repair"
 	@echo "  make status              Check the existing Kaggle notebook run"
 
 setup:
@@ -57,6 +60,12 @@ build-model:
 build-repair:
 	PYTHONPATH=. $(VENV_PY) scripts/build_release.py --profile repair
 
+build-public-memory:
+	PYTHONPATH=. $(VENV_PY) scripts/build_release.py --profile public-memory
+
+build-public-repair:
+	PYTHONPATH=. $(VENV_PY) scripts/build_release.py --profile public-repair
+
 verify:
 	PYTHONPATH=. $(VENV_PY) -m superturiya_arc verify-build dist/kaggle
 
@@ -74,8 +83,15 @@ first-kaggle-test: build-smoke push
 
 kaggle-model: build-model push
 
+kaggle-public-memory: build-public-memory push
+
+kaggle-public-repair: build-public-repair push
+
 status: _check-token
 	$(KAGGLE) kernels status $(KERNEL_ID)
+
+submissions: _check-token
+	$(KAGGLE) competitions submissions -c arc-prize-2026-arc-agi-3
 
 pull-output: _check-token
 	@output_dir="results/kaggle-$$(date -u +%Y%m%dT%H%M%SZ)"; \

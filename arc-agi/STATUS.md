@@ -14,7 +14,11 @@ Updated: 23 September 2026.
   recursively; Kaggle loaded Qwen 3.8 27B FP8 with vLLM 0.19.0, passed the local
   model readiness probe, and wrote a valid Apache Parquet output. Model loading used
   28.51 GiB; the measured KV cache supports the configured eight concurrent games.
-- **Official submissions — none.** There is no leaderboard score yet.
+- **Official submission 56490090 — pending.** Version 4 was submitted on September 23
+  as the frozen memory-profile baseline. Kaggle reports no submissions remaining today.
+- **Version 5 — public benchmark uploaded.** This private commit-mode run evaluates the
+  memory profile on eight frozen official public environments and preserves per-game
+  reports and journals. It does not consume a competition submission.
 
 ## Ready locally
 

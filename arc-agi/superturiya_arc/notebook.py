@@ -89,6 +89,7 @@ def build(
     dataset_sources=(),
     wheel_path: str | None = None,
     tensor_parallel: int = 1,
+    validation_games=(),
     kernel_slug: str = "notebook5326562b0c",
     title: str = "notebook5326562b0c",
 ):
@@ -110,6 +111,11 @@ def build(
         raise ValueError("offline wheel path requires an explicit Kaggle dataset source")
     if tensor_parallel not in (1, 2, 4):
         raise ValueError("tensor parallel must be 1, 2, or 4")
+    validation_games = tuple(validation_games)
+    if any(not re.fullmatch(r"[a-z0-9]{4}(?:-[a-f0-9]{8})?", game) for game in validation_games):
+        raise ValueError("validation game IDs must be four lowercase alphanumerics with optional version")
+    if len(validation_games) != len(set(validation_games)):
+        raise ValueError("validation games must be unique")
     if output.exists() and any(output.iterdir()):
         raise ValueError("build directory must be empty; use a new version directory")
     output.mkdir(parents=True, exist_ok=True)
@@ -123,6 +129,7 @@ def build(
         "wheel_path": wheel_path,
         "tensor_parallel": tensor_parallel,
         "uses_model": uses_model,
+        "validation_games": validation_games,
     }
 
     bootstrap = dedent(
@@ -315,6 +322,26 @@ def build(
                 if not pathlib.Path('/kaggle/working/submission.parquet').is_file():
                     raise RuntimeError('Gateway did not produce submission.parquet')
             else:
+                validation_games = list(SETTINGS.get('validation_games', ()))
+                if validation_games:
+                    public_environments = competition_root / 'environment_files'
+                    if not public_environments.is_dir():
+                        raise RuntimeError('Official public environment files are unavailable')
+                    report = run(
+                        config,
+                        pathlib.Path('/kaggle/working/arc-agi-run'),
+                        public_environments,
+                        game_ids=validation_games,
+                        mode='offline',
+                        run_deadline=NOTEBOOK_START+config.total_seconds,
+                    )
+                    if report['status'] != 'complete':
+                        raise RuntimeError('Public benchmark incomplete; inspect arc-agi-run/report.json')
+                    print(
+                        'Public benchmark passed:',
+                        report['scorecard'].get('score'),
+                        '| games:', len(report['games']),
+                    )
                 import pandas as pd
                 pd.DataFrame(
                     [['1_0', '1', True, 1]],
