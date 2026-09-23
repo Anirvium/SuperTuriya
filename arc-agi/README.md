@@ -102,7 +102,7 @@ competition submission quota.
 The default competition profile is intentionally smaller than the experimental repair
 profile. It uses:
 
-- Qwen 3.8 27B FP8 with raw grid plus image context;
+- Qwen 3.8 27B FP8 with lossless run-length grid context plus image context;
 - compact per-game notes and recent transition summaries;
 - legal-action validation and coordinate validation before every real step;
 - short action plans that are cancelled when an observation contradicts a prediction;

@@ -15,7 +15,7 @@ from superturiya_arc.config import Config
 from superturiya_arc.diagnostics import diagnose_run
 from superturiya_arc.evaluation import compare, create_split, load_split
 from superturiya_arc.notebook import build
-from superturiya_arc.observation import Action, Observation, objects
+from superturiya_arc.observation import Action, Observation, decode_grid_rle, encode_grid_rle, objects
 from superturiya_arc.programs import ProgramExecutor, WorldModel
 from superturiya_arc.provider import ProviderError, parse_response
 
@@ -109,6 +109,16 @@ class Arc3ContractTests(unittest.TestCase):
         frame = SimpleNamespace(frame=[[[1]]], state=SimpleNamespace(name="NOT_FINISHED"),
                                 levels_completed=0, available_actions=[1], hidden_answer="secret")
         self.assertNotIn("secret", json.dumps(Observation.from_frame(frame).to_dict()))
+
+    def test_grid_rle_is_lossless_and_prompt_uses_it(self):
+        grid = [[0, 0, 1, 1], [2, 3, 3, 2]]
+        self.assertEqual(decode_grid_rle(encode_grid_rle(grid), 4), grid)
+        model = ScriptedModel(['{"actions":[{"id":3}]}'])
+        agent = Agent(Config(profile="memory", context_chars=6000), Log(), model)
+        agent.choose(observation(grid))
+        prompt = model.messages[0][1]["content"]
+        self.assertIn("grid_rle", prompt)
+        self.assertNotIn('"grid"', prompt)
 
     def test_component_click_is_inside_shape(self):
         grid = [[0]*5 for _ in range(5)]

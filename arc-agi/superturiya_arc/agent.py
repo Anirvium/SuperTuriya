@@ -7,7 +7,7 @@ from collections import Counter, deque
 from dataclasses import asdict
 
 from .config import Config
-from .observation import Action, Observation, delta, objects
+from .observation import Action, Observation, delta, encode_grid_rle, objects
 from .programs import ProgramExecutor, WorldModel
 from .provider import ProviderError, grid_image, parse_response
 
@@ -22,7 +22,10 @@ goals and coordinate conventions in notes. Avoid repeating ineffective actions.
 Reason internally, then return one JSON object, without markdown:
 {"actions":[{"id":1}],"notes":"compact rules, evidence, uncertainties, next goal",
  "reason":"brief evidence for the action"}.
-Actions may have x,y only for id 6. Propose at most 4 actions. You can supply
+Actions may have x,y only for id 6. Propose at most 8 actions. When an action has
+already shown a repeatable, beneficial effect, include 6-8 repetitions so the runner
+does not need to ask again after every few steps. Use short plans for risky or new
+actions. You can supply
 "expected_grids": [grid_after_action1,...] to make plans falsifiable.
 Instead of acting, request pure computation with {"analyze":"def analyze(data):\\n ..."}.
 The data object contains observation, transitions (before/action/after), notes,
@@ -31,7 +34,10 @@ testing candidate rules or planning. Return a small JSON-compatible result.
 Python supports basic builtins, list/dict/set methods and sqrt. No imports,
 filesystem, network, introspection, printing, environment calls or hidden state.
 Computation has a short timeout. Do not use tools for trivial calculations.
-All coordinates in grids use grid[y][x]. Component candidates may be misleading.
+The observation has height, width and lossless grid_rle. Each grid_rle item is one
+row, read left to right: "5x3,0x2" means color 5 repeated three cells then color 0
+repeated two cells. The supplied image shows the same grid. All coordinates use
+grid[y][x]. Component candidates may be misleading.
 """
 
 REPAIR_SYSTEM = """
@@ -126,7 +132,10 @@ class Agent:
         summaries = [{"action": t["action"], "delta": t["delta"], "level": t["level"],
                       "next_level": t["next_level"], "state": t["state"]}
                      for t in history[-self.config.recent_transitions:]]
-        data = {"observation": obs.to_dict(), "components": objects(obs.grid),
+        data = {"observation": {"height": len(obs.grid), "width": len(obs.grid[0]),
+                                "grid_rle": encode_grid_rle(obs.grid), "state": obs.state,
+                                "level": obs.level, "available_actions": list(obs.available)},
+                "components": objects(obs.grid),
                 "recent": summaries, "notes": self.notes if self.config.profile != "reactive" else "",
                 "budget": {"seconds_left": round(self.remaining(), 1),
                            "model_calls_left": self.config.max_model_calls-self.stats["model_calls"]}}

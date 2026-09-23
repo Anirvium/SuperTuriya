@@ -26,6 +26,42 @@ def grid_value(value: Any) -> list[list[int]]:
     return value
 
 
+def encode_grid_rle(grid: list[list[int]]) -> list[str]:
+    """Losslessly encode each grid row as color x run-length pairs.
+
+    This keeps the complete visual state available to the model without sending a
+    64-by-64 JSON array on every decision.  The accompanying image remains useful
+    for quick visual interpretation; this representation is the exact data.
+    """
+    grid_value(grid)
+    rows = []
+    for row in grid:
+        runs, color, count = [], row[0], 0
+        for value in row:
+            if value == color:
+                count += 1
+            else:
+                runs.append(f"{color}x{count}")
+                color, count = value, 1
+        runs.append(f"{color}x{count}")
+        rows.append(",".join(runs))
+    return rows
+
+
+def decode_grid_rle(rows: list[str], width: int) -> list[list[int]]:
+    """Decode ``encode_grid_rle``; used in tests to protect its lossless contract."""
+    decoded = []
+    for row in rows:
+        values = []
+        for run in row.split(","):
+            color, count = run.split("x", 1)
+            values.extend([int(color)] * int(count))
+        if len(values) != width:
+            raise ValueError("RLE row width mismatch")
+        decoded.append(values)
+    return grid_value(decoded)
+
+
 @dataclass(frozen=True)
 class Action:
     id: int
