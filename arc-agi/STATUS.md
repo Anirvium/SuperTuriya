@@ -10,9 +10,10 @@ Updated: 23 September 2026.
 - **Version 3 — model startup failed before inference.** The model was attached under
   Kaggle's nested model mount, while the notebook only searched direct input children.
   No competition submission was made.
-- **Version 4 — running.** Nested model and dataset mounts are now resolved recursively;
-  the regression is covered by the local test suite. This run is the current full
-  Qwen 3.8 27B FP8 candidate.
+- **Version 4 — model commit passed.** Nested model and dataset mounts are resolved
+  recursively; Kaggle loaded Qwen 3.8 27B FP8 with vLLM 0.19.0, passed the local
+  model readiness probe, and wrote a valid Apache Parquet output. Model loading used
+  28.51 GiB; the measured KV cache supports the configured eight concurrent games.
 - **Official submissions — none.** There is no leaderboard score yet.
 
 ## Ready locally
@@ -35,15 +36,14 @@ Updated: 23 September 2026.
 
 ## External gates
 
-These remaining facts require a real Kaggle execution and cannot be certified locally:
+These remaining facts require an official Kaggle competition rerun and cannot be
+certified by commit-mode execution:
 
-1. The current Kaggle image and attached wheelhouse start vLLM successfully.
-2. The mounted model loads and the Qwen readiness probe passes.
-3. The competition gateway completes a hidden rerun and emits the real parquet file.
-4. The candidate establishes a leaderboard baseline for measured ablations.
+1. The competition gateway completes a hidden rerun and emits the real parquet file.
+2. The candidate establishes a leaderboard baseline for measured ablations.
 
-The first hardware and packaging gate has passed. The live model run exercises the
-next two startup gates. The hidden gateway and score require an official submission.
+The hardware, packaging, offline dependency, model-load, and inference gates have
+passed. The hidden gateway and score require an official submission.
 
 ## Evidence labels
 
