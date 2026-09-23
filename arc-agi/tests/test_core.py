@@ -54,6 +54,15 @@ def observation(grid=None, level=0, available=(1, 2, 3, 4, 6), state="NOT_FINISH
 
 
 class Arc3ContractTests(unittest.TestCase):
+    def test_competition_ablation_changes_only_profile(self):
+        root = Path(__file__).resolve().parents[1]
+        memory = Config.load(root/"configs"/"competition.json").to_dict()
+        repair = Config.load(root/"configs"/"repair-ablation.json").to_dict()
+        self.assertEqual(
+            {key: (memory[key], repair[key]) for key in memory if memory[key] != repair[key]},
+            {"profile": ("memory", "repair")},
+        )
+
     def test_diagnostics_flag_repeated_no_effect_exploration(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

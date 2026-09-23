@@ -16,9 +16,11 @@ Updated: 23 September 2026.
   28.51 GiB; the measured KV cache supports the configured eight concurrent games.
 - **Official submission 56490090 — pending.** Version 4 was submitted on September 23
   as the frozen memory-profile baseline. Kaggle reports no submissions remaining today.
-- **Version 5 — public benchmark uploaded.** This private commit-mode run evaluates the
-  memory profile on eight frozen official public environments and preserves per-game
-  reports and journals. It does not consume a competition submission.
+- **Version 5 — public benchmark completed.** It scored 0.4382 across eight frozen
+  public environments, but 24 of 25 model requests timed out. Every game disabled the
+  model after three failures, so most actions came from the exploration fallback. This
+  run diagnoses the provider latency boundary; it is not a valid solver-quality
+  baseline for the repair ablation.
 
 ## Ready locally
 

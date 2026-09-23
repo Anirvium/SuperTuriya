@@ -1,0 +1,21 @@
+{
+  "schema": "superturiya-arc-agi-public-run-v1",
+  "kernel": "piyusha1234/notebook5326562b0c",
+  "kernel_version": 5,
+  "profile": "memory",
+  "source_commit": "e097ea47d6309e587ad55cd8f614f0ae5e01d583",
+  "notebook_sha256": "3f1a4e483e844c015e12903098501f4d4253dfec2d2c7d9d6db19bc3bd44a02c",
+  "games": ["cd82", "ft09", "ls20", "r11l", "s5i5", "tu93", "vc33", "wa30"],
+  "score": 0.4381714688469685,
+  "levels_completed": 3,
+  "actions": 4173,
+  "runtime_seconds": 361.12171241700025,
+  "model_calls": 25,
+  "successful_model_responses": 1,
+  "model_timeouts": 24,
+  "prompt_tokens": 9153,
+  "completion_tokens": 2752,
+  "primary_signal": "model_interface",
+  "decision": "Do not compare repair yet. Disable thinking, cap generation at 1024 tokens, and rerun memory because the 90-second request limit caused model disablement in every game.",
+  "artifact_directory": "results/kaggle-20260923T111255Z/arc-agi-run"
+}

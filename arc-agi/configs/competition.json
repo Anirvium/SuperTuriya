@@ -9,7 +9,8 @@
   "total_seconds": 28800,
   "reserve_seconds": 300,
   "max_model_calls": 80,
-  "max_tokens": 4096,
+  "request_seconds": 120,
+  "max_tokens": 1024,
   "max_context_tokens": 32768,
   "temperature": 0.6,
   "top_p": 0.95,
@@ -19,6 +20,6 @@
   "max_tool_rounds": 1,
   "plan_length": 4,
   "vision": true,
-  "enable_thinking": true,
+  "enable_thinking": false,
   "max_parallel_games": 8
 }
