@@ -1,0 +1,10 @@
+{
+  "profile": "explore",
+  "seed": 2026,
+  "max_actions": 80,
+  "max_resets": 2,
+  "game_seconds": 90,
+  "total_seconds": 7200,
+  "reserve_seconds": 120,
+  "max_parallel_games": 4
+}

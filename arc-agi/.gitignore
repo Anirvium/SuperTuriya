@@ -1,0 +1,20 @@
+# Credentials
+.kaggle/
+
+# Local Python and ARC runtime state
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+environment_files/
+recordings/
+logs.log
+
+# Generated runs and deployment artifacts
+dist/
+results/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

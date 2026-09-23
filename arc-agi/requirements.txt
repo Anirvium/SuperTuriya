@@ -1,0 +1,4 @@
+# Local development only. Kaggle installs organizer wheels from attached inputs.
+arc-agi==0.9.8
+arcengine==0.9.3
+kaggle>=2.2,<3
