@@ -37,6 +37,9 @@ def main():
     comparison.add_argument("baseline", type=Path)
     comparison.add_argument("candidate", type=Path)
     comparison.add_argument("--output", type=Path)
+    diagnosis = sub.add_parser("diagnose")
+    diagnosis.add_argument("run_directory", type=Path)
+    diagnosis.add_argument("--output", type=Path)
     verify = sub.add_parser("verify")
     verify.add_argument("run_dir", type=Path)
     for name in ("verify-build", "push"):
@@ -105,6 +108,9 @@ def main():
     elif args.command == "compare":
         from .evaluation import compare
         print(json.dumps(compare(args.baseline, args.candidate, args.output), indent=2))
+    elif args.command == "diagnose":
+        from .diagnostics import diagnose_run
+        print(json.dumps(diagnose_run(args.run_directory, args.output), indent=2))
     elif args.command == "verify":
         from .release import verify_run
         print(json.dumps(verify_run(args.run_dir), indent=2))

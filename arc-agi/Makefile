@@ -8,7 +8,7 @@ KAGGLE := KAGGLE_API_TOKEN=$$(cat $(TOKEN_FILE)) $(VENV)/bin/kaggle
 GAMES ?= ls20,vc33,ft09
 STEPS ?= 40
 
-.PHONY: help setup test doctor list-games cache local-smoke build-smoke build-model \
+.PHONY: help setup test doctor list-games cache local-smoke diagnose build-smoke build-model \
 	build-repair build-public-memory build-public-repair verify push first-kaggle-test \
 	kaggle-model kaggle-public-memory kaggle-public-repair status submissions pull-output _check-token
 
@@ -19,6 +19,7 @@ help:
 	@echo "  make test                Run the ARC package tests"
 	@echo "  make cache               Cache public games for offline local runs"
 	@echo "  make local-smoke         Run the non-model agent on public games"
+	@echo "  make diagnose RUN=...    Triage one downloaded public benchmark"
 	@echo "  make build-smoke         Build the first RTX/Kaggle validation notebook"
 	@echo "  make first-kaggle-test   Build + upload the first validation version"
 	@echo "  make build-model         Build Qwen 3.8 27B FP8 competition candidate"
@@ -50,6 +51,10 @@ local-smoke:
 		--config configs/smoke.json --games "$(GAMES)" --max-actions "$(STEPS)" \
 		--output "$$run_dir"; \
 	PYTHONPATH=. $(VENV_PY) -m superturiya_arc verify "$$run_dir"
+
+diagnose:
+	@test -n "$(RUN)" || (echo "Usage: make diagnose RUN=results/<run>"; exit 1)
+	PYTHONPATH=. $(VENV_PY) -m superturiya_arc diagnose "$(RUN)" --output "$(RUN)/diagnostics.json"
 
 build-smoke:
 	PYTHONPATH=. $(VENV_PY) scripts/build_release.py --profile smoke

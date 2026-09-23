@@ -12,6 +12,7 @@ from types import SimpleNamespace
 from superturiya_arc.agent import Agent
 from superturiya_arc.artifacts import Journal, verify_journal
 from superturiya_arc.config import Config
+from superturiya_arc.diagnostics import diagnose_run
 from superturiya_arc.evaluation import compare, create_split, load_split
 from superturiya_arc.notebook import build
 from superturiya_arc.observation import Action, Observation, objects
@@ -53,6 +54,31 @@ def observation(grid=None, level=0, available=(1, 2, 3, 4, 6), state="NOT_FINISH
 
 
 class Arc3ContractTests(unittest.TestCase):
+    def test_diagnostics_flag_repeated_no_effect_exploration(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            journal = Journal(root/"game-000.jsonl")
+            journal.write("game_start", game_id="test-v1")
+            journal.write("observation", hash="same")
+            journal.write("action", action={"id": 1}, source="model")
+            journal.write("observation", hash="same")
+            journal.write(
+                "game_end",
+                levels_completed=0,
+                actions=1,
+                stop_reason="action_limit",
+            )
+            journal.close()
+            (root/"report.json").write_text(json.dumps({
+                "config": {"profile": "memory"},
+                "scorecard": {"score": 0.0},
+                "games": [{"game_id": "test-v1", "journal": "game-000.jsonl"}],
+            }))
+
+            result = diagnose_run(root)
+            self.assertEqual(result["signal_counts"], {"exploration": 1})
+            self.assertEqual(result["games"][0]["unchanged_transition_rate"], 1.0)
+
     def test_only_available_actions_and_valid_clicks(self):
         for payload in ({"id": 7}, {"id": True}, {"id": 6, "x": -1, "y": 0},
                         {"id": 6, "x": 1.5, "y": 0}, {"id": 1, "x": 2}, {"id": 0}):
