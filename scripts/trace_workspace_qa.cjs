@@ -87,7 +87,7 @@ async function main() {
     await click('#refresh');await waitFor(`document.querySelector('[data-run="${imported.run_id}"]')`);await click(`[data-run="${imported.run_id}"]`);await waitFor('document.querySelector("#export-trace")');
     if(await evaluate('!!window.traceXss || !!document.querySelector("#inspector img") || document.querySelector("#inspector").textContent.includes("secret-synthetic-token")'))throw Error('Hostile content or credentials leaked');
     await call('Page.navigate',{url:base+'/traces.html'});await waitFor('document.querySelector("[data-run]")');
-    await metrics(390,844,true);await click('[data-run]');await waitFor('document.querySelector("#export-trace")');await layout('saved trace mobile');await evaluate('document.querySelector("#inspector").scrollIntoView({behavior:"instant",block:"start"})');await shot('trace-mobile.png');
+    await metrics(390,844,true);await evaluate('Array.from(document.querySelectorAll("[data-run]")).find(b=>b.textContent.includes("example-assistant")).click()');await waitFor('document.querySelector("#export-trace")');await layout('saved trace mobile');await evaluate('document.querySelector("#inspector").scrollIntoView({behavior:"instant",block:"start"})');await shot('trace-mobile.png');
     await evaluate('document.querySelector("#search").value="no-matching-workflow";document.querySelector("#search").dispatchEvent(new Event("input"))');
     if(await evaluate('document.querySelectorAll("[data-run]").length')!==0)throw Error('Run search failed');
     await evaluate('document.querySelector(".audit").open=true');await click('#load-audit');await waitFor('document.querySelector(".audit-row")');
