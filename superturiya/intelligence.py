@@ -21,7 +21,12 @@ from .adaptive import (
     validate_intervention,
 )
 from .evaluation import EvaluationHarness, validate_benchmark
+from .evidence_integrity import build_evidence_projection, verify_evidence_projection
+from .integrity_cards import build_integrity_card
 from .quantum_layer import QuantumInspiredTrajectoryAnalyzer
+from .memory_governance import MemoryUseContext, evaluate_memory_admissibility
+from .repair_guidance import ReplayGuidedRepairSelector
+from .oversight import build_evidence_grounded_behavior_graph
 from .store import SuperTuriyaStore
 
 
@@ -63,6 +68,10 @@ class SuperTuriyaEngine:
         self.store = store
         self.quantum_analyzer = QuantumInspiredTrajectoryAnalyzer()
         self.adaptive_runner = AdaptiveEvaluationRunner()
+        self.repair_selector = ReplayGuidedRepairSelector(
+            self.adaptive_runner.workload,
+            self.adaptive_runner.verifier,
+        )
         self.evaluation_harness = EvaluationHarness(runtime=self.adaptive_runner)
 
     def capture_observations(self, payload: Mapping[str, Any]) -> JsonDict:
@@ -127,6 +136,15 @@ class SuperTuriyaEngine:
         stored = []
         if not dry_run:
             for candidate in unique_candidates:
+                principal_id = clean_text(payload.get("principal_id"))
+                if principal_id and principal_id != candidate["subject_id"]:
+                    metadata = dict(candidate.get("metadata") or {})
+                    shared = list(metadata.get("shared_with_principals") or [])
+                    if principal_id not in shared:
+                        shared.append(principal_id)
+                    metadata["shared_with_principals"] = shared
+                    metadata["authorization_ref"] = "authenticated-capture-principal"
+                    candidate["metadata"] = metadata
                 stored.append(self.store.add_memory(candidate))
 
         return {
@@ -137,8 +155,9 @@ class SuperTuriyaEngine:
         }
 
     def search_memories(self, payload: Mapping[str, Any]) -> JsonDict:
-        tenant_id = clean_text(payload.get("tenant_id") or "default")
-        subject_id = clean_text(payload.get("subject_id")) or None
+        context = MemoryUseContext.from_payload(payload)
+        tenant_id = context.tenant_id
+        subject_id = context.subject_id
         query = clean_text(payload.get("query"))
         memory_types = payload.get("memory_types") or payload.get("types")
         limit = int(payload.get("limit") or 8)
@@ -164,10 +183,58 @@ class SuperTuriyaEngine:
                     }
                 )
         ranked.sort(key=lambda item: item["rank_score"], reverse=True)
+        decisions = [
+            evaluate_memory_admissibility(memory, context) for memory in ranked
+        ]
+        decision_by_id = {item["memory_id"]: item for item in decisions}
+        admissible = [
+            {**memory, "admissibility": decision_by_id[memory["memory_id"]]}
+            for memory in ranked
+            if decision_by_id[memory["memory_id"]]["decision"] == "yes"
+        ]
+        exposed = admissible[:limit]
+        withheld = [
+            decision
+            for decision in decisions
+            if decision["decision"] != "yes"
+        ]
+        unexposed = admissible[limit:]
+        trace = {
+            "candidate_ids": [item["memory_id"] for item in ranked],
+            "retrieved_ids": [item["memory_id"] for item in ranked],
+            "exposed_ids": [item["memory_id"] for item in exposed],
+            "withheld_ids": [item["memory_id"] for item in withheld],
+            "admissible_not_exposed_ids": [item["memory_id"] for item in unexposed],
+        }
+        if not set(trace["exposed_ids"]).issubset(set(trace["retrieved_ids"])):
+            raise RuntimeError("memory exposure invariant violated")
+        self.store.add_audit(
+            tenant_id,
+            "memory.exposure_decision",
+            "memory_search",
+            subject_id=subject_id,
+            metadata={
+                "principal_id": context.principal_id,
+                "purpose": context.purpose,
+                "intent": context.intent,
+                "policy_version": context.policy_version,
+                **trace,
+            },
+        )
         return {
             "query": query,
-            "results": ranked[:limit],
-            "context": "\n".join(f"- {item['text']}" for item in ranked[:limit]),
+            "use_context": context.to_dict(),
+            "results": exposed,
+            "withheld": withheld,
+            "trace": trace,
+            "metrics": {
+                "candidate_count": len(ranked),
+                "admissible_count": len(admissible),
+                "exposed_count": len(exposed),
+                "known_violation_exposure_rate": 0.0,
+                "unresolved_exposure_rate": 0.0,
+            },
+            "context": "\n".join(f"- {item['text']}" for item in exposed),
         }
 
     def upsert_graph(self, payload: Mapping[str, Any]) -> JsonDict:
@@ -360,6 +427,60 @@ class SuperTuriyaEngine:
     def forget_subject(self, tenant_id: str, subject_id: str) -> JsonDict:
         return self.store.delete_subject(tenant_id, subject_id)
 
+    def ingest_evidence(self, payload: Mapping[str, Any]) -> JsonDict:
+        tenant_id = clean_text(payload.get("tenant_id") or "default")
+        subject_id = clean_text(payload.get("subject_id")) or None
+        raw_record = payload.get("record")
+        if not isinstance(raw_record, Mapping):
+            raise ValueError("evidence record must be an object")
+        projection = build_evidence_projection(
+            raw_record,
+            record_id=clean_text(payload.get("record_id")) or None,
+            display_fields=payload.get("display_fields"),
+        )
+        stored = self.store.add_evidence_record(
+            {
+                "record_id": projection["record_id"],
+                "tenant_id": tenant_id,
+                "subject_id": subject_id,
+                "raw_payload": dict(raw_record),
+                "projection": projection,
+            }
+        )
+        verification = verify_evidence_projection(
+            stored["raw_payload"], stored["projection"]
+        )
+        return {
+            "record_id": stored["record_id"],
+            "projection": stored["projection"],
+            "integrity": verification,
+            "raw_available_separately": True,
+        }
+
+    def evidence_projection(self, record_id: str) -> JsonDict:
+        stored = self.store.get_evidence_record(record_id)
+        return {
+            "record_id": record_id,
+            "projection": stored["projection"],
+            "integrity": verify_evidence_projection(
+                stored["raw_payload"], stored["projection"]
+            ),
+            "raw_available_separately": True,
+        }
+
+    def create_integrity_card(self, payload: Mapping[str, Any]) -> JsonDict:
+        card = build_integrity_card(payload)
+        stored = self.store.add_integrity_card(
+            clean_text(payload.get("tenant_id") or "default"), card
+        )
+        return {"card": stored["card"], "stored": True}
+
+    def oversight_graph(self, payload: Mapping[str, Any]) -> JsonDict:
+        run_id = clean_text(payload.get("run_id"))
+        if not run_id:
+            raise ValueError("run_id is required")
+        return build_evidence_grounded_behavior_graph(self.store.get_trace(run_id))
+
     def dashboard_state(self, tenant_id: str = "demo", subject_id: Optional[str] = None) -> JsonDict:
         state = self.store.dashboard_state(tenant_id, subject_id)
         latest_score = state["scores"][0] if state["scores"] else None
@@ -431,6 +552,54 @@ class SuperTuriyaEngine:
             )
         return {**report, "stored_evaluation": stored["evaluation_id"]}
 
+    def repair_guided_case(self, payload: Mapping[str, Any]) -> JsonDict:
+        case_id = clean_text(payload.get("case_id"))
+        if not case_id:
+            raise ValueError("case_id is required")
+        matches = [
+            case for case in self.adaptive_runner.cases if case["case_id"] == case_id
+        ]
+        if not matches:
+            raise KeyError("benchmark case not found: %s" % case_id)
+        case = matches[0]
+        original = self.adaptive_runner.verifier.verify(
+            case, self.adaptive_runner.workload.run(case)
+        )
+        mode = clean_text(payload.get("mode") or "frozen").lower()
+        if mode not in {"frozen", "live"}:
+            raise ValueError("mode must be frozen or live")
+        investigation = self.adaptive_runner.investigator.investigate(
+            case, original, mode
+        )
+        decision = self.repair_selector.select(case, investigation["output"])
+        stored = None
+        if decision["recommended_intervention"]:
+            stored = self.store.add_intervention(
+                {
+                    "tenant_id": clean_text(payload.get("tenant_id") or "hackathon"),
+                    "case_id": case_id,
+                    "payload": decision["recommended_intervention"],
+                }
+            )
+        return {
+            "namespace": "post-v2/replay-guided-v1",
+            "historical_v2_unchanged": True,
+            "investigation": investigation,
+            "decision": decision,
+            "stored_intervention": stored,
+            "approval_required": stored is not None,
+        }
+
+    def repair_oracle_ceiling(self, payload: Mapping[str, Any]) -> JsonDict:
+        return {
+            "namespace": "post-v2/one-patch-oracle-v1",
+            "historical_v2_unchanged": True,
+            **self.repair_selector.oracle_ceiling(
+                self.adaptive_runner.cases,
+                split=clean_text(payload.get("split") or "held_out"),
+            ),
+        }
+
     def prepare_hackathon_case(self, payload: Mapping[str, Any]) -> JsonDict:
         case_id = clean_text(payload.get("case_id"))
         if not case_id:
@@ -501,6 +670,9 @@ class SuperTuriyaEngine:
         stored = self.store.get_intervention(intervention_id)
         if stored["status"] != "approved":
             raise ValueError("only an approved intervention may be activated")
+        if stored["payload"].get("review", {}).get("simulated", True):
+            raise ValueError("activation requires explicit human replay approval")
+        approved_hash = validate_intervention(stored["payload"])["intervention_hash"]
         replays = self.store.list_replay_results(tenant_id, stored["case_id"], limit=20)
         verified = [
             item
@@ -508,6 +680,7 @@ class SuperTuriyaEngine:
             if item["intervention_id"] == intervention_id
             and bool(item["verified_safe_recovery"])
             and not bool(item["safety_regression"])
+            and item["result"].get("intervention", {}).get("intervention_hash") == approved_hash
         ]
         if not verified:
             raise ValueError("activation requires a verified safe replay")
@@ -545,6 +718,8 @@ class SuperTuriyaEngine:
         return {"intervention": active, "procedural_policy": policy, "verified_replay": verified[0]}
 
     def review_policy(self, payload: Mapping[str, Any]) -> JsonDict:
+        if clean_text(payload.get("decision")).lower() == "active":
+            raise ValueError("activate through the verified intervention workflow; generic policy review cannot activate")
         return self.store.transition_policy(
             clean_text(payload.get("policy_id")),
             clean_text(payload.get("decision")),

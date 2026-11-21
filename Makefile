@@ -1,4 +1,4 @@
-.PHONY: validate baseline evaluate demo shadow-transfer external-validate external-bundle external-live v2-status v2-sut-freeze v2-sut-verify v2-author-packet v2-validate v2-freeze v2-verify v2-predict v2-predict-resume v2-predict-resume-status v2-qwen-validate v2-qwen-probe v2-qwen-predict-resume v2-qwen-predict-resume-status v2-score v2-evidence-manifest test run
+.PHONY: validate baseline evaluate demo shadow-transfer external-validate external-bundle external-live v2-status v2-sut-freeze v2-sut-verify v2-author-packet v2-validate v2-freeze v2-verify v2-predict v2-predict-resume v2-predict-resume-status v2-qwen-validate v2-qwen-probe v2-qwen-predict-resume v2-qwen-predict-resume-status v2-score v2-evidence-manifest v2-adjudication-packet test run
 
 validate:
 	python3 -m superturiya.hackathon validate
@@ -82,6 +82,12 @@ v2-score:
 v2-evidence-manifest:
 	@test -n "$(EVIDENCE_ROOT)" || (echo "EVIDENCE_ROOT is required" && exit 2)
 	python3 -m superturiya.external_v2 evidence-manifest --evidence-root "$(EVIDENCE_ROOT)" --output "$(EVIDENCE_ROOT)/manifest.json"
+
+v2-adjudication-packet:
+	@test -n "$(RAW)" || (echo "RAW is required" && exit 2)
+	@test -n "$(OUTPUT)" || (echo "OUTPUT is required" && exit 2)
+	@test -n "$(KEY_OUTPUT)" || (echo "KEY_OUTPUT is required" && exit 2)
+	python3 -m superturiya.adjudication --raw "$(RAW)" --output "$(OUTPUT)" --key-output "$(KEY_OUTPUT)"
 
 test:
 	python3 -m unittest discover -s tests -v

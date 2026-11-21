@@ -25,6 +25,16 @@ class SuperTuriyaStore:
         with self._lock:
             self._connection.close()
 
+    def record_owner(self, table: str, column: str, identifier: str) -> Optional[str]:
+        allowed = {("traces", "run_id"), ("policies", "policy_id"), ("interventions", "intervention_id"), ("trace_steps", "step_id"), ("observations", "observation_id"), ("memories", "memory_id"), ("evidence_records", "record_id")}
+        if (table, column) not in allowed:
+            raise ValueError("unsupported ownership lookup")
+        with self._lock:
+            row = self._connection.execute(
+                "SELECT tenant_id FROM %s WHERE %s = ?" % (table, column), (identifier,)
+            ).fetchone()
+        return row[0] if row else None
+
     def initialize(self) -> None:
         with self._lock:
             self._connection.executescript(
@@ -211,6 +221,28 @@ class SuperTuriyaStore:
                     created_at TEXT NOT NULL
                 );
 
+                CREATE TABLE IF NOT EXISTS evidence_records (
+                    record_id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    subject_id TEXT,
+                    raw_payload TEXT NOT NULL,
+                    raw_sha256 TEXT NOT NULL,
+                    projection TEXT NOT NULL,
+                    projection_sha256 TEXT NOT NULL,
+                    renderer_version TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+
+                CREATE TABLE IF NOT EXISTS integrity_cards (
+                    card_id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    evaluation_id TEXT NOT NULL,
+                    assessor_id TEXT NOT NULL,
+                    card TEXT NOT NULL,
+                    card_hash TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+
                 CREATE INDEX IF NOT EXISTS idx_observations_scope
                     ON observations (tenant_id, subject_id, timestamp);
                 CREATE INDEX IF NOT EXISTS idx_observations_run
@@ -233,9 +265,131 @@ class SuperTuriyaStore:
                     ON replay_results (tenant_id, case_id, created_at);
                 CREATE INDEX IF NOT EXISTS idx_evaluation_runs_scope
                     ON evaluation_runs (tenant_id, created_at);
+                CREATE INDEX IF NOT EXISTS idx_evidence_records_scope
+                    ON evidence_records (tenant_id, subject_id, created_at);
+                CREATE INDEX IF NOT EXISTS idx_integrity_cards_scope
+                    ON integrity_cards (tenant_id, evaluation_id, created_at);
                 """
             )
             self._connection.commit()
+
+    def add_evidence_record(self, payload: Mapping[str, Any]) -> JsonDict:
+        projection = dict(payload.get("projection") or {})
+        raw_payload = dict(payload.get("raw_payload") or {})
+        record = {
+            "record_id": clean_text(payload.get("record_id") or projection.get("record_id")),
+            "tenant_id": clean_text(payload.get("tenant_id") or "default"),
+            "subject_id": clean_text(payload.get("subject_id")) or None,
+            "raw_payload": json_dump(raw_payload),
+            "raw_sha256": clean_text(projection.get("raw_sha256")),
+            "projection": json_dump(projection),
+            "projection_sha256": clean_text(projection.get("projection_sha256")),
+            "renderer_version": clean_text(projection.get("renderer_version")),
+            "created_at": clean_text(payload.get("created_at") or utc_now()),
+        }
+        required = (
+            "record_id",
+            "raw_sha256",
+            "projection_sha256",
+            "renderer_version",
+        )
+        missing = [field for field in required if not record[field]]
+        if missing:
+            raise ValueError("evidence record missing fields: %s" % ", ".join(missing))
+        with self._lock:
+            existing = self._connection.execute(
+                "SELECT record_id FROM evidence_records WHERE record_id = ?",
+                (record["record_id"],),
+            ).fetchone()
+            if existing:
+                raise ValueError("evidence record is append-only: %s" % record["record_id"])
+            self._connection.execute(
+                """
+                INSERT INTO evidence_records
+                (record_id, tenant_id, subject_id, raw_payload, raw_sha256, projection,
+                 projection_sha256, renderer_version, created_at)
+                VALUES
+                (:record_id, :tenant_id, :subject_id, :raw_payload, :raw_sha256, :projection,
+                 :projection_sha256, :renderer_version, :created_at)
+                """,
+                record,
+            )
+            self._connection.commit()
+        self.add_audit(
+            record["tenant_id"],
+            "evidence.ingest",
+            "evidence_record",
+            record["record_id"],
+            record["subject_id"],
+            {
+                "raw_sha256": record["raw_sha256"],
+                "projection_sha256": record["projection_sha256"],
+                "renderer_version": record["renderer_version"],
+            },
+        )
+        return self.get_evidence_record(record["record_id"])
+
+    def get_evidence_record(self, record_id: str) -> JsonDict:
+        row = self._connection.execute(
+            "SELECT * FROM evidence_records WHERE record_id = ?",
+            (record_id,),
+        ).fetchone()
+        if row is None:
+            raise KeyError("evidence record not found: %s" % record_id)
+        return row_to_dict(row)
+
+    def add_integrity_card(self, tenant_id: str, card: Mapping[str, Any]) -> JsonDict:
+        record = {
+            "card_id": clean_text(card.get("card_id")),
+            "tenant_id": clean_text(tenant_id or "default"),
+            "evaluation_id": clean_text(card.get("evaluation_id")),
+            "assessor_id": clean_text(card.get("assessor_id")),
+            "card": json_dump(dict(card)),
+            "card_hash": clean_text(card.get("card_hash")),
+            "created_at": clean_text(card.get("assessed_at") or utc_now()),
+        }
+        with self._lock:
+            self._connection.execute(
+                """
+                INSERT INTO integrity_cards
+                (card_id, tenant_id, evaluation_id, assessor_id, card, card_hash, created_at)
+                VALUES
+                (:card_id, :tenant_id, :evaluation_id, :assessor_id, :card, :card_hash, :created_at)
+                """,
+                record,
+            )
+            self._connection.commit()
+        self.add_audit(
+            record["tenant_id"],
+            "integrity.assess",
+            "integrity_card",
+            record["card_id"],
+            metadata={
+                "evaluation_id": record["evaluation_id"],
+                "card_hash": record["card_hash"],
+            },
+        )
+        return {**record, "card": dict(card)}
+
+    def list_integrity_cards(
+        self, tenant_id: str, evaluation_id: Optional[str] = None, limit: int = 50
+    ) -> List[JsonDict]:
+        clauses = ["tenant_id = ?"]
+        params: List[Any] = [tenant_id]
+        if evaluation_id:
+            clauses.append("evaluation_id = ?")
+            params.append(evaluation_id)
+        rows = self._connection.execute(
+            "SELECT * FROM integrity_cards WHERE %s ORDER BY created_at DESC LIMIT ?"
+            % " AND ".join(clauses),
+            [*params, limit],
+        ).fetchall()
+        result = []
+        for row in rows:
+            item = dict(row)
+            item["card"] = json_load(item["card"], {})
+            result.append(item)
+        return result
 
     def add_audit(
         self,
@@ -341,21 +495,36 @@ class SuperTuriyaStore:
     def add_memory(self, payload: Mapping[str, Any]) -> JsonDict:
         now = utc_now()
         memory_id = clean_text(payload.get("memory_id") or new_id("mem"))
+        tenant_id = clean_text(payload.get("tenant_id") or "default")
+        subject_id = clean_text(payload.get("subject_id") or "global")
+        created_at = clean_text(payload.get("created_at") or now)
+        expires_at = clean_text(payload.get("expires_at")) or None
+        metadata = dict(payload.get("metadata") or {})
+        metadata.setdefault("namespace_id", "%s:%s" % (tenant_id, subject_id))
+        metadata.setdefault("owner_principal_id", subject_id)
+        metadata.setdefault("allowed_purposes", ["assist_subject"])
+        metadata.setdefault("authorization_state", "yes")
+        metadata.setdefault("authorization_ref", "subject-scope-default")
+        metadata.setdefault("policy_version", "v1")
+        metadata.setdefault("lifecycle_state", "current")
+        metadata.setdefault("valid_from", created_at)
+        if expires_at:
+            metadata.setdefault("valid_to", expires_at)
         record = {
             "memory_id": memory_id,
-            "tenant_id": clean_text(payload.get("tenant_id") or "default"),
-            "subject_id": clean_text(payload.get("subject_id") or "global"),
+            "tenant_id": tenant_id,
+            "subject_id": subject_id,
             "memory_type": clean_text(payload.get("memory_type") or "episodic"),
             "text": clean_text(payload.get("text")),
             "derived_from": json_dump(payload.get("derived_from") or []),
             "confidence": float(payload.get("confidence", 0.65)),
             "status": clean_text(payload.get("status") or "active").lower(),
-            "created_at": clean_text(payload.get("created_at") or now),
+            "created_at": created_at,
             "updated_at": clean_text(payload.get("updated_at") or now),
-            "expires_at": clean_text(payload.get("expires_at")) or None,
+            "expires_at": expires_at,
             "graph_refs": json_dump(payload.get("graph_refs") or []),
             "vector_ref": clean_text(payload.get("vector_ref") or f"local:memories/{memory_id}"),
-            "metadata": json_dump(payload.get("metadata") or {}),
+            "metadata": json_dump(metadata),
         }
         if not record["text"]:
             raise ValueError("memory.text is required")
@@ -936,7 +1105,8 @@ class SuperTuriyaStore:
             "candidate": {"approved", "rejected", "deferred"},
             "approved": {"active"},
             "deferred": {"candidate"},
-            "active": set(),
+            "active": {"revoked"},
+            "revoked": set(),
             "rejected": set(),
         }
         if target not in transitions.get(policy["status"], set()):
@@ -944,6 +1114,23 @@ class SuperTuriyaStore:
         reviewer = clean_text(reviewer_id)
         if not reviewer:
             raise ValueError("reviewer_id is required")
+        if target == "active":
+            replay_ids = policy.get("derived_from_runs") or []
+            verified = False
+            for replay_id in replay_ids:
+                row = self._connection.execute(
+                    "SELECT * FROM replay_results WHERE replay_id = ? AND tenant_id = ? AND verified_safe_recovery = 1 AND safety_regression = 0",
+                    (replay_id, policy["tenant_id"]),
+                ).fetchone()
+                if row:
+                    intervention = self.get_intervention(row["intervention_id"])
+                    patch = intervention["payload"]
+                    expected_body = "%s on %s. %s" % (patch["operation"], patch["target_id"], patch["after_value"])
+                    verified = (intervention["tenant_id"] == policy["tenant_id"] and intervention["status"] == "active" and policy["body"] == expected_body and not patch.get("review", {}).get("simulated", False))
+                    if verified:
+                        break
+            if not verified:
+                raise ValueError("activation requires a verified safe replay bound to this policy")
         now = utc_now()
         with self._lock:
             self._connection.execute(
@@ -1196,6 +1383,7 @@ class SuperTuriyaStore:
             "policies": "policies",
             "interventions": "interventions",
             "replays": "replay_results",
+            "evidence_records": "evidence_records",
         }
         for key, table in tables.items():
             clauses: List[str] = []
@@ -1224,6 +1412,7 @@ class SuperTuriyaStore:
             "policies",
             "interventions",
             "replay_results",
+            "evidence_records",
         ]
         deleted: Dict[str, int] = {}
         with self._lock:

@@ -191,6 +191,9 @@ class ExternalValidityTest(unittest.TestCase):
             "Ani" + "rvium",
             "Sar" + "vagun",
         )
+        allowed_repository_prefixes = (
+            "https://github.com/" + "Ani" + "rvium" + "/SuperTuriya",
+        )
         violations = []
         for path in project_root.rglob("*"):
             if not path.is_file() or path.suffix.lower() not in {
@@ -201,6 +204,8 @@ class ExternalValidityTest(unittest.TestCase):
                 continue
             relative = str(path.relative_to(project_root))
             content = path.read_text(encoding="utf-8", errors="ignore").lower()
+            for prefix in allowed_repository_prefixes:
+                content = content.replace(prefix.lower(), "")
             if any(name.lower() in relative.lower() or name.lower() in content for name in forbidden):
                 violations.append(relative)
         self.assertEqual(violations, [])

@@ -29,13 +29,31 @@ authority inside the product.
 That division is also the product thesis: assistance is useful; authority must
 remain explicit.
 
+## Public website and playground
+
+Explore the [product website](https://superturiya.piyushunt.chatgpt.site),
+[interactive playground](https://superturiya.piyushunt.chatgpt.site/demo/), and
+[field guide](https://superturiya.piyushunt.chatgpt.site/docs/).
+
+The public playground contains twelve recorded synthetic examples and keeps
+visitor decisions in browser memory. The local workbench uses the same visual
+language but runs the Python replay and persists audited policies. The previous
+judge console remains available at `/judge.html`; the original console remains
+at `/legacy.html`.
+
+The 21 November launch update adds ownership checks at the API boundary,
+server-bound reviewer identity, replay/content-bound activation, explicit policy
+revocation, authenticated browser connection, and a separate static website.
+See [the launch engineering notes](docs/PUBLIC_LAUNCH_2026-11-21.md) for the
+verification record and remaining production work.
+
 ## Run locally
 
 The default demonstration is credential-free and uses only Python’s standard
 library and SQLite.
 
 ```bash
-git clone https://github.com/<owner>/SuperTuriya.git
+git clone --branch launch/cosmic-workbench-2026-11-21 https://github.com/Anirvium/SuperTuriya.git
 cd SuperTuriya
 python3 -m superturiya --seed --port 8765
 ```
@@ -90,7 +108,7 @@ make v2-verify
 make v2-sut-verify
 ```
 
-These commands reproduce the deterministic comparison, run all 58 tests, and
+These commands reproduce the deterministic comparison, run all 87 tests, and
 verify the frozen External-v2 benchmark and SUT hashes without an API key.
 
 Committed evidence is under `evidence/`: complete baseline and final reports, all case-level results, representative Investigator and Adaptation trajectories, replay records, hashes, usage, runtime, and the metric contract. See [reproduction instructions](docs/hackathon/REPRODUCTION.md) and the [evidence manifest](docs/hackathon/EVIDENCE_MANIFEST.md).
