@@ -1,0 +1,22 @@
+services:
+  operator:
+    build: .
+    ports:
+      - "127.0.0.1:8765:8765"
+    environment:
+      SUPERTURIYA_API_TOKEN: ${SUPERTURIYA_API_TOKEN:?Set a secret operator token}
+      SUPERTURIYA_API_TENANT: ${SUPERTURIYA_API_TENANT:?Set the tenant identifier}
+      SUPERTURIYA_API_PRINCIPAL: ${SUPERTURIYA_API_PRINCIPAL:?Set the reviewer identifier}
+      SUPERTURIYA_ALLOWED_ORIGINS: ${SUPERTURIYA_ALLOWED_ORIGINS:-}
+    volumes:
+      - operator-data:/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+volumes:
+  operator-data:

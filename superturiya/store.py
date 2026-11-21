@@ -128,6 +128,16 @@ class SuperTuriyaStore:
                     metadata TEXT NOT NULL
                 );
 
+                CREATE TABLE IF NOT EXISTS trace_imports (
+                    run_id TEXT PRIMARY KEY REFERENCES traces(run_id) ON DELETE CASCADE,
+                    tenant_id TEXT NOT NULL,
+                    content_hash TEXT NOT NULL,
+                    document TEXT NOT NULL,
+                    report TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    UNIQUE(tenant_id, content_hash)
+                );
+
                 CREATE TABLE IF NOT EXISTS trajectory_scores (
                     score_id TEXT PRIMARY KEY,
                     run_id TEXT NOT NULL,
@@ -765,6 +775,8 @@ class SuperTuriyaStore:
             "metadata": json_dump(payload.get("metadata") or {}),
         }
         with self._lock:
+            if self._connection.execute("SELECT 1 FROM trace_imports WHERE run_id=?", (record["run_id"],)).fetchone():
+                raise ValueError("imported snapshots are immutable; import a new recording")
             self._connection.execute(
                 """
                 INSERT OR REPLACE INTO traces
@@ -792,6 +804,12 @@ class SuperTuriyaStore:
             raise ValueError("step.run_id is required")
         run = self.get_trace(run_id)["run"]
         with self._lock:
+            if self._connection.execute("SELECT 1 FROM trace_imports WHERE run_id=?", (run_id,)).fetchone():
+                raise ValueError("imported snapshots are immutable; import a new recording")
+            if payload.get("step_id") and self._connection.execute(
+                "SELECT 1 FROM trace_steps s JOIN trace_imports i ON s.run_id=i.run_id WHERE s.step_id=?", (payload["step_id"],)
+            ).fetchone():
+                raise ValueError("imported snapshot steps are immutable")
             next_index = self._connection.execute(
                 "SELECT COALESCE(MAX(step_index), 0) + 1 FROM trace_steps WHERE run_id = ?",
                 (run_id,),

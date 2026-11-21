@@ -47,13 +47,26 @@ revocation, authenticated browser connection, and a separate static website.
 See [the launch engineering notes](docs/PUBLIC_LAUNCH_2026-11-21.md) for the
 verification record and remaining production work.
 
+## Your own agent traces
+
+Open `/traces.html` on the Python operator to preview, inspect and save native
+agent recordings. The new standard-library Python recorder captures explicitly
+supplied spans, inputs and outputs. Imports include best-effort credential
+masking, tenant-scoped history, immutable snapshots, evidence digests and audit
+receipts. Imported recordings remain inspection-only until an executable replay
+adapter and task-specific verifier exist.
+
+See [trace capture and inspection](docs/TRACE_WORKSPACE.md),
+[deployment, custom-domain export and backup/restore](docs/DEPLOYMENT.md), and
+[the public website quickstart](docs/WEBSITE_QUICKSTART.md).
+
 ## Run locally
 
 The default demonstration is credential-free and uses only Python’s standard
 library and SQLite.
 
 ```bash
-git clone --branch launch/cosmic-workbench-2026-11-21 https://github.com/Anirvium/SuperTuriya.git
+git clone --branch upgrade/trace-workspace-2026-11-21 https://github.com/Anirvium/SuperTuriya.git
 cd SuperTuriya
 python3 -m superturiya --seed --port 8765
 ```
@@ -108,7 +121,7 @@ make v2-verify
 make v2-sut-verify
 ```
 
-These commands reproduce the deterministic comparison, run all 87 tests, and
+These commands reproduce the deterministic comparison, run all 100 tests, and
 verify the frozen External-v2 benchmark and SUT hashes without an API key.
 
 Committed evidence is under `evidence/`: complete baseline and final reports, all case-level results, representative Investigator and Adaptation trajectories, replay records, hashes, usage, runtime, and the metric contract. See [reproduction instructions](docs/hackathon/REPRODUCTION.md) and the [evidence manifest](docs/hackathon/EVIDENCE_MANIFEST.md).

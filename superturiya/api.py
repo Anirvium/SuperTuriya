@@ -18,6 +18,7 @@ from .explainability import live_explainability_state
 from .intelligence import SuperTuriyaEngine
 from .sample_data import seed_demo
 from .store import SuperTuriyaStore
+from .trace_workspace import export_trace, import_trace, inspect_trace, normalize
 
 
 class ApiError(Exception):
@@ -63,6 +64,31 @@ class SuperTuriyaHandler(BaseHTTPRequestHandler):
                 self._authenticate()
                 self._send_json({"authenticated": True, "tenant_id": self.scoped_tenant_id or "hackathon", "principal_id": self.scoped_principal_id or "local-operator", "local_mode": not bool(self.api_token)})
                 return
+            if parsed.path.startswith("/workspace/"):
+                self._authenticate()
+                tenant = self.scoped_tenant_id or "hackathon"
+                if parsed.path == "/workspace/runs":
+                    with self.engine.store._lock:
+                        rows = self.engine.store._connection.execute(
+                            "SELECT t.*,i.content_hash,i.report FROM traces t JOIN trace_imports i ON t.run_id=i.run_id WHERE t.tenant_id=? ORDER BY i.created_at DESC LIMIT 100",
+                            (tenant,),
+                        ).fetchall()
+                    runs = []
+                    for row in rows:
+                        item = dict(row)
+                        item["metadata"] = json.loads(item["metadata"])
+                        item["report"] = json.loads(item["report"])
+                        runs.append(item)
+                    self._send_json({"runs": runs, "limit": 100})
+                    return
+                if parsed.path.startswith("/workspace/runs/"):
+                    identifier = unquote(parsed.path.removeprefix("/workspace/runs/"))
+                    self._send_json(export_trace(self.engine.store, identifier, tenant))
+                    return
+                if parsed.path == "/workspace/audit":
+                    self._send_json({"events": self.engine.store.list_audit(tenant, limit=100)})
+                    return
+                raise ApiError(HTTPStatus.NOT_FOUND, "unknown workspace endpoint")
             if parsed.path.startswith(("/dashboard/", "/hackathon/", "/traces/", "/evidence/", "/integrity/")):
                 self._authenticate()
             if parsed.path == "/dashboard/state":
@@ -172,6 +198,15 @@ class SuperTuriyaHandler(BaseHTTPRequestHandler):
             }
             handler = routes.get(parsed.path)
             if not handler:
+                if parsed.path == "/workspace/preview":
+                    document = normalize(payload.get("record"))
+                    self._send_json({"record": document, "report": inspect_trace(document)})
+                    return
+                if parsed.path == "/workspace/import":
+                    payload["tenant_id"] = self.scoped_tenant_id or "hackathon"
+                    payload["principal_id"] = self.scoped_principal_id or "local-operator"
+                    self._send_json(import_trace(self.engine.store, payload))
+                    return
                 raise ApiError(HTTPStatus.NOT_FOUND, f"unknown endpoint: {parsed.path}")
             # Serialize authorization and mutations across this SQLite workspace.
             # This prevents duplicate concurrent lifecycle transitions.
@@ -364,6 +399,10 @@ class SuperTuriyaHandler(BaseHTTPRequestHandler):
             raise ApiError(HTTPStatus.FORBIDDEN, "record is outside authenticated tenant scope")
 
     def _handle_exception(self, exc: Exception) -> None:
+        # A navigating/closing browser can reset a response mid-write. Sending a
+        # second error response on that socket only produces another exception.
+        if isinstance(exc, (BrokenPipeError, ConnectionResetError, TimeoutError)):
+            return
         if isinstance(exc, ApiError):
             self._send_json({"error": exc.message}, exc.status)
             return
